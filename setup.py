@@ -35,5 +35,9 @@ setup(
     long_description=readme,
     packages=find_packages(exclude=('tests')),
     install_requires=regular_packages,
-    extras_require={'dev': regular_packages + dev_packages}
+    extras_require={'dev': regular_packages + dev_packages},
+    author='Greg Gandenberger',
+    author_email='gsganden@gmail.com',
+    url='https://github.com/ShopRunner/creevey',
+    download_url='https://github.com/ShopRunner/creevey/tarball/0.1.0',
 )

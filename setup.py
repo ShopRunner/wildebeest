@@ -40,4 +40,5 @@ setup(
     author_email='gsganden@gmail.com',
     url='https://github.com/ShopRunner/creevey',
     download_url='https://github.com/ShopRunner/creevey/tarball/0.1.0',
+    long_description_content_type='text/markdown',
 )

@@ -274,7 +274,13 @@ def write_response_as_png(response: requests.Response,
 
     outdir = os.path.dirname(outpath)
     if not os.path.isdir(outdir):
-        os.makedirs(outdir)
+        # Will get a FileExistsError if another thread creates the
+        # directory after we check for it here
+        try:
+            os.makedirs(outdir)
+        except FileExistsError:
+            pass
+
     if write_log_path is not None and not os.path.exists(write_log_path):
         _initialize_write_log(write_log_path)
 

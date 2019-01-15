@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
+# [1.1.3] - 2019-1-14
+### Added
+- Added functionality to save_response_content_as_png() to allow resize on download
+
 # [0.1.2] - 2019-01-11
 ### Fixed
 - Another try to configure PyPI Markdown rendering.

@@ -290,18 +290,18 @@ def write_response_as_png(response: requests.Response,
         _append_to_write_log(write_log_path, response.url, outpath)
 
 
-def _initialize_write_log(path):
+def _initialize_write_log(path: str):
     with open(path, 'w') as write_log:
         write_log.write('timestamp,url,local_path\n')
 
 
-def _save_response_content_as_png(response, path):
+def _save_response_content_as_png(response: requests.Response, path: str):
     image = Image.open(io.BytesIO(response.content))
     image_rgb = image.convert("RGB")
     image_rgb.save(path, format='PNG')
 
 
-def _append_to_write_log(write_log_path, url, outpath):
+def _append_to_write_log(write_log_path: str, url: str, outpath: str):
     current_time = datetime.datetime.now()
     outpath = os.path.abspath(outpath)
     with open(write_log_path, 'a') as write_log:

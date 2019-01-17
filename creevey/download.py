@@ -52,8 +52,8 @@ def download_images_as_png(urls: Iterable[str],
     resize_shape: int or tuple
         Desired final image dimensions to resize to. Default is None
         which will not change image size on download. a single int
-        will make a square of that size. a tuple will create a custome
-        x,y rectangle.
+        will make a square of that size. a tuple will create a custom
+        (height, width) rectangle.
 
     Raises
     ------
@@ -66,7 +66,9 @@ def download_images_as_png(urls: Iterable[str],
     if outdir is not None:
         path_func = partial(replace_directory_and_extension, extension='.png', outdir=outdir)
 
-    write_func = partial(write_response_as_png, write_log_path=write_log_path, resize_shape=resize_shape)
+    write_func = partial(write_response_as_png,
+                         write_log_path=write_log_path,
+                         resize_shape=resize_shape)
 
     download_files(urls,
                    path_func=path_func,
@@ -270,8 +272,8 @@ def write_response_as_png(response: requests.Response,
     resize_shape: int or tuple
         Desired final image dimensions to resize to. Default is None
         which will not change image size on download. a single int
-        will make a square of that size. a tuple will create a custome
-        x,y rectangle.
+        will make a square of that size. a tuple will create a custom
+        (height, width) rectangle.
 
     Raises
     ------
@@ -301,12 +303,14 @@ def _initialize_write_log(path):
         write_log.write('timestamp,url,local_path\n')
 
 
-def _save_response_content_as_png(response, path, resize_shape: Optional[Union[int, Tuple[int, int]]] = None):
+def _save_response_content_as_png(response,
+                                  path,
+                                  resize_shape: Optional[Union[int, Tuple[int, int]]] = None):
     image = Image.open(io.BytesIO(response.content))
-    if isinstance(resize_shape, tuple) is True:
-        image = image.resize((resize_shape[0], resize_shape[1]))
-    if isinstance(resize_shape, int) is True:
-        image = image.resize((resize_shape, resize_shape))
+    if resize_shape is not None:
+        if isinstance(resize_shape, int):
+            resize_shape = (resize_shape, resize_shape)
+        image = image.resize((resize_shape[1], resize_shape[0]))
     image_rgb = image.convert("RGB")
     image_rgb.save(path, format='PNG')
 

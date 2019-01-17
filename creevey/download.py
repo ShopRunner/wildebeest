@@ -303,14 +303,15 @@ def _initialize_write_log(path):
         write_log.write('timestamp,url,local_path\n')
 
 
-def _save_response_content_as_png(response,
-                                  path,
+def _save_response_content_as_png(response: requests.Response,
+                                  path: str,
                                   resize_shape: Optional[Union[int, Tuple[int, int]]] = None):
     image = Image.open(io.BytesIO(response.content))
     if resize_shape is not None:
         if isinstance(resize_shape, int):
             resize_shape = (resize_shape, resize_shape)
-        image = image.resize((resize_shape[1], resize_shape[0]))
+        height, width = resize_shape
+        image = image.resize((width, height))
     image_rgb = image.convert("RGB")
     image_rgb.save(path, format='PNG')
 

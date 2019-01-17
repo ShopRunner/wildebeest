@@ -311,7 +311,8 @@ def _initialize_write_log(path: str):
 
 def _save_response_content_as_png(response: requests.Response,
                                   path: str,
-                                  resize_shape: Optional[Union[int, Tuple[int, int]]] = None):
+                                  resize_shape: Optional[Union[int, Tuple[int, int]]] = None,
+                                  ):
     image = Image.open(io.BytesIO(response.content))
     if resize_shape is not None:
         if isinstance(resize_shape, int):

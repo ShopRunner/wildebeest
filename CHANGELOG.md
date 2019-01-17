@@ -7,6 +7,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ### Added
 - Added functionality to save_response_content_as_png() to allow resize on download
 
+# [0.1.3] - 2019-01-15
+### Fixed
+- Catch `FileExistsError` in case in which another thread creates directory after we check for it.
+
 # [0.1.2] - 2019-01-11
 ### Fixed
 - Another try to configure PyPI Markdown rendering.

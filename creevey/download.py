@@ -288,7 +288,13 @@ def write_response_as_png(response: requests.Response,
 
     outdir = os.path.dirname(outpath)
     if not os.path.isdir(outdir):
-        os.makedirs(outdir)
+        # Will get a FileExistsError if another thread creates the
+        # directory after we check for it here
+        try:
+            os.makedirs(outdir)
+        except FileExistsError:
+            pass
+
     if write_log_path is not None and not os.path.exists(write_log_path):
         _initialize_write_log(write_log_path)
 
@@ -298,9 +304,10 @@ def write_response_as_png(response: requests.Response,
         _append_to_write_log(write_log_path, response.url, outpath)
 
 
-def _initialize_write_log(path):
+def _initialize_write_log(path: str):
     with open(path, 'w') as write_log:
         write_log.write('timestamp,url,local_path\n')
+
 
 
 def _save_response_content_as_png(response: requests.Response,
@@ -316,7 +323,7 @@ def _save_response_content_as_png(response: requests.Response,
     image_rgb.save(path, format='PNG')
 
 
-def _append_to_write_log(write_log_path, url, outpath):
+def _append_to_write_log(write_log_path: str, url: str, outpath: str):
     current_time = datetime.datetime.now()
     outpath = os.path.abspath(outpath)
     with open(write_log_path, 'a') as write_log:

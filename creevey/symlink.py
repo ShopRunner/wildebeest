@@ -97,7 +97,7 @@ def create_imagenet_style_symlinks(df: pd.DataFrame,
     reconcile_subdirectories(valid_dir, train_dir)
 
 
-def reconcile_subdirectories(dir1, dir2):
+def reconcile_subdirectories(dir1: str, dir2: str):
     for subdir in os.listdir(os.path.join(dir2)):
         corresponding_dir = os.path.join(dir1, subdir)
         if not os.path.isdir(corresponding_dir):

@@ -3,7 +3,7 @@ from functools import partial
 import io
 import logging
 import os
-from typing import Callable, Iterable, Optional, Union, Tuple
+from typing import Callable, Iterable, Optional, Tuple, Union
 
 from joblib import delayed, Parallel
 from PIL import Image
@@ -307,7 +307,6 @@ def write_response_as_png(response: requests.Response,
 def _initialize_write_log(path: str):
     with open(path, 'w') as write_log:
         write_log.write('timestamp,url,local_path\n')
-
 
 
 def _save_response_content_as_png(response: requests.Response,

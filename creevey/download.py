@@ -3,7 +3,7 @@ from functools import partial
 import io
 import logging
 import os
-from typing import Callable, Iterable, Optional
+from typing import Callable, Iterable, Optional, Union, Tuple
 
 from joblib import delayed, Parallel
 from PIL import Image
@@ -18,6 +18,7 @@ def download_images_as_png(urls: Iterable[str],
                            skip_existing: bool = True,
                            write_log_path: Optional[str] = None,
                            n_jobs: int = 1,
+                           resize_shape: Optional[Union[int, Tuple[int, int]]] = None,
                            ) -> None:
     """
     Download images and save as PNGs
@@ -48,6 +49,11 @@ def download_images_as_png(urls: Iterable[str],
         Desired path for logs of successful writes
     n_jobs
         Number of jobs to run in parallel
+    resize_shape: int or tuple
+        Desired final image dimensions to resize to. Default is None
+        which will not change image size on download. a single int
+        will make a square of that size. a tuple will create a custom
+        (height, width) rectangle.
 
     Raises
     ------
@@ -60,7 +66,9 @@ def download_images_as_png(urls: Iterable[str],
     if outdir is not None:
         path_func = partial(replace_directory_and_extension, extension='.png', outdir=outdir)
 
-    write_func = partial(write_response_as_png, write_log_path=write_log_path)
+    write_func = partial(write_response_as_png,
+                         write_log_path=write_log_path,
+                         resize_shape=resize_shape)
 
     download_files(urls,
                    path_func=path_func,
@@ -241,6 +249,7 @@ def replace_directory_and_extension(
 def write_response_as_png(response: requests.Response,
                           outpath: str,
                           write_log_path: Optional[str] = None,
+                          resize_shape: Optional[Union[int, Tuple[int, int]]] = None,
                           ) -> None:
     """
     Write response contents to `path` as a PNG file.
@@ -260,6 +269,11 @@ def write_response_as_png(response: requests.Response,
         appended. That file is assumed to have headings "timestamp,"
         "url," and "local_path." If no file exists at that location,
         then one is created with those headings.
+    resize_shape: int or tuple
+        Desired final image dimensions to resize to. Default is None
+        which will not change image size on download. a single int
+        will make a square of that size. a tuple will create a custom
+        (height, width) rectangle.
 
     Raises
     ------
@@ -284,7 +298,7 @@ def write_response_as_png(response: requests.Response,
     if write_log_path is not None and not os.path.exists(write_log_path):
         _initialize_write_log(write_log_path)
 
-    _save_response_content_as_png(response, outpath)
+    _save_response_content_as_png(response, outpath, resize_shape)
 
     if write_log_path is not None:
         _append_to_write_log(write_log_path, response.url, outpath)
@@ -295,8 +309,16 @@ def _initialize_write_log(path: str):
         write_log.write('timestamp,url,local_path\n')
 
 
-def _save_response_content_as_png(response: requests.Response, path: str):
+
+def _save_response_content_as_png(response: requests.Response,
+                                  path: str,
+                                  resize_shape: Optional[Union[int, Tuple[int, int]]] = None):
     image = Image.open(io.BytesIO(response.content))
+    if resize_shape is not None:
+        if isinstance(resize_shape, int):
+            resize_shape = (resize_shape, resize_shape)
+        height, width = resize_shape
+        image = image.resize((width, height))
     image_rgb = image.convert("RGB")
     image_rgb.save(path, format='PNG')
 

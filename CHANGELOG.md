@@ -3,6 +3,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
+# [0.1.5] - 2019-01-17
+### Added
+- Modify Jenkins job to avoid trying to push old versions to PyPI.
+
+# [0.1.4] - 2019-01-17
+### Added
+- Attempt to set up Jenkins job to push to PyPI.
+
 # [0.1.3] - 2019-01-15
 ### Fixed
 - Catch `FileExistsError` in case in which another thread creates directory after we check for it.

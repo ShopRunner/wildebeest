@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
+# [0.1.10] - 2019-01-17
+### Fixed
+- Remove download instructions from README now that a simple pip install should work.
+
 # [0.1.9] - 2019-01-17
 ### Added
 - Added functionality to save_response_content_as_png() to allow resize on download

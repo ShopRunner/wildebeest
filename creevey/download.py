@@ -3,7 +3,7 @@ from functools import partial
 import io
 import logging
 import os
-from typing import Callable, Iterable, Optional, Union, Tuple
+from typing import Callable, Iterable, Optional, Tuple, Union
 
 from joblib import delayed, Parallel
 from PIL import Image

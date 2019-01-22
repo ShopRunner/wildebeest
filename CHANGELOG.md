@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 # [0.1.10] - 2019-01-17
+### Changed
+- Used black to format code.
+
+# [0.1.10] - 2019-01-17
 ### Fixed
 - Remove download instructions from README now that a simple pip install should work.
 

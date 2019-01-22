@@ -12,14 +12,15 @@ from retrying import retry
 from tqdm import tqdm
 
 
-def download_images_as_png(urls: Iterable[str],
-                           outdir: Optional[str] = None,
-                           path_func: Optional[Callable[[str], str]] = None,
-                           skip_existing: bool = True,
-                           write_log_path: Optional[str] = None,
-                           n_jobs: int = 1,
-                           resize_shape: Optional[Union[int, Tuple[int, int]]] = None,
-                           ) -> None:
+def download_images_as_png(
+    urls: Iterable[str],
+    outdir: Optional[str] = None,
+    path_func: Optional[Callable[[str], str]] = None,
+    skip_existing: bool = True,
+    write_log_path: Optional[str] = None,
+    n_jobs: int = 1,
+    resize_shape: Optional[Union[int, Tuple[int, int]]] = None,
+) -> None:
     """
     Download images and save as PNGs
 
@@ -64,26 +65,30 @@ def download_images_as_png(urls: Iterable[str],
     elif path_func is None and outdir is None:
         outdir = '.'
     if outdir is not None:
-        path_func = partial(replace_directory_and_extension, extension='.png', outdir=outdir)
+        path_func = partial(
+            replace_directory_and_extension, extension='.png', outdir=outdir
+        )
 
-    write_func = partial(write_response_as_png,
-                         write_log_path=write_log_path,
-                         resize_shape=resize_shape)
+    write_func = partial(
+        write_response_as_png, write_log_path=write_log_path, resize_shape=resize_shape
+    )
 
-    download_files(urls,
-                   path_func=path_func,
-                   write_func=write_func,
-                   skip_existing=skip_existing,
-                   n_jobs=n_jobs,
-                   )
+    download_files(
+        urls,
+        path_func=path_func,
+        write_func=write_func,
+        skip_existing=skip_existing,
+        n_jobs=n_jobs,
+    )
 
 
-def download_files(urls: Iterable[str],
-                   path_func: Callable[[str], str],
-                   write_func: Callable[[requests.Response, str], None],
-                   skip_existing: bool = True,
-                   n_jobs: int = 1,
-                   ) -> None:
+def download_files(
+    urls: Iterable[str],
+    path_func: Callable[[str], str],
+    write_func: Callable[[requests.Response, str], None],
+    skip_existing: bool = True,
+    n_jobs: int = 1,
+) -> None:
     """
     Make GET requests to the specified URLs and write the responses
     to disk.
@@ -112,11 +117,12 @@ def download_files(urls: Iterable[str],
     n_jobs
         Number of jobs to run in parallel
     """
-    download_single_file_func = partial(download_single_file,
-                                        path_func=path_func,
-                                        write_func=write_func,
-                                        skip_existing=skip_existing,
-                                        )
+    download_single_file_func = partial(
+        download_single_file,
+        path_func=path_func,
+        write_func=write_func,
+        skip_existing=skip_existing,
+    )
     Parallel(n_jobs=n_jobs, prefer='threads')(
         delayed(download_single_file_func)(url) for url in tqdm(urls)
     )
@@ -128,16 +134,17 @@ def _is_connection_error(exception):
     )
 
 
-@retry(retry_on_exception=_is_connection_error,
-       wait_exponential_multiplier=1000,
-       wait_exponential_max=10000,
-       stop_max_attempt_number=10,
-       )
+@retry(
+    retry_on_exception=_is_connection_error,
+    wait_exponential_multiplier=1000,
+    wait_exponential_max=10000,
+    stop_max_attempt_number=10,
+)
 def download_single_file(
-        url: str,
-        path_func: Callable[[str], str],
-        write_func: Callable[[requests.Response, str], None],
-        skip_existing: bool = True,
+    url: str,
+    path_func: Callable[[str], str],
+    write_func: Callable[[requests.Response, str], None],
+    skip_existing: bool = True,
 ) -> None:
     """
     Make a GET request to the specified URL and write the response
@@ -179,13 +186,17 @@ def download_single_file(
     outpath = path_func(url)
     skip_download = os.path.isfile(outpath) and skip_existing
     if skip_download:
-        logging.warning(f'Skipping {url} download because there is already a file at {outpath}')
+        logging.warning(
+            f'Skipping {url} download because there is already a file at {outpath}'
+        )
     else:
         if os.path.isfile(outpath):
             logging.warning(f'Overwriting existing file at {outpath}')
         response = requests.get(url)
         if _log_as_error_on_status_code(response.status_code):
-            logging.error(f'Failed to download {url} with status code {response.status_code}')
+            logging.error(
+                f'Failed to download {url} with status code {response.status_code}'
+            )
         elif _retry_on_status_code(response.status_code):
             logging.debug(f'Retrying {url} with status code {response.status_code}')
             raise _HTTPErrorToRetry
@@ -214,9 +225,7 @@ class _HTTPErrorToRetry(requests.exceptions.HTTPError):
 
 
 def replace_directory_and_extension(
-        inpath: str,
-        extension: str,
-        outdir: str = '.'
+    inpath: str, extension: str, outdir: str = '.'
 ) -> str:
     """
     Construct path for local file by taking `outdir` as the directory,
@@ -246,11 +255,12 @@ def replace_directory_and_extension(
     return outpath
 
 
-def write_response_as_png(response: requests.Response,
-                          outpath: str,
-                          write_log_path: Optional[str] = None,
-                          resize_shape: Optional[Union[int, Tuple[int, int]]] = None,
-                          ) -> None:
+def write_response_as_png(
+    response: requests.Response,
+    outpath: str,
+    write_log_path: Optional[str] = None,
+    resize_shape: Optional[Union[int, Tuple[int, int]]] = None,
+) -> None:
     """
     Write response contents to `path` as a PNG file.
 
@@ -284,7 +294,9 @@ def write_response_as_png(response: requests.Response,
     if not outpath.endswith('png'):
         raise ValueError('`outpath` argument must end with .png')
     if write_log_path is not None and not write_log_path.endswith('csv'):
-        raise ValueError('`write_log_path` argument must end with .csv if it is not `None`')
+        raise ValueError(
+            '`write_log_path` argument must end with .csv if it is not `None`'
+        )
 
     outdir = os.path.dirname(outpath)
     if not os.path.isdir(outdir):
@@ -309,10 +321,11 @@ def _initialize_write_log(path: str):
         write_log.write('timestamp,url,local_path\n')
 
 
-
-def _save_response_content_as_png(response: requests.Response,
-                                  path: str,
-                                  resize_shape: Optional[Union[int, Tuple[int, int]]] = None):
+def _save_response_content_as_png(
+    response: requests.Response,
+    path: str,
+    resize_shape: Optional[Union[int, Tuple[int, int]]] = None,
+):
     image = Image.open(io.BytesIO(response.content))
     if resize_shape is not None:
         if isinstance(resize_shape, int):

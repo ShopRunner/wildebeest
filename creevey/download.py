@@ -159,7 +159,7 @@ def download_single_file(
     --------------
     Retry up to ten times on `requests.exceptions.ConnectionError`
     instances and 5xx status codes, waiting 2^x seconds between each
-    retry, up to 10 seconds.
+    retry, with a max of 10 seconds.
 
     Log an error without retrying or raising for 403 and 404 status
     codes.

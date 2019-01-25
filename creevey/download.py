@@ -332,7 +332,7 @@ def _save_response_content_as_png(
             resize_shape = (resize_shape, resize_shape)
         height, width = resize_shape
         image = image.resize((width, height))
-    image_rgb = image.convert("RGB")
+    image_rgb = image.convert('RGB')
     image_rgb.save(path, format='PNG')
 
 

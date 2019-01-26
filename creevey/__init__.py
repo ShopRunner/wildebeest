@@ -6,3 +6,4 @@ from creevey.download import (
     download_single_file,
 )
 from creevey.symlink import create_imagenet_style_symlinks
+from creevey.dataset import S3Downloader, S3TarfileDataset, TarfileExtractor

@@ -3,7 +3,6 @@ Classes for downloading and processing datasets
 """
 import logging
 import os
-from pathlib import Path
 import sys
 import tarfile
 import threading
@@ -21,11 +20,11 @@ class _DatasetDirectoryInitializer:
     initialize other dataset-related classes.
     """
 
-    def __init__(self, data_dir: Path):
+    def __init__(self, data_dir: str):
         self.data_dir = data_dir
-        self.raw_dir = self.data_dir / 'raw'
-        self.interim_dir = self.raw_dir.parent / 'interim'
-        self.processed_dir = self.raw_dir.parent / 'processed'
+        self.raw_dir = os.path.join(self.data_dir, 'raw')
+        self.interim_dir = os.path.join(os.path.dirname(self.raw_dir), 'interim')
+        self.processed_dir = os.path.join(os.path.dirname(self.raw_dir), 'processed')
 
 
 class _Downloader(_DatasetDirectoryInitializer):
@@ -36,7 +35,7 @@ class _Downloader(_DatasetDirectoryInitializer):
     if the data is to be obtained by downloading.
     """
 
-    def __init__(self, base_dir: Path):
+    def __init__(self, base_dir: str):
         super().__init__(base_dir)
 
     def download(self):
@@ -69,7 +68,7 @@ class _Processor(_DatasetDirectoryInitializer):
     working with one object per dataset.
     """
 
-    def __init__(self, base_dir: Path):
+    def __init__(self, base_dir: str):
         super().__init__(base_dir)
 
     def process(self):
@@ -99,7 +98,7 @@ class _Dataset(_DatasetDirectoryInitializer):
     method call.
     """
 
-    def __init__(self, base_dir: Path):
+    def __init__(self, base_dir: str):
         super().__init__(base_dir)
 
     def get_raw(self):
@@ -127,11 +126,13 @@ class S3Downloader(_Downloader):
         Local directory for storing dataset.
     """
 
-    def __init__(self, s3_bucket: str, s3_key: str, base_dir: Path) -> None:
+    def __init__(self, s3_bucket: str, s3_key: str, base_dir: str) -> None:
         super().__init__(base_dir)
         self.s3_bucket = s3_bucket
         self.s3_key = s3_key
-        self.local_archive_path = self.raw_dir / os.path.basename(self.s3_key)
+        self.local_archive_path = os.path.join(
+            self.raw_dir, os.path.basename(self.s3_key)
+        )
 
     def download(self) -> None:
         """
@@ -141,7 +142,7 @@ class S3Downloader(_Downloader):
         logging.info(f'Downloading {self.s3_key} to {self.local_archive_path}')
         self._seen_so_far = 0
 
-        if not self.raw_dir.is_dir():
+        if not os.path.isdir(self.raw_dir):
             os.makedirs(self.raw_dir)
 
         s3_client = boto3.resource('s3')
@@ -190,14 +191,16 @@ class TarfileExtractor(_Extractor):
         Path to archive to be extracted
     """
 
-    def __init__(self, archive_path: Path):
-        self.archive_path = archive_path
+    def __init__(self, archive_path: str):
+        self.local_archive_path = archive_path
 
     def extract(self):
-        with tarfile.open(self.archive_path) as archive:
+        with tarfile.open(self.local_archive_path) as archive:
             members = archive.getmembers()
             for item in tqdm(iterable=members, total=len(members)):
-                archive.extract(member=item, path=self.local_archive_path.parent)
+                archive.extract(
+                    member=item, path=os.path.dirname(self.local_archive_path)
+                )
 
 
 class S3TarfileDataset(_Dataset):
@@ -221,7 +224,7 @@ class S3TarfileDataset(_Dataset):
         self,
         s3_bucket: str,
         s3_key: str,
-        base_dir: Path,
+        base_dir: str,
         Processor: Type['_Processor'] = _Processor,
     ):
         super().__init__(base_dir)
@@ -230,16 +233,16 @@ class S3TarfileDataset(_Dataset):
         self.s3_key = s3_key
 
         self.downloader = S3Downloader(
-            s3_bucket=self.s3_bucket, s3_key=self.s3_key, local_dir=self.base_dir
+            s3_bucket=self.s3_bucket, s3_key=self.s3_key, base_dir=self.base_dir
         )
         self.extractor = TarfileExtractor(
             archive_path=self.downloader.local_archive_path
         )
 
-        self.processor = Processor(data_dir=self.base_dir)
+        self.processor = Processor(base_dir=self.base_dir)
         self.process = self.processor.process
 
     def get_raw(self):
         self.downloader.download()
         self.extractor.extract()
-        os.remove(self.download.local_archive_path)
+        os.remove(self.downloader.local_archive_path)

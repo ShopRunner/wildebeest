@@ -15,14 +15,27 @@ import botocore
 
 
 class _DatasetDirectoryInitializer:
+    """
+    Creates attributes pointing to subdirectories "raw", "interim", and
+    "processed" of the provided `data_dir`. Intended to be used to
+    initialize other dataset-related classes.
+    """
+
     def __init__(self, data_dir: Path):
         self.data_dir = data_dir
-        self.raw_data_dir = self.data_dir / 'raw'
-        self.interim_data_dir = self.raw_data_dir.parent / 'interim'
-        self.processed_data_dir = self.raw_data_dir.parent / 'processed'
+        self.raw_dir = self.data_dir / 'raw'
+        self.interim_dir = self.raw_dir.parent / 'interim'
+        self.processed_dir = self.raw_dir.parent / 'processed'
 
 
 class _Downloader(_DatasetDirectoryInitializer):
+    """
+    Abstract base class for downloading datasets. Intended use is for
+    classes inheriting from `_Dataset` to delegate downloading to a
+    class inheriting from `_Downloader` as part of its `get_raw` method,
+    if the data is to be obtained by downloading.
+    """
+
     def __init__(self, base_dir: Path):
         super().__init__(base_dir)
 
@@ -31,6 +44,13 @@ class _Downloader(_DatasetDirectoryInitializer):
 
 
 class _Extractor:
+    """
+    Abstract base class for extracting dataset archive files. Intended
+    use is for classes inheriting from `_Dataset` to delegate extraction
+    to a class inheriting from `_Extractor` as part of its `get_raw`
+    method, if the data comes as some kind of archive file.
+    """
+
     def __init__(self):
         raise NotImplementedError
 
@@ -39,6 +59,16 @@ class _Extractor:
 
 
 class _Processor(_DatasetDirectoryInitializer):
+    """
+    Abstract base class for processing raw dataset files. Intended
+    use is for classes inheriting from `_Dataset` to delegate its
+    `process` method to a class inheriting from `_Processor`, so that
+    the processing steps for a specific dataset can be specified
+    separately from steps for obtaining raw data that might be reusable
+    across multiple datasets while still providing the convenience of
+    working with one object per dataset.
+    """
+
     def __init__(self, base_dir: Path):
         super().__init__(base_dir)
 
@@ -59,8 +89,8 @@ class _Dataset(_DatasetDirectoryInitializer):
     Intended use:
 
     - Method `get_raw` gets the raw data and puts it in `raw_dir`, for
-    instance by downloading an archive file, expanding it, and deleting
-    it.
+    instance by downloading an archive file, expanding it, and then
+    deleting it.
     - Method `process` gets the data ready for modeling and puts the
     result in `processed_dir`. If intermediate results are written to
     disk, they are written to `interim_dir`.
@@ -103,12 +133,16 @@ class S3Downloader(_Downloader):
         self.s3_key = s3_key
         self.local_archive_path = self.raw_dir / os.path.basename(self.s3_key)
 
-    def download(self):
+    def download(self) -> None:
+        """
+        Download to "<base_dir>/raw/<s3_key>" the file in `s3_bucket`
+        with key `s3_key`
+        """
         logging.info(f'Downloading {self.s3_key} to {self.local_archive_path}')
         self._seen_so_far = 0
 
-        if not self.local_dir.is_dir():
-            os.makedirs(self.local_dir)
+        if not self.raw_dir.is_dir():
+            os.makedirs(self.raw_dir)
 
         s3_client = boto3.resource('s3')
         progress = DownloadProgressPercentage(s3_client, self.s3_bucket, self.s3_key)
@@ -127,7 +161,7 @@ class S3Downloader(_Downloader):
 
 class DownloadProgressPercentage:
     """
-    Use as a callback to track download progress
+    Use as a callback to track download progress.
     """
 
     def __init__(self, client, bucket, key):
@@ -168,7 +202,7 @@ class TarfileExtractor(_Extractor):
 
 class S3TarfileDataset(_Dataset):
     """
-    Retrieve and process a dataset stored as a tarfile on S3.
+    Download, extract, and delete a dataset stored as a tarfile on S3.
 
     Attributes
     ----------
@@ -205,7 +239,7 @@ class S3TarfileDataset(_Dataset):
         self.processor = Processor(data_dir=self.base_dir)
         self.process = self.processor.process
 
-        def get_raw(self):
-            self.downloader.download()
-            self.extractor.extract()
-            os.remove(self.download.local_archive_path)
+    def get_raw(self):
+        self.downloader.download()
+        self.extractor.extract()
+        os.remove(self.download.local_archive_path)

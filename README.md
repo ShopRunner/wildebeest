@@ -81,4 +81,6 @@ create_imagenet_style_symlinks(df=df,
 
 ## Specifying Data Processing Workflows
 
-The `dataset` module provides classes for specifying data processing workflows. 
+The `dataset` module provides classes for specifying data processing workflows. It assumes that each dataset corresponds to a single "base directory" with subdirectories "raw" for storing data as received from some source without any transformations, "processed" for storing derived products from the contents of "raw" for modeling purposes, and "interim" for any intermediate results produced from the contents of "raw" but not needed for modeling purposes. Dataset classes inherit from an abstract class `_Dataset` and specify a method `get_raw` and a method `process`.
+
+For instance, the class `S3TarfileDataset` is for a dataset the raw data is contained in a single tarfile on S3. It is instantiated with a base directory `Path` object, an S3 bucket name and an S3 key. Its `get_raw` method downloads the corresponding tarfile to the "raw" subdirectory of the base directory, extracts its contents, and deletes the tarfile. Processing steps are dataset-specific, so its `process` method raises a `NotImplementedError` until specified by a user (e.g. by subclassing).  

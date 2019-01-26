@@ -1,16 +1,14 @@
-"""
-Classes for downloading and processing datasets
-"""
+"""Classes for downloading and processing datasets"""
 import logging
 import os
 import sys
 import tarfile
 import threading
-from tqdm import tqdm
 from typing import Type
 
 import boto3
 import botocore
+from tqdm import tqdm
 
 
 class _DatasetDirectoryInitializer:
@@ -161,9 +159,7 @@ class S3Downloader(_Downloader):
 
 
 class DownloadProgressPercentage:
-    """
-    Use as a callback to track download progress.
-    """
+    """Use as a callback to track download progress."""
 
     def __init__(self, client, bucket, key):
         self._key = key
@@ -171,7 +167,7 @@ class DownloadProgressPercentage:
         self._seen_so_far = 0
         self._lock = threading.Lock()
 
-    def __call__(self, bytes_amount):
+    def __call__(self, bytes_amount):  # noqa: 170
         with self._lock:
             self._seen_so_far += bytes_amount
             percentage = (self._seen_so_far / self._size) * 100
@@ -194,7 +190,8 @@ class TarfileExtractor(_Extractor):
     def __init__(self, archive_path: str):
         self.local_archive_path = archive_path
 
-    def extract(self):
+    def extract(self) -> None:
+        """Extract tarfile at `archive_path`"""
         with tarfile.open(self.local_archive_path) as archive:
             members = archive.getmembers()
             for item in tqdm(iterable=members, total=len(members)):
@@ -243,6 +240,10 @@ class S3TarfileDataset(_Dataset):
         self.process = self.processor.process
 
     def get_raw(self):
+        """
+        Download tarfile at `s3_key` in `s3_bucket` to '<base_dir>/raw',
+        extract it, and delete the tarfile.
+        """
         self.downloader.download()
         self.extractor.extract()
         os.remove(self.downloader.local_archive_path)

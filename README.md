@@ -78,3 +78,7 @@ create_imagenet_style_symlinks(df=df,
                                groupby_colname='group',
                                )
 ```
+
+## Specifying Data Processing Workflows
+
+The `dataset` module provides classes for specifying data processing workflows. 

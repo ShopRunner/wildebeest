@@ -14,48 +14,39 @@ import boto3
 import botocore
 
 
-class S3TarfileDataset(_Dataset):
-    """
-    Retrieve and process a dataset stored as a tarfile on S3.
+class _DatasetDirectoryInitializer:
+    def __init__(self, data_dir: Path):
+        self.data_dir = data_dir
+        self.raw_data_dir = self.data_dir / 'raw'
+        self.interim_data_dir = self.raw_data_dir.parent / 'interim'
+        self.processed_data_dir = self.raw_data_dir.parent / 'processed'
 
-    Attributes
-    ----------
-    Processor
-        Class that implements an `process` method, to which this
-        class's `process` method is to delegated.
-    s3_bucket
-        Name of S3 bucket in which dataset tarfile is stored.
-    s3_key
-        S3 key to dataset tarfile.
-    base_dir
-        Local directory for storing dataset.
-    """
 
-    def __init__(
-        self, Processor: Type['_Processor'], s3_bucket: str, s3_key: str, base_dir: Path
-    ):
+class _Downloader(_DatasetDirectoryInitializer):
+    def __init__(self, base_dir: Path):
         super().__init__(base_dir)
-        self.base_dir = base_dir
-        self.s3_bucket = s3_bucket
-        self.s3_key = s3_key
 
-        self.downloader = S3Downloader(
-            s3_bucket=self.s3_bucket, s3_key=self.s3_key, local_dir=self.base_dir
-        )
-        self.extractor = TarfileExtractor(
-            archive_path=self.downloader.local_archive_path
-        )
-
-        self.processor = Processor(data_dir=self.base_dir)
-        self.process = self.processor.process
-
-        def get_raw(self):
-            self.downloader.download()
-            self.extractor.extract()
-            os.remove(self.download.local_archive_path)
+    def download(self):
+        raise NotImplementedError
 
 
-class _Dataset(_DatasetInitializer):
+class _Extractor:
+    def __init__(self):
+        raise NotImplementedError
+
+    def extract(self):
+        raise NotImplementedError
+
+
+class _Processor(_DatasetDirectoryInitializer):
+    def __init__(self, base_dir: Path):
+        super().__init__(base_dir)
+
+    def process(self):
+        raise NotImplementedError
+
+
+class _Dataset(_DatasetDirectoryInitializer):
     """
     Abstract base class for defining reproducible workflows for
     downloading and processing datasets.
@@ -92,14 +83,6 @@ class _Dataset(_DatasetInitializer):
         self.process()
 
 
-class _DatasetInitializer:
-    def __init__(self, data_dir: Path):
-        self.data_dir = data_dir
-        self.raw_data_dir = self.data_dir / 'raw'
-        self.interim_data_dir = self.raw_data_dir.parent / 'interim'
-        self.processed_data_dir = self.raw_data_dir.parent / 'processed'
-
-
 class S3Downloader(_Downloader):
     """
     Download a dataset from S3.
@@ -113,11 +96,12 @@ class S3Downloader(_Downloader):
     base_dir
         Local directory for storing dataset.
     """
+
     def __init__(self, s3_bucket: str, s3_key: str, base_dir: Path) -> None:
         super().__init__(base_dir)
         self.s3_bucket = s3_bucket
         self.s3_key = s3_key
-        self.local_archive_path = self.raw_dir/ os.path.basename(self.s3_key)
+        self.local_archive_path = self.raw_dir / os.path.basename(self.s3_key)
 
     def download(self):
         logging.info(f'Downloading {self.s3_key} to {self.local_archive_path}')
@@ -141,18 +125,11 @@ class S3Downloader(_Downloader):
                 raise
 
 
-class _Downloader(_DatasetInitializer):
-    def __init__(self, base_dir: Path):
-        super().__init__(base_dir)
-
-    def download(self):
-        raise NotImplementedError
-
-
 class DownloadProgressPercentage:
     """
     Use as a callback to track download progress
     """
+
     def __init__(self, client, bucket, key):
         self._key = key
         self._size = client.Bucket(bucket).Object(key).content_length
@@ -178,6 +155,7 @@ class TarfileExtractor(_Extractor):
     archive_path
         Path to archive to be extracted
     """
+
     def __init__(self, archive_path: Path):
         self.archive_path = archive_path
 
@@ -188,17 +166,46 @@ class TarfileExtractor(_Extractor):
                 archive.extract(member=item, path=self.local_archive_path.parent)
 
 
-class _Extractor:
-    def __init__(self):
-        raise NotImplementedError
+class S3TarfileDataset(_Dataset):
+    """
+    Retrieve and process a dataset stored as a tarfile on S3.
 
-    def extract(self):
-        raise NotImplementedError
+    Attributes
+    ----------
+    Processor
+        Class that implements an `process` method, to which this
+        class's `process` method is delegated.
+    s3_bucket
+        Name of S3 bucket in which dataset tarfile is stored.
+    s3_key
+        S3 key to dataset tarfile.
+    base_dir
+        Local directory for storing dataset.
+    """
 
-
-class _Processor(_DatasetInitializer):
-    def __init__(self, base_dir: Path):
+    def __init__(
+        self,
+        s3_bucket: str,
+        s3_key: str,
+        base_dir: Path,
+        Processor: Type['_Processor'] = _Processor,
+    ):
         super().__init__(base_dir)
+        self.base_dir = base_dir
+        self.s3_bucket = s3_bucket
+        self.s3_key = s3_key
 
-    def process(self):
-        raise NotImplementedError
+        self.downloader = S3Downloader(
+            s3_bucket=self.s3_bucket, s3_key=self.s3_key, local_dir=self.base_dir
+        )
+        self.extractor = TarfileExtractor(
+            archive_path=self.downloader.local_archive_path
+        )
+
+        self.processor = Processor(data_dir=self.base_dir)
+        self.process = self.processor.process
+
+        def get_raw(self):
+            self.downloader.download()
+            self.extractor.extract()
+            os.remove(self.download.local_archive_path)

@@ -27,24 +27,31 @@ def dataset():
         shutil.copyfile(STABLE_LOCAL_MADEYE_IMAGE_PATH, outpath)
         dataset['path'].append(outpath)
         dataset['label'].append('fake1' if copynum < 5 else 'fake2')
-        dataset['group'].append('a' if copynum % 3 == 0 else 'b' if copynum % 3 == 1 else 'c')
+        dataset['group'].append(
+            'a' if copynum % 3 == 0 else 'b' if copynum % 3 == 1 else 'c'
+        )
     dataset = pd.DataFrame(dataset)
-    create_imagenet_style_symlinks(df=dataset,
-                                   label_colname='label',
-                                   path_colname='path',
-                                   valid_size=.2,
-                                   outdir=TEMP_OUTDIR,
-                                   groupby_colname='group',
-                                   )
+    create_imagenet_style_symlinks(
+        df=dataset,
+        label_colname='label',
+        path_colname='path',
+        valid_size=0.2,
+        outdir=TEMP_OUTDIR,
+        groupby_colname='group',
+    )
     yield dataset
     shutil.rmtree(TEMP_INDIR)
     shutil.rmtree(TEMP_OUTDIR)
 
 
 def test_create_imagenet_style_symlinks(dataset):
-    train_filenames = sum([os.listdir(os.path.join(TEMP_TRAIN_DIR, directory))
-                           for directory in os.listdir(TEMP_TRAIN_DIR)
-                           ], [])
+    train_filenames = sum(
+        [
+            os.listdir(os.path.join(TEMP_TRAIN_DIR, directory))
+            for directory in os.listdir(TEMP_TRAIN_DIR)
+        ],
+        [],
+    )
     dataset.loc[:, 'dataset_name'] = dataset.loc[:, 'path'].apply(
         lambda path: 'train' if os.path.basename(path) in train_filenames else 'valid'
     )
@@ -56,5 +63,5 @@ def test_create_imagenet_style_symlinks(dataset):
 
     assert not groups_overlap
 
-    assert len(valid_df) in (NUM_TEST_IMAGES//3, NUM_TEST_IMAGES//3 + 1)
+    assert len(valid_df) in (NUM_TEST_IMAGES // 3, NUM_TEST_IMAGES // 3 + 1)
     assert len(train_df) == NUM_TEST_IMAGES - len(valid_df)

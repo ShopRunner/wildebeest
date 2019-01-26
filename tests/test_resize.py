@@ -4,12 +4,13 @@ import cv2 as cv
 import pytest
 
 from creevey import resize_image, resize_multiple_files
-from .conftest import (SAMPLE_DATA_DIR,
-                       STABLE_LOCAL_MADEYE_IMAGE_FILENAME,
-                       STABLE_LOCAL_MADEYE_IMAGE_PATH,
-                       STABLE_LOCAL_PHILOSOPHERS_STONE_IMAGE_FILENAME,
-                       STABLE_LOCAL_PHILOSOPHERS_STONE_IMAGE_PATH
-                       )
+from .conftest import (
+    SAMPLE_DATA_DIR,
+    STABLE_LOCAL_MADEYE_IMAGE_FILENAME,
+    STABLE_LOCAL_MADEYE_IMAGE_PATH,
+    STABLE_LOCAL_PHILOSOPHERS_STONE_IMAGE_FILENAME,
+    STABLE_LOCAL_PHILOSOPHERS_STONE_IMAGE_PATH,
+)
 
 
 @pytest.fixture
@@ -51,14 +52,11 @@ def resized_files():
     if not os.path.isdir(outdir):
         os.makedirs(outdir)
     paths = STABLE_LOCAL_MADEYE_IMAGE_PATH, STABLE_LOCAL_PHILOSOPHERS_STONE_IMAGE_PATH
-    resize_multiple_files(paths=paths,
-                          shape=(224, 224),
-                          outdir=outdir,
-                          n_jobs=20,
-                          )
-    outpaths = [os.path.join(outdir, STABLE_LOCAL_MADEYE_IMAGE_FILENAME),
-                os.path.join(outdir, STABLE_LOCAL_PHILOSOPHERS_STONE_IMAGE_FILENAME)
-                ]
+    resize_multiple_files(paths=paths, shape=(224, 224), outdir=outdir, n_jobs=20)
+    outpaths = [
+        os.path.join(outdir, STABLE_LOCAL_MADEYE_IMAGE_FILENAME),
+        os.path.join(outdir, STABLE_LOCAL_PHILOSOPHERS_STONE_IMAGE_FILENAME),
+    ]
 
     yield outpaths
 

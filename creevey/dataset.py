@@ -1,5 +1,5 @@
 """
-Classes for downloading and processing datasets in reproducible ways.
+Classes for downloading and processing datasets
 """
 import logging
 import os
@@ -22,7 +22,7 @@ class S3TarfileDataset(_Dataset):
     ----------
     Processor
         Class that implements an `process` method, to which this
-        class's `process` method is to be delegated.
+        class's `process` method is to delegated.
     s3_bucket
         Name of S3 bucket in which dataset tarfile is stored.
     s3_key
@@ -42,7 +42,7 @@ class S3TarfileDataset(_Dataset):
         self.downloader = S3Downloader(
             s3_bucket=self.s3_bucket, s3_key=self.s3_key, local_dir=self.base_dir
         )
-        self.extractor = Tarf sileExtractor(
+        self.extractor = TarfileExtractor(
             archive_path=self.downloader.local_archive_path
         )
 
@@ -196,7 +196,7 @@ class _Extractor:
         raise NotImplementedError
 
 
-class _Processor(DatasetInitializer):
+class _Processor(_DatasetInitializer):
     def __init__(self, base_dir: Path):
         super().__init__(base_dir)
 

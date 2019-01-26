@@ -8,11 +8,9 @@ import numpy as np
 from tqdm import tqdm
 
 
-def resize_multiple_files(paths: List[str],
-                          shape: Tuple[int, int],
-                          outdir: str,
-                          n_jobs: int
-                          ) -> None:
+def resize_multiple_files(
+    paths: List[str], shape: Tuple[int, int], outdir: str, n_jobs: int
+) -> None:
     """
     Resize image files and write them to specified output directory
 
@@ -33,12 +31,15 @@ def resize_multiple_files(paths: List[str],
         delayed(_resize_file_catch_cv_errors)(
             inpath=path,
             shape=shape,
-            outpath=os.path.join(outdir, os.path.basename(path))
-        ) for path in tqdm(paths)
+            outpath=os.path.join(outdir, os.path.basename(path)),
+        )
+        for path in tqdm(paths)
     )
 
 
-def _resize_file_catch_cv_errors(inpath: str, shape: Tuple[int, int], outpath: str) -> None:
+def _resize_file_catch_cv_errors(
+    inpath: str, shape: Tuple[int, int], outpath: str
+) -> None:
     try:
         resize_file(inpath, shape, outpath)
     except cv.error as e:

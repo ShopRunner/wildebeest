@@ -3,9 +3,33 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
+# [0.1.16] - 2019-01-22
+### Changed
+- Trivial change to debug Jenkins webhook.
+
+# [0.1.15] - 2019-01-22
+### Changed
+- Use `black` to format code.
+
+# [0.1.14] - 2019-01-17
+### Changed
+- Trivial change to test Jenkins changes.
+
+# [0.1.13] - 2019-01-17
+### Changed
+- Trivial change to test Jenkins changes.
+
+# [0.1.12] - 2019-01-17
+### Changed
+- Trivial change to test Jenkins changes.
+
 # [0.1.11] - 2019-01-17
 ### Fixed
 - Address flake8 complaints.
+
+# [0.1.10] - 2019-01-17
+### Changed
+- Used black to format code.
 
 # [0.1.10] - 2019-01-17
 ### Fixed

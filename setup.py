@@ -20,6 +20,7 @@ regular_packages = [
     'tqdm',
 ]
 dev_packages = [
+    'black',
     'flake8',
     'flake8-docstrings',
     'flake8-import-order',

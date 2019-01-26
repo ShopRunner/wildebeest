@@ -34,14 +34,15 @@ pip install -e .
 
 6. Make your changes.
 7. Update the unit tests, _version.py, and CHANGELOG.
-8. Double-check that unit tests pass and the linter doesn't complain.
+8. Run `black creevey tests --skip-string-normalization` to format code.
+9. Check that unit tests pass and the linter doesn't complain.
      
  ```bash
  pytest
  flake8 creevey tests
  ```
  
-9. Submit your PR.
+10. Submit your PR.
 
 
-We follow PEP8 standards, except that we tolerate line lengths up to about 90 characters, with a hard cutoff at 110. We use numpy style for docstrings. We run code using CPython 3.6+.
+We prefer single quotes for strings unless using double quotes allows us to avoid escaping internal single quotes. We use numpy style for docstrings and run code using CPython 3.6+.

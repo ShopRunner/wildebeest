@@ -1,5 +1,4 @@
 import pandas as pd
-
 import pytest
 
 from creevey import group_train_test_split

@@ -1,4 +1,4 @@
-from typing import Optional, Union, Tuple
+from typing import Optional, Tuple, Union
 
 import pandas as pd
 from sklearn.model_selection import GroupShuffleSplit

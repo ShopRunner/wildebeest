@@ -25,7 +25,7 @@ class _DatasetDirectoryInitializer:
         self.processed_dir = os.path.join(os.path.dirname(self.raw_dir), 'processed')
 
 
-class _Downloader(_DatasetDirectoryInitializer):
+class BaseDownloader(_DatasetDirectoryInitializer):
     """
     Abstract base class for downloading datasets. Intended use is for
     classes inheriting from `_Dataset` to delegate downloading to a
@@ -40,7 +40,7 @@ class _Downloader(_DatasetDirectoryInitializer):
         raise NotImplementedError
 
 
-class _Extractor:
+class BaseExtractor:
     """
     Abstract base class for extracting dataset archive files. Intended
     use is for classes inheriting from `_Dataset` to delegate extraction
@@ -55,7 +55,7 @@ class _Extractor:
         raise NotImplementedError
 
 
-class _Processor(_DatasetDirectoryInitializer):
+class BaseProcessor(_DatasetDirectoryInitializer):
     """
     Abstract base class for processing raw dataset files. Intended
     use is for classes inheriting from `_Dataset` to delegate its
@@ -73,7 +73,7 @@ class _Processor(_DatasetDirectoryInitializer):
         raise NotImplementedError
 
 
-class _Dataset(_DatasetDirectoryInitializer):
+class BaseDataset(_DatasetDirectoryInitializer):
     """
     Abstract base class for defining reproducible workflows for
     downloading and processing datasets.
@@ -110,7 +110,7 @@ class _Dataset(_DatasetDirectoryInitializer):
         self.process()
 
 
-class S3Downloader(_Downloader):
+class S3Downloader(BaseDownloader):
     """
     Download a dataset from S3.
 
@@ -177,7 +177,7 @@ class DownloadProgressPercentage:
             sys.stdout.flush()
 
 
-class TarfileExtractor(_Extractor):
+class TarfileExtractor(BaseExtractor):
     """
     Extract members of a tarfile.
 
@@ -200,7 +200,7 @@ class TarfileExtractor(_Extractor):
                 )
 
 
-class S3TarfileDataset(_Dataset):
+class S3TarfileDataset(BaseDataset):
     """
     Download, extract, and delete a dataset stored as a tarfile on S3.
 
@@ -222,7 +222,7 @@ class S3TarfileDataset(_Dataset):
         s3_bucket: str,
         s3_key: str,
         base_dir: str,
-        Processor: Type['_Processor'] = _Processor,
+        Processor: Type['BaseProcessor'] = BaseProcessor,
     ):
         super().__init__(base_dir)
         self.base_dir = base_dir

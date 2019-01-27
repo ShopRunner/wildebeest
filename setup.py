@@ -25,7 +25,7 @@ dev_packages = [
     'flake8-docstrings',
     'flake8-import-order',
     'pytest',
-    'pytest-cov'
+    'pytest-cov',
 ]
 
 

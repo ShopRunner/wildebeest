@@ -40,6 +40,6 @@ setup(
     author='Greg Gandenberger',
     author_email='gsganden@gmail.com',
     url='https://github.com/ShopRunner/creevey',
-    download_url=f'https://github.com/ShopRunner/creevey/tarball/{__verion__}',
+    download_url=f'https://github.com/ShopRunner/creevey/tarball/{__version__}',
     long_description_content_type='text/markdown',
 )

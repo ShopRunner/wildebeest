@@ -25,7 +25,14 @@ def group_train_test_split(
         Group labels to split on, with shape (n_samples,)
     test_size
         Desired number (int) or proportion (float between 0.0 and 1.0)
-        of *groups* to place in `valid`
+        of *groups* to place in `valid`. Unlike `sklearn`'s
+        `train_test_split`, this function does not provide a default
+        `test_size`. This lack of a default value is a deliberate design
+        choice: Creevey is designed for deep learning workflows that
+        often involve datasets with millions of items, but it should
+        also be able to handle smaller datasets (including tiny datasets
+        created for debugging purposes), and there does not seem to be a
+        simple default that is sensible across that range of use cases.
     random_state
         `train`/`valid` split is randomized. Specifying a consistent
         value for this parameter will yield consistent results.

@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
+# [0.2.0] - 2019-01-26
+### Changed
+- Elevated `group_train_test_split` to a public function in its own module.
+
 # [0.1.16] - 2019-01-22
 ### Changed
 - Trivial change to debug Jenkins webhook.

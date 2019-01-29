@@ -7,7 +7,6 @@ import threading
 from typing import Type
 
 import boto3
-import botocore
 from tqdm import tqdm
 
 
@@ -37,6 +36,7 @@ class BaseDownloader(_DatasetDirectoryInitializer):
         super().__init__(data_dir)
 
     def download(self):
+        """Placeholder for method to download dataset"""
         raise NotImplementedError
 
 
@@ -52,6 +52,7 @@ class BaseExtractor:
         raise NotImplementedError
 
     def extract(self):
+        """Placeholder for method to extract archive dataset"""
         raise NotImplementedError
 
 
@@ -70,6 +71,7 @@ class BaseProcessor(_DatasetDirectoryInitializer):
         super().__init__(data_dir)
 
     def process(self):
+        """Placeholder for method to process raw dataset"""
         raise NotImplementedError
 
 
@@ -100,12 +102,15 @@ class BaseDataset(_DatasetDirectoryInitializer):
         super().__init__(data_dir)
 
     def get_raw(self):
+        """Placeholder for method to get raw dataset"""
         raise NotImplementedError
 
     def process(self):
+        """Placeholder for method to process raw dataset"""
         raise NotImplementedError
 
     def build(self):
+        """Get raw data and then process it"""
         self.get_raw()
         self.process()
 
@@ -146,9 +151,7 @@ class S3Downloader(BaseDownloader):
         s3_client = boto3.resource('s3')
         progress = DownloadProgressPercentage(s3_client, self.s3_bucket, self.s3_key)
         s3_client.Bucket(self.s3_bucket).download_file(
-            Key=self.s3_key,
-            Filename=str(self.local_archive_path),
-            Callback=progress,
+            Key=self.s3_key, Filename=str(self.local_archive_path), Callback=progress
         )
 
 

@@ -33,8 +33,8 @@ class BaseDownloader(_DatasetDirectoryInitializer):
     if the data is to be obtained by downloading.
     """
 
-    def __init__(self, base_dir: str):
-        super().__init__(base_dir)
+    def __init__(self, data_dir: str):
+        super().__init__(data_dir)
 
     def download(self):
         raise NotImplementedError
@@ -66,8 +66,8 @@ class BaseProcessor(_DatasetDirectoryInitializer):
     working with one object per dataset.
     """
 
-    def __init__(self, base_dir: str):
-        super().__init__(base_dir)
+    def __init__(self, data_dir: str):
+        super().__init__(data_dir)
 
     def process(self):
         raise NotImplementedError
@@ -78,9 +78,9 @@ class BaseDataset(_DatasetDirectoryInitializer):
     Abstract base class for defining reproducible workflows for
     downloading and processing datasets.
 
-    Constructor takes one parameter `base_dir` that points to a
+    Constructor takes one parameter `data_dir` that points to a
     directory for storing the dataset. It then defines an attribute
-    `raw_dir` that points to a subdirectory "raw" of base_dir and
+    `raw_dir` that points to a subdirectory "raw" of data_dir and
     analogous attributes `interim_dir` and `processed_dir`.
 
     Intended use:
@@ -96,8 +96,8 @@ class BaseDataset(_DatasetDirectoryInitializer):
     method call.
     """
 
-    def __init__(self, base_dir: str):
-        super().__init__(base_dir)
+    def __init__(self, data_dir: str):
+        super().__init__(data_dir)
 
     def get_raw(self):
         raise NotImplementedError
@@ -120,12 +120,12 @@ class S3Downloader(BaseDownloader):
         Name of S3 bucket in which dataset file is stored.
     s3_key
         S3 key to dataset file.
-    base_dir
+    data_dir
         Local directory for storing dataset.
     """
 
-    def __init__(self, s3_bucket: str, s3_key: str, base_dir: str) -> None:
-        super().__init__(base_dir)
+    def __init__(self, s3_bucket: str, s3_key: str, data_dir: str) -> None:
+        super().__init__(data_dir)
         self.s3_bucket = s3_bucket
         self.s3_key = s3_key
         self.local_archive_path = os.path.join(
@@ -134,7 +134,7 @@ class S3Downloader(BaseDownloader):
 
     def download(self) -> None:
         """
-        Download to "<base_dir>/raw/<s3_key>" the file in `s3_bucket`
+        Download to "<data_dir>/raw/<s3_key>" the file in `s3_bucket`
         with key `s3_key`
         """
         logging.info(f'Downloading {self.s3_key} to {self.local_archive_path}')
@@ -207,7 +207,7 @@ class S3TarfileDataset(BaseDataset):
         Name of S3 bucket in which dataset tarfile is stored.
     s3_key
         S3 key to dataset tarfile.
-    base_dir
+    data_dir
         Local directory for storing dataset.
     """
 
@@ -215,27 +215,27 @@ class S3TarfileDataset(BaseDataset):
         self,
         s3_bucket: str,
         s3_key: str,
-        base_dir: str,
+        data_dir: str,
         processor: Type['BaseProcessor'] = BaseProcessor,
     ):
-        super().__init__(base_dir)
-        self.base_dir = base_dir
+        super().__init__(data_dir)
+        self.data_dir = data_dir
         self.s3_bucket = s3_bucket
         self.s3_key = s3_key
 
         self.downloader = S3Downloader(
-            s3_bucket=self.s3_bucket, s3_key=self.s3_key, base_dir=self.base_dir
+            s3_bucket=self.s3_bucket, s3_key=self.s3_key, data_dir=self.data_dir
         )
         self.extractor = TarfileExtractor(
             archive_path=self.downloader.local_archive_path
         )
 
-        self.processor = processor(base_dir=self.base_dir)
+        self.processor = processor(data_dir=self.data_dir)
         self.process = self.processor.process
 
     def get_raw(self):
         """
-        Download tarfile at `s3_key` in `s3_bucket` to '<base_dir>/raw',
+        Download tarfile at `s3_key` in `s3_bucket` to '<data_dir>/raw',
         extract it, and delete the tarfile.
         """
         self.downloader.download()

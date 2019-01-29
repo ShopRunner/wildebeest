@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
+# [0.3.0] - 2019-01-29
+### Added
+- Added dataset module
+
 # [0.2.0] - 2019-01-26
 ### Changed
 - Elevated `group_train_test_split` to a public function in its own module.

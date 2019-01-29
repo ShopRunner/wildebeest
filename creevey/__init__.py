@@ -7,3 +7,4 @@ from creevey.download import (
 from creevey.model_selection import group_train_test_split
 from creevey.resize import resize_image, resize_file, resize_multiple_files
 from creevey.symlink import create_imagenet_style_symlinks
+from creevey.dataset import S3Downloader, S3TarfileDataset, TarfileExtractor

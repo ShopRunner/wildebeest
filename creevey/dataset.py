@@ -112,14 +112,14 @@ class BaseDataset(_DatasetDirectoryInitializer):
 
 class S3Downloader(BaseDownloader):
     """
-    Download a dataset from S3.
+    Download a dataset that consists of a single file on S3.
 
     Attributes
     ----------
     s3_bucket
-        Name of S3 bucket in which dataset tarfile is stored.
+        Name of S3 bucket in which dataset file is stored.
     s3_key
-        S3 key to dataset tarfile.
+        S3 key to dataset file.
     base_dir
         Local directory for storing dataset.
     """

@@ -216,7 +216,7 @@ class S3TarfileDataset(BaseDataset):
         s3_bucket: str,
         s3_key: str,
         base_dir: str,
-        Processor: Type['BaseProcessor'] = BaseProcessor,
+        processor: Type['BaseProcessor'] = BaseProcessor,
     ):
         super().__init__(base_dir)
         self.base_dir = base_dir
@@ -230,7 +230,7 @@ class S3TarfileDataset(BaseDataset):
             archive_path=self.downloader.local_archive_path
         )
 
-        self.processor = Processor(base_dir=self.base_dir)
+        self.processor = processor(base_dir=self.base_dir)
         self.process = self.processor.process
 
     def get_raw(self):

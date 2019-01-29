@@ -28,8 +28,8 @@ class _DatasetDirectoryInitializer:
 class BaseDownloader(_DatasetDirectoryInitializer):
     """
     Abstract base class for downloading datasets. Intended use is for
-    classes inheriting from `_Dataset` to delegate downloading to a
-    class inheriting from `_Downloader` as part of its `get_raw` method,
+    classes inheriting from `BaseDataset` to delegate downloading to a
+    class inheriting from `BaseDownloader` as part of its `get_raw` method,
     if the data is to be obtained by downloading.
     """
 
@@ -43,8 +43,8 @@ class BaseDownloader(_DatasetDirectoryInitializer):
 class BaseExtractor:
     """
     Abstract base class for extracting dataset archive files. Intended
-    use is for classes inheriting from `_Dataset` to delegate extraction
-    to a class inheriting from `_Extractor` as part of its `get_raw`
+    use is for classes inheriting from `BaseDataset` to delegate extraction
+    to a class inheriting from `BaseExtractor` as part of its `get_raw`
     method, if the data comes as some kind of archive file.
     """
 
@@ -58,7 +58,7 @@ class BaseExtractor:
 class BaseProcessor(_DatasetDirectoryInitializer):
     """
     Abstract base class for processing raw dataset files. Intended
-    use is for classes inheriting from `_Dataset` to delegate its
+    use is for classes inheriting from `BaseDataset` to delegate its
     `process` method to a class inheriting from `_Processor`, so that
     the processing steps for a specific dataset can be specified
     separately from steps for obtaining raw data that might be reusable

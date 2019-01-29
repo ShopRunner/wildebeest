@@ -9,7 +9,7 @@ def test_S3TarfileDataset():
     dataset = S3TarfileDataset(
         s3_bucket='autofocus',
         s3_key='creevey_dummy_dataset.tar',
-        base_dir=SAMPLE_DATA_DIR,
+        data_dir=SAMPLE_DATA_DIR,
     )
     dataset.get_raw()
     assert os.path.isdir(dataset.raw_dir)

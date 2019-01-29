@@ -21,8 +21,8 @@ class _DatasetDirectoryInitializer:
     def __init__(self, data_dir: str):
         self.data_dir = data_dir
         self.raw_dir = os.path.join(self.data_dir, 'raw')
-        self.interim_dir = os.path.join(os.path.dirname(self.raw_dir), 'interim')
-        self.processed_dir = os.path.join(os.path.dirname(self.raw_dir), 'processed')
+        self.interim_dir = os.path.join(self.data_dir, 'interim')
+        self.processed_dir = os.path.join(self.data_dir, 'processed')
 
 
 class BaseDownloader(_DatasetDirectoryInitializer):

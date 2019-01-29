@@ -145,17 +145,11 @@ class S3Downloader(BaseDownloader):
 
         s3_client = boto3.resource('s3')
         progress = DownloadProgressPercentage(s3_client, self.s3_bucket, self.s3_key)
-        try:
-            s3_client.Bucket(self.s3_bucket).download_file(
-                Key=self.s3_key,
-                Filename=str(self.local_archive_path),
-                Callback=progress,
-            )
-        except botocore.exceptions.ClientError as e:
-            if e.response['Error']['Code'] == '404':
-                print('The object does not exist.')
-            else:
-                raise
+        s3_client.Bucket(self.s3_bucket).download_file(
+            Key=self.s3_key,
+            Filename=str(self.local_archive_path),
+            Callback=progress,
+        )
 
 
 class DownloadProgressPercentage:

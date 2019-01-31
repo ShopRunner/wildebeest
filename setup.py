@@ -10,6 +10,7 @@ with open('README.md') as r:
     readme = r.read()
 
 regular_packages = [
+    'boto3',
     'joblib',
     'opencv-contrib-python',
     'pandas',

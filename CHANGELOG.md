@@ -3,6 +3,50 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
+# [0.3.1] - 2019-01-29
+### Added
+- Added boto3 to setup.py requirements
+
+# [0.3.0] - 2019-01-29
+### Added
+- Added dataset module
+
+# [0.2.0] - 2019-01-26
+### Changed
+- Elevated `group_train_test_split` to a public function in its own module.
+
+# [0.1.16] - 2019-01-22
+### Changed
+- Trivial change to debug Jenkins webhook.
+
+# [0.1.15] - 2019-01-22
+### Changed
+- Use `black` to format code.
+
+# [0.1.14] - 2019-01-17
+### Changed
+- Trivial change to test Jenkins changes.
+
+# [0.1.13] - 2019-01-17
+### Changed
+- Trivial change to test Jenkins changes.
+
+# [0.1.12] - 2019-01-17
+### Changed
+- Trivial change to test Jenkins changes.
+
+# [0.1.11] - 2019-01-17
+### Fixed
+- Address flake8 complaints.
+
+# [0.1.10] - 2019-01-17
+### Changed
+- Used black to format code.
+
+# [0.1.10] - 2019-01-17
+### Fixed
+- Remove download instructions from README now that a simple pip install should work.
+
 # [0.1.9] - 2019-01-17
 ### Added
 - Added functionality to save_response_content_as_png() to allow resize on download

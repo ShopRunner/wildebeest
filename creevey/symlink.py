@@ -1,18 +1,21 @@
 import os
-from typing import Optional, Tuple, Union
+from typing import Optional, Union
 
 import pandas as pd
-from sklearn.model_selection import GroupShuffleSplit, train_test_split
+from sklearn.model_selection import train_test_split
+
+from creevey.model_selection import group_train_test_split
 
 
-def create_imagenet_style_symlinks(df: pd.DataFrame,
-                                   valid_size: Union[int, float],
-                                   outdir: str,
-                                   label_colname: str,
-                                   path_colname: str,
-                                   groupby_colname: Optional[str] = None,
-                                   random_state: Optional[int] = None,
-                                   ) -> None:
+def create_imagenet_style_symlinks(
+    df: pd.DataFrame,
+    valid_size: Union[int, float],
+    outdir: str,
+    label_colname: str,
+    path_colname: str,
+    groupby_colname: Optional[str] = None,
+    random_state: Optional[int] = None,
+) -> None:
     """
     Create image symlinks organized into `train` and `valid`
     directories each containing one subdirectory per label value,
@@ -58,13 +61,13 @@ def create_imagenet_style_symlinks(df: pd.DataFrame,
     y = df.loc[:, path_colname]
 
     if groupby_colname is None:
-        X_train, X_valid, y_train, y_valid = (
-            train_test_split(X=X, y=y, test_size=valid_size, random_state=random_state)
+        X_train, X_valid, y_train, y_valid = train_test_split(
+            X=X, y=y, test_size=valid_size, random_state=random_state
         )
     else:
         groups = df.loc[:, groupby_colname]
-        X_train, X_valid, y_train, y_valid = (
-            _group_train_test_split(X=X, y=y, groups=groups, test_size=valid_size, random_state=random_state)
+        X_train, X_valid, y_train, y_valid = group_train_test_split(
+            X=X, y=y, groups=groups, test_size=valid_size, random_state=random_state
         )
 
     df_train = pd.concat([X_train, y_train], axis='columns')
@@ -84,7 +87,7 @@ def create_imagenet_style_symlinks(df: pd.DataFrame,
         dataset_dir = os.path.join(outdir, dataset_name)
         dataset_df.apply(
             lambda row: _make_symlink(row, label_colname, path_colname, dataset_dir),
-            axis='columns'
+            axis='columns',
         )
 
     # fastai v0.7 at least assumes that the nth directory in "valid"
@@ -104,11 +107,7 @@ def reconcile_subdirectories(dir1: str, dir2: str):
             os.makedirs(corresponding_dir)
 
 
-def _make_symlink(row: pd.Series,
-                  label_colname: str,
-                  path_colname: str,
-                  base_dir: str
-                  ):
+def _make_symlink(row: pd.Series, label_colname: str, path_colname: str, base_dir: str):
     label = row.loc[label_colname]
     row_dir = os.path.join(base_dir, label)
     if not os.path.exists(row_dir):
@@ -118,43 +117,3 @@ def _make_symlink(row: pd.Series,
     symlink_path = os.path.join(row_dir, image_filename)
     if not os.path.islink(symlink_path):
         os.symlink(image_path, symlink_path)
-
-
-def _group_train_test_split(X: pd.DataFrame,
-                            y: pd.Series,
-                            groups: pd.Series,
-                            test_size: Optional[Union[float, int]],
-                            random_state: Optional[int] = None,
-                            ) -> Tuple[pd.DataFrame, pd.DataFrame, pd.Series, pd.Series]:
-    """
-    Do a train/test split that keeps items with the same value in a
-    specified column together.
-
-    Parameters
-    ----------
-    X
-        DataFrame of features
-    y
-        Series of labels
-    groups
-        Group labels to split on, with shape (n_samples,)
-    test_size
-        Desired number (int) or proportion (float between 0.0 and 1.0)
-        of *groups* to place in `valid`
-    random_state
-        `train`/`valid` split is randomized. Specifying a consistent
-        value for this parameter will yield consistent results.
-
-    Returns
-    -------
-    X_train, X_test, y_train, y_test
-    """
-    splitter = GroupShuffleSplit(n_splits=1, test_size=test_size, random_state=random_state)
-    train_indices, test_indices = list(splitter.split(X, y, groups))[0]
-
-    X_train = X.iloc[train_indices, :]
-    X_test = X.iloc[test_indices, :]
-    y_train = y.iloc[train_indices]
-    y_test = y.iloc[test_indices]
-
-    return X_train, X_test, y_train, y_test

@@ -4,23 +4,7 @@
 
 Creevey is an image processing library that focuses on the non-deep learning parts of deep learning workflows, such as downloading and resizing images in bulk.
 
-## Installing Creevey
-
-- Clone the repo, using either SSH or HTTPS:
-
-```bash
-git clone git@github.com:ShopRunner/creevey.git
-```
-
-```bash
-git clone https://github.com/ShopRunner/creevey.git
-```
-
-- Install the repo: `pip3 install creevey`
-
-## Using Creevey
-
-### Downloading
+## Downloading
 
 Given an iterable of image URLs, Creevey provides a function to download those images to a specified output directory with parallelization. For instance:
 
@@ -40,7 +24,7 @@ This function tries to be smart about handling errors by retrying or skipping th
 
 This function is capable of generating a lot of requests in a short amount of time, so use it with care to avoid overwhelming anyone's servers.
 
-### Resizing
+## Resizing
 
 Given an iterable of image paths, Creevey provides a function to resize those images to a specified shape and write the result to a specified output directory with parallelization. For instance, if you ran the code snippet above to download three images to an 'example' directory, then you could run this snippet to write copies resized to 100x100 pixels to an 'example_resized' directory:
 
@@ -54,7 +38,7 @@ image_paths = [os.path.join(download_dir, filename) for filename in os.listdir(d
 resize_multiple_files(paths=image_paths, shape=(100, 100), outdir=resized_dir, n_jobs=3)
 ```
 
-### Creating Imagenet-Style Symlinks
+## Creating Imagenet-Style Symlinks
 
 Deep learning frameworks sometimes expect trainining/validation splits and class labels to be encoded in the directory structure following this format:
 
@@ -94,3 +78,9 @@ create_imagenet_style_symlinks(df=df,
                                groupby_colname='group',
                                )
 ```
+
+## Specifying Data Processing Workflows
+
+The `dataset` module provides classes for specifying data processing workflows. It assumes that each dataset corresponds to a single "base directory" with subdirectories "raw" for storing data as received from some source without any transformations, "processed" for storing derived products from the contents of "raw" for modeling purposes, and "interim" for any intermediate results produced from the contents of "raw" but not needed for modeling purposes. Dataset classes inherit from an abstract class `BaseDataset` and specify a method `get_raw` and a method `process`. They then have a method `build` that runs `get_raw` and `process` in sequence so that users can obtain both raw and processed data that is ready for modeling with a single method call.
+
+`S3TarfileDataset` is a good example to mimic if you are building your own dataset class. It is for a dataset in which the raw data is contained in a single tarfile on S3. Its constructor takes a base directory path string, an S3 bucket name and an S3 key. Its `get_raw` method downloads the corresponding tarfile to the "raw" subdirectory of the base directory, extracts its contents, and deletes the tarfile. Processing steps are dataset-specific, so its `process` method raises a `NotImplementedError` until specified by a user (e.g. by subclassing). Internally, it delegates downloading to an `S3Downloader` object and archive extraction to a `TarfileExtractor` object so that those classes can be reused in different combinations.

@@ -3,6 +3,7 @@ from functools import partial
 import io
 import logging
 import os
+import threading
 from typing import Callable, Iterable, Optional, Tuple, Union
 
 from joblib import delayed, Parallel
@@ -10,6 +11,8 @@ from PIL import Image
 import requests
 from retrying import retry
 from tqdm import tqdm
+
+threadLocal = threading.local()
 
 
 def download_images_as_png(
@@ -192,7 +195,8 @@ def download_single_file(
     else:
         if os.path.isfile(outpath):
             logging.warning(f'Overwriting existing file at {outpath}')
-        response = requests.get(url)
+        session = _get_session()
+        response = session.get(url)
         if _log_as_error_on_status_code(response.status_code):
             logging.error(
                 f'Failed to download {url} with status code {response.status_code}'
@@ -206,6 +210,12 @@ def download_single_file(
             write_func(response, outpath)
         else:
             requests.raise_for_status()
+
+
+def _get_session():
+    if getattr(threadLocal, "session", None) is None:
+        threadLocal.session = requests.Session()
+    return threadLocal.session
 
 
 def _log_as_error_on_status_code(status_code: int):

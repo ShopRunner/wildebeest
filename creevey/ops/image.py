@@ -7,6 +7,7 @@ import numpy as np
 def resize(image: np.array, shape: Tuple[int, int]) -> np.array:
     """
     Resize input image to the specified shape.
+
     Parameters
     ----------
     image:
@@ -14,6 +15,7 @@ def resize(image: np.array, shape: Tuple[int, int]) -> np.array:
         additional channel dimension
     shape:
         Desired output shape in the form (height, width)
+
     Returns
     -------
     NumPy array with specified shape

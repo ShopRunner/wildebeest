@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
+# [1.0.0] - 2019-02-23
+### Changed
+- Redesigned library around `Pipeline` abstraction
+
 # [0.3.1] - 2019-01-29
 ### Added
 - Added boto3 to setup.py requirements

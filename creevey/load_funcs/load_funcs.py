@@ -1,30 +1,11 @@
-import io
 import logging
-from retrying import retry
 import threading
 
-import cv2 as cv
-import numpy as np
 import requests
+from retrying import retry
 
 
 threadLocal = threading.local()
-
-
-def _log_as_error_on_status_code(status_code: int):
-    return status_code in [403, 404]
-
-
-def _retry_on_status_code(status_code: int):
-    return status_code >= 500
-
-
-def _raise_on_status_code(status_code: int):
-    return status_code == 400
-
-
-class _HTTPErrorToRetry(requests.exceptions.HTTPError):
-    pass
 
 
 def _is_connection_error(exception):
@@ -40,29 +21,55 @@ def _is_connection_error(exception):
     stop_max_attempt_number=10,
 )
 def get_response(url: str) -> None:
+    """
+    Make a GET request to the specified URL and return the response.
+
+    Maintain a common session within each thread to reduce request
+    overhead.
+
+    Error Handling
+    --------------
+    Retry up to ten times on `requests.exceptions.ConnectionError`
+    instances and 5xx status codes, waiting 2^x seconds between each
+    retry, with a max of 10 seconds.
+
+    Log an error without retrying or raising for 403 and 404 status
+    codes.
+
+    Raise `requests.exceptions.HTTPError` for other non-200 status
+    codes.
+
+    Parameters
+    ----------
+    url
+        URL of file to download
+    """
+
     session = _get_session()
     response = session.get(url)
-    _check_status(response)
+    _check_status(url, response)
     return response
 
 
 def _get_session():
-    if getattr(threadLocal, "session", None) is None:
+    if getattr(threadLocal, 'session', None) is None:
         threadLocal.session = requests.Session()
     return threadLocal.session
 
 
-def _check_status(response):
+def _check_status(url, response):
     if response.status_code == 200:
         pass
-    elif _log_as_error_on_status_code(response.status_code):
+    elif 600 > response.status_code > 499:
+        logging.debug(f'Retrying {url} with status code {response.status_code}')
+        raise _HTTPErrorToRetry
+    elif response.status_code in [403, 404]:
         logging.error(
             f'Failed to download {url} with status code {response.status_code}'
         )
-    elif _retry_on_status_code(response.status_code):
-        logging.debug(f'Retrying {url} with status code {response.status_code}')
-        raise _HTTPErrorToRetry
-    elif _raise_on_status_code(response.status_code):
-        raise requests.exceptions.HTTPError
     else:
         requests.raise_for_status()
+
+
+class _HTTPErrorToRetry(requests.exceptions.HTTPError):
+    pass

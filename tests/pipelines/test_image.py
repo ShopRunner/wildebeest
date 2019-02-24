@@ -1,42 +1,43 @@
 from functools import partial
-import filecmp
 
+import logging
+import matplotlib.pyplot as plt
 import pytest
 
-from creevey.pipelines.image import download_image_pipeline
-from creevey.path_funcs.path_funcs import combine_outdir_dirname_extension
+from creevey import Pipeline
+from creevey.load_funcs.image import download_image
+from creevey.ops.image import resize
+from creevey.write_funcs.image import write_image
+from creevey.path_funcs import combine_outdir_dirname_extension
+from tests.conftest import SAMPLE_DATA_DIR
 
-from tests.conftest import (
-    MADEYE_IMAGE_URL,
-    PHILOSOPHERS_STONE_IMAGE_URL,
-    SAMPLE_DATA_DIR,
-    STABLE_LOCAL_MADEYE_IMAGE_PATH,
-    STABLE_LOCAL_PHILOSOPHERS_STONE_IMAGE_PATH,
-    TEMP_LOCAL_MADEYE_IMAGE_PATH_DEFAULT,
-    TEMP_LOCAL_PHILOSOPHERS_STONE_IMAGE_PATH_DEFAULT,
+IMAGE_FILENAMES = ['2RsJ8EQ', '2TqoToT', '2VocS58', '2scKPIp', '2TsO6Pc', '2SCv0q7']
+IMAGE_URLS = [f'https://bit.ly/{filename}' for filename in IMAGE_FILENAMES]
+IMAGE_SHAPE = (224, 224)
+
+keep_filename_png_in_cwd = partial(
+    combine_outdir_dirname_extension, outdir=SAMPLE_DATA_DIR, extension='.png'
 )
 
 
-URLS = [MADEYE_IMAGE_URL, PHILOSOPHERS_STONE_IMAGE_URL]
-
-
 @pytest.fixture
-def download_two_images_as_png(scope='session'):
-    for path in [
-        TEMP_LOCAL_MADEYE_IMAGE_PATH_DEFAULT,
-        TEMP_LOCAL_PHILOSOPHERS_STONE_IMAGE_PATH_DEFAULT,
-    ]:
-        _delete_file_if_exists(path)
-    outpath_func = partial(
-        combine_outdir_dirname_extension, outdir=SAMPLE_DATA_DIR, extension='.png'
+def trim_resize_pipeline():
+    for url in IMAGE_URLS:
+        outpath = keep_filename_png_in_cwd(url)
+        _delete_file_if_exists(outpath)
+
+    trim_bottom_100 = lambda image: image[:-100, :]
+    resize_224 = partial(resize, shape=IMAGE_SHAPE)
+
+    trim_resize_pipeline = Pipeline(
+        load_func=download_image,
+        ops=[trim_bottom_100, resize_224],
+        write_func=write_image,
     )
-    download_image_pipeline.run(inpaths=URLS, path_func=outpath_func, n_jobs=10)
-    yield
-    for path in [
-        TEMP_LOCAL_MADEYE_IMAGE_PATH_DEFAULT,
-        TEMP_LOCAL_PHILOSOPHERS_STONE_IMAGE_PATH_DEFAULT,
-    ]:
-        _delete_file_if_exists(path)
+    yield trim_resize_pipeline
+    for url in IMAGE_URLS:
+        outpath = keep_filename_png_in_cwd(url)
+        _delete_file_if_exists(outpath)
 
 
 def _delete_file_if_exists(path):
@@ -44,11 +45,32 @@ def _delete_file_if_exists(path):
         path.unlink()
 
 
-def test_download_png_pipeline(download_two_images_as_png):
-    assert filecmp.cmp(
-        STABLE_LOCAL_MADEYE_IMAGE_PATH, TEMP_LOCAL_MADEYE_IMAGE_PATH_DEFAULT
+def test_trim_resize_pipeline(trim_resize_pipeline):
+    trim_resize_pipeline.run(
+        inpaths=IMAGE_URLS,
+        path_func=keep_filename_png_in_cwd,
+        n_jobs=10,
+        skip_existing=False,
     )
-    assert filecmp.cmp(
-        STABLE_LOCAL_PHILOSOPHERS_STONE_IMAGE_PATH,
-        TEMP_LOCAL_PHILOSOPHERS_STONE_IMAGE_PATH_DEFAULT,
+    for path in SAMPLE_DATA_DIR.iterdir():
+        if path.suffix == '.png':
+            image = plt.imread(str(path))
+            assert image.shape[:2] == IMAGE_SHAPE
+
+
+def test_skip_existing(trim_resize_pipeline, caplog):
+    trim_resize_pipeline.run(
+        inpaths=IMAGE_URLS,
+        path_func=keep_filename_png_in_cwd,
+        n_jobs=10,
+        skip_existing=False,
     )
+    with caplog.at_level(logging.WARNING):
+        trim_resize_pipeline.run(
+            inpaths=IMAGE_URLS,
+            path_func=keep_filename_png_in_cwd,
+            n_jobs=10,
+            skip_existing=True,
+        )
+        assert len(caplog.records) == len(IMAGE_URLS)
+        assert caplog.records[0].levelname == 'WARNING'

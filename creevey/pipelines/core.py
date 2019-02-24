@@ -2,7 +2,7 @@ from functools import partial, reduce
 import os
 from typing import Any, Callable, Iterable, Optional
 
-from creevey.util.constants import PathOrStr
+from creevey.constants import PathOrStr
 from joblib import delayed, Parallel
 from tqdm import tqdm
 
@@ -13,21 +13,13 @@ class Pipeline:
         load_func: Callable[[PathOrStr], Any],
         ops: Optional[Iterable[Callable]],
         write_func: Callable[[Any, PathOrStr, Callable[[PathOrStr], PathOrStr]], None],
-        parallel_strategy: Optional[str] = None,
     ):
-        self.pipeline_func = _build_pipeline_func(load_func, ops, write_func)
+        self.load_func = load_func
+        self.ops = ops if ops is not None else []
+        self.write_func = write_func
+        self.pipeline_func = self._build_pipeline_func()
 
-        self.parallel_strategy = parallel_strategy
-        self._validate_parallel_strategy()
-
-    def _validate_parallel_strategy(self):
-        supported_parallel_strategies = (None, 'threads', 'processes')
-        if self.parallel_strategy not in supported_parallel_strategies:
-            raise ValueError(
-                f'parallel_strategy must be one of {supported_parallel_strategies}'
-            )
-
-    def _build_pipeline_func(self, load_func, ops, write_func):
+    def _build_pipeline_func(self):
         def pipeline_func(
             inpath: PathOrStr, outpath_func: PathOrStr, skip_existing: bool
         ):
@@ -35,10 +27,10 @@ class Pipeline:
             if skip_existing and os.path.isfile(outpath):
                 pass
             else:
-                pipeline = compose(
-                    load_func, *ops, partial(write_func, outpath=outpath)
-                )
-                pipeline(inpath)
+                thing = self.load_func(inpath)
+                for op in self.ops:
+                    thing = op(thing)
+                self.write_func(thing, outpath)
 
         return pipeline_func
 
@@ -49,7 +41,7 @@ class Pipeline:
         n_jobs: int,
         skip_existing: bool = True,
     ):
-        Parallel(n_jobs=n_jobs, prefer=prefer)(
+        Parallel(n_jobs=n_jobs, prefer='threads')(
             delayed(self.pipeline_func)(path, outpath_func, skip_existing)
             for path in tqdm(inpaths)
         )

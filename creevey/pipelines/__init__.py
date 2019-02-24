@@ -1,1 +1,1 @@
-from .core import *  # noqa: F401, F403
+from creevey.pipelines.core import *

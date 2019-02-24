@@ -64,7 +64,7 @@ class Pipeline:
             outpath = outpath_func(inpath)
             if skip_existing and Path(outpath).is_file():
                 logging.warning(
-                    f'Skipping {inpath} because there is already a file at corresponding'
+                    f'Skipping {inpath} because there is already a file at corresponding '
                     f'output path {outpath}'
                 )
             else:

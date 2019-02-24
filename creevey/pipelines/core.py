@@ -15,9 +15,9 @@ class Pipeline:
     Attributes
     ----------
     load_func
-        Callable that takes a string or Path object as single positional
-        argument, reads from the corresponding location, and returns
-        some representation of its contents.
+        Callable that takes a string or `Path` object as single
+        positional argument, reads from the corresponding location, and
+        returns some representation of its contents.
     ops
         Iterable of callables each of which takes a single positional
         argument. The first element of `ops` must accept the output of
@@ -28,18 +28,16 @@ class Pipeline:
         be recombined easily.
     write_func
         Callable that takes the output of the last element of `ops` (or
-        the output of `load_func` if `ops` is `None` or empty), the same
-        string or Path object that was passed to `load_func`, and a
-        callable that takes the latter and returns the desired
-        corresponding output location; and writes the output of the last
-        element of `ops` to that location.
+        the output of `load_func` if `ops` is `None` or empty) and a
+        string or `Path` object and writes the former to the location
+        specified by the latter.
     """
 
     def __init__(
         self,
         load_func: Callable[[PathOrStr], Any],
         ops: Optional[Iterable[Callable[[Any], Any]]],
-        write_func: Callable[[Any, PathOrStr, Callable[[PathOrStr], PathOrStr]], None],
+        write_func: Callable[[Any, PathOrStr], None],
     ) -> None:
         """
         Compose the provided functions, and store them as attributes.
@@ -65,7 +63,7 @@ class Pipeline:
             if skip_existing and Path(outpath).is_file():
                 pass
             else:
-                stage = self.load_func(path=inpath)
+                stage = self.load_func(inpath)
                 for op in self.ops:
                     stage = op(stage)
                 self.write_func(stage, outpath)

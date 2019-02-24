@@ -30,7 +30,7 @@ def download_two_images_as_png(scope='session'):
     outpath_func = partial(
         combine_outdir_dirname_extension, outdir=SAMPLE_DATA_DIR, extension='.png'
     )
-    download_image_pipeline.run(inpaths=URLS, outpath_func=outpath_func, n_jobs=10)
+    download_image_pipeline.run(inpaths=URLS, path_func=outpath_func, n_jobs=10)
     yield
     for path in [
         TEMP_LOCAL_MADEYE_IMAGE_PATH_DEFAULT,

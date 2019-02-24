@@ -1,10 +1,11 @@
+import logging
 from pathlib import Path
 from typing import Any, Callable, Iterable, Optional
 
-from creevey.constants import PathOrStr
 from joblib import delayed, Parallel
-import logging
 from tqdm import tqdm
+
+from creevey.constants import PathOrStr
 
 
 class Pipeline:

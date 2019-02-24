@@ -1,14 +1,14 @@
 from functools import partial
-
 import logging
+
 import matplotlib.pyplot as plt
 import pytest
 
 from creevey import Pipeline
 from creevey.load_funcs.image import download_image
 from creevey.ops.image import resize
-from creevey.write_funcs.image import write_image
 from creevey.path_funcs import join_outdir_filename_extension
+from creevey.write_funcs.image import write_image
 from tests.conftest import SAMPLE_DATA_DIR
 
 IMAGE_FILENAMES = ['2RsJ8EQ', '2TqoToT', '2VocS58', '2scKPIp', '2TsO6Pc', '2SCv0q7']
@@ -26,7 +26,7 @@ def trim_resize_pipeline():
         outpath = keep_filename_png_in_cwd(url)
         _delete_file_if_exists(outpath)
 
-    trim_bottom_100 = lambda image: image[:-100, :]
+    trim_bottom_100 = lambda image: image[:-100, :]  # noqa: 29
     resize_224 = partial(resize, shape=IMAGE_SHAPE)
 
     trim_resize_pipeline = Pipeline(

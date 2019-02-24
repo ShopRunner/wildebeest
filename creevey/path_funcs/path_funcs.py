@@ -1,6 +1,6 @@
-from creevey.constants import PathOrStr
-
 from pathlib import Path
+
+from creevey.constants import PathOrStr
 
 
 def join_outdir_filename_extension(

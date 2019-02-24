@@ -44,7 +44,6 @@ def get_response(url: str) -> None:
     url
         URL of file to download
     """
-
     session = _get_session()
     response = session.get(url)
     _check_status(url, response)

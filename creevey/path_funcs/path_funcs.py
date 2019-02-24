@@ -28,3 +28,7 @@ def join_outdir_filename_extension(
     filename_with_ext = filename.stem + extension
     outpath = Path(outdir) / filename_with_ext
     return outpath
+
+
+def replace_dir(path: PathOrStr, outdir: PathOrStr) -> Path:
+    return outdir / path.name

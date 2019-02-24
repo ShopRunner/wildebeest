@@ -14,9 +14,10 @@ from tests.conftest import SAMPLE_DATA_DIR
 IMAGE_FILENAMES = ['2RsJ8EQ', '2TqoToT', '2VocS58', '2scKPIp', '2TsO6Pc', '2SCv0q7']
 IMAGE_URLS = [f'https://bit.ly/{filename}' for filename in IMAGE_FILENAMES]
 IMAGE_SHAPE = (224, 224)
+OUTDIR = SAMPLE_DATA_DIR / 'tmp'
 
 keep_filename_png_in_cwd = partial(
-    join_outdir_filename_extension, outdir=SAMPLE_DATA_DIR, extension='.png'
+    join_outdir_filename_extension, outdir=OUTDIR, extension='.png'
 )
 
 

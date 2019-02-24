@@ -1,5 +1,4 @@
-from functools import partial, reduce
-import os
+from pathlib import Path
 from typing import Any, Callable, Iterable, Optional
 
 from creevey.constants import PathOrStr
@@ -8,44 +7,103 @@ from tqdm import tqdm
 
 
 class Pipeline:
+    """
+    Class for defining file processing pipelines.
+
+    See Creevey's README for an example.
+
+    Attributes
+    ----------
+    load_func
+        Callable that takes a string or Path object as single positional
+        argument, reads from the corresponding location, and returns
+        some representation of its contents.
+    ops
+        Iterable of callables each of which takes a single positional
+        argument. The first element of `ops` must accept the output of
+        `load_func`, and each subsequent element must accept the output
+        of the immediately preceding element. It is recommended that
+        every element of `ops` take and return one common data structure
+        (e.g. NumPy arrays for image data) so that those elements can
+        be recombined easily.
+    write_func
+        Callable that takes the output of the last element of `ops` (or
+        the output of `load_func` if `ops` is `None` or empty), the same
+        string or Path object that was passed to `load_func`, and a
+        callable that takes the latter and returns the desired
+        corresponding output location; and writes the output of the last
+        element of `ops` to that location.
+    """
+
     def __init__(
         self,
         load_func: Callable[[PathOrStr], Any],
-        ops: Optional[Iterable[Callable]],
+        ops: Optional[Iterable[Callable[[Any], Any]]],
         write_func: Callable[[Any, PathOrStr, Callable[[PathOrStr], PathOrStr]], None],
-    ):
+    ) -> None:
+        """
+        Compose the provided functions, and store them as attributes.
+
+        Store `load_func`, `ops`, and `write_func` as attributes with
+        the corresponding names. Create an additional attribute
+        `pipeline_func` that composes those functions for when `run`
+        is called.
+
+        See the `Pipeline` docstring for information about the form that
+        `load_func`, `ops`, and `write_func` are expected to take.
+        """
         self.load_func = load_func
         self.ops = ops if ops is not None else []
         self.write_func = write_func
         self.pipeline_func = self._build_pipeline_func()
 
-    def _build_pipeline_func(self):
+    def _build_pipeline_func(self) -> Callable:
         def pipeline_func(
             inpath: PathOrStr, outpath_func: PathOrStr, skip_existing: bool
         ):
             outpath = outpath_func(inpath)
-            if skip_existing and os.path.isfile(outpath):
+            if skip_existing and Path(outpath).is_file():
                 pass
             else:
-                thing = self.load_func(inpath)
+                stage = self.load_func(path=inpath)
                 for op in self.ops:
-                    thing = op(thing)
-                self.write_func(thing, outpath)
+                    stage = op(stage)
+                self.write_func(stage, outpath)
 
         return pipeline_func
 
     def run(
         self,
         inpaths: Iterable[PathOrStr],
-        outpath_func: Callable[[PathOrStr], PathOrStr],
+        path_func: Callable[[PathOrStr], PathOrStr],
         n_jobs: int,
         skip_existing: bool = True,
-    ):
+    ) -> None:
+        """
+        Run the pipeline.
+
+        Across `n_jobs` threads, for each path in `inpaths`, if
+        `skip_existing` is `True` and `path_func` of that path exists,
+        do not do anything. Otherwise, use `load_func` to get the
+        resource from that path, pipe its output through `ops`, and
+        write out the result with `write_func`.
+
+        Parameters
+        ----------
+        inpaths
+            Iterable of string or Path objects pointing to resources to
+            be processed and written out.
+        path_func
+            Function that takes each input path and returns the desired
+            corresponding output path.
+        n_jobs
+            Number of threads to use.
+        skip_existing
+            Boolean indicating whether to skip items that would result
+            in overwriting an existing file or to overwrite any such
+            files.
+        """
         Parallel(n_jobs=n_jobs, prefer='threads')(
-            delayed(self.pipeline_func)(path, outpath_func, skip_existing)
+            delayed(self.pipeline_func)(path, path_func, skip_existing)
             for path in tqdm(inpaths)
         )
-
-
-def compose(*functions):
-    return reduce(lambda f, g: lambda x: f(g(x)), functions, lambda x: x)

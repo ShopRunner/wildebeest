@@ -1,5 +1,5 @@
 from creevey import Pipeline
-from creevey.load_funcs import download_image
+from creevey.load_funcs.image import download_image
 from creevey.write_funcs.image import write_image
 
 download_image_pipeline = Pipeline(

@@ -8,7 +8,7 @@ from creevey import Pipeline
 from creevey.load_funcs.image import download_image
 from creevey.ops.image import resize
 from creevey.write_funcs.image import write_image
-from creevey.path_funcs import combine_outdir_basename_extension
+from creevey.path_funcs import join_outdir_filename_extension
 from tests.conftest import SAMPLE_DATA_DIR
 
 IMAGE_FILENAMES = ['2RsJ8EQ', '2TqoToT', '2VocS58', '2scKPIp', '2TsO6Pc', '2SCv0q7']
@@ -16,7 +16,7 @@ IMAGE_URLS = [f'https://bit.ly/{filename}' for filename in IMAGE_FILENAMES]
 IMAGE_SHAPE = (224, 224)
 
 keep_filename_png_in_cwd = partial(
-    combine_outdir_basename_extension, outdir=SAMPLE_DATA_DIR, extension='.png'
+    join_outdir_filename_extension, outdir=SAMPLE_DATA_DIR, extension='.png'
 )
 
 

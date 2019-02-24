@@ -3,7 +3,7 @@ from creevey.constants import PathOrStr
 from pathlib import Path
 
 
-def combine_outdir_basename_extension(
+def join_outdir_filename_extension(
     path: PathOrStr, outdir: PathOrStr, extension: str
 ) -> Path:
     """

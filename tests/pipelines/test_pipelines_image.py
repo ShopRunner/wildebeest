@@ -46,16 +46,15 @@ def _delete_file_if_exists(path):
 
 
 def test_trim_resize_pipeline(trim_resize_pipeline):
+    path_func = keep_filename_png_in_cwd
+    inpaths = IMAGE_URLS
     trim_resize_pipeline.run(
-        inpaths=IMAGE_URLS,
-        path_func=keep_filename_png_in_cwd,
-        n_jobs=10,
-        skip_existing=False,
+        inpaths=IMAGE_URLS, path_func=path_func, n_jobs=10, skip_existing=False
     )
-    for path in SAMPLE_DATA_DIR.iterdir():
-        if path.suffix == '.png':
-            image = plt.imread(str(path))
-            assert image.shape[:2] == IMAGE_SHAPE
+    for path in inpaths:
+        outpath = path_func(path)
+        image = plt.imread(str(outpath))
+        assert image.shape[:2] == IMAGE_SHAPE
 
 
 def test_skip_existing(trim_resize_pipeline, caplog):

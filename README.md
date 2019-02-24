@@ -49,8 +49,8 @@ trim_resize_pipeline = Pipeline(
  A `Pipeline` object has three attributes:
  
 1. A function `load_func` that takes a string or Path object and returns some kind of data structure in memory. In this example, `download_image` takes an image URL and returns the contents of the corresponding image as a NumPy array.
-- A list `ops` of single-argument functions that can be piped together, with the first taking the return value of `load_func` as its input. This example follows common practice for image data by using functions each of which takes a NumPy array and returns a NumPy array.
-- A function `write_image` that takes the output of the last function in `ops` and writes it out to a specified location. In this example, `write_image` takes a NumPy array and writes it to disk.
+1. A list `ops` of single-argument functions that can be piped together, with the first taking the return value of `load_func` as its input. This example follows common practice for image data by using functions each of which takes a NumPy array and returns a NumPy array.
+1. A function `write_image` that takes the output of the last function in `ops` and writes it out to a specified location. In this example, `write_image` takes a NumPy array and writes it to disk.
  
 ### Running a `Pipeline`
 
@@ -63,9 +63,9 @@ trim_resize_pipeline.run(inpaths=image_urls, outpath_func=keep_filename_png_in_c
 A `Pipeline` object's `run` method takes four arguments:
  
 1. An iterable `inpaths` of input paths (a list of image URLs in this example).
-- A function `outpath_func` for transforming each path in `inpaths` into a corresponding output path. In this example, `keep_filename_png_in_cwd` uses the filename from the URL but gives it a PNG extension and places it in the current working directory.
-- The number `n_jobs` of threads to run (10 in this example).
-- A Boolean `skip_existing` indicating whether to overwrite existing files or to skip processing input files that would result in overwriting existing files.
+1. A function `outpath_func` for transforming each path in `inpaths` into a corresponding output path. In this example, `keep_filename_png_in_cwd` uses the filename from the URL but gives it a PNG extension and places it in the current working directory.
+1. The number `n_jobs` of threads to run (10 in this example).
+1. A Boolean `skip_existing` indicating whether to overwrite existing files or to skip processing input files that would result in overwriting existing files.
 
 ## Benefits
 
@@ -73,15 +73,16 @@ For workflows that involve reading files into memory, processing their contents,
 
 ## Limitations
 
-- Creevey provides concurrency through threading rather than multiprocessing, which is appropriate for IO-bound rather than CPU-bound workflows.
-- Creevey does not force you to write threadsafe code. It is intended to be used for workflows in which multiple files are all processed separately and written out to separate locations, which is a generally threadsafe pattern, but there are pitfalls. For instance, if your `write_func` checks whether an output directory exists and creates it if it does not, then it can happen that the process switches threads between checking whether the directory exists and attempting to create it, so that the attempt to create it raises an error. (One solution to this problem is to wrap the directory creation step in a `try/except` block, as in `creevey.write_funs.image.write_image`.) Note that [logging from multiple threads requires no special effort](https://docs.python.org/3/howto/logging-cookbook.html), so you can include logging in your pipeline functions.
+Creevey provides concurrency through threading rather than multiprocessing, which is appropriate for **IO-bound rather than CPU-bound** workflows.
+
+**Creevey does not force you to write threadsafe code.** It is intended to be used for workflows in which multiple files are all processed separately and written out to separate locations, which is a generally threadsafe pattern, but there are pitfalls. For instance, if your `write_func` checks whether an output directory exists and creates it if it does not, then it can happen that the process switches threads between checking whether the directory exists and attempting to create it, so that the attempt to create it raises an error. (One solution to this problem is to wrap the directory creation step in a `try/except` block, as in `creevey.write_funs.image.write_image`.) Note that [logging from multiple threads requires no special effort](https://docs.python.org/3/howto/logging-cookbook.html), so you can include logging in your pipeline functions.
 
 ## Structure
 
 Creevey has five modules. Generally, each one has a submodule which shares its name that defines generic components and an `image` submodule that defines components for working with images. Items in the former are imported into the module namespace, so that you can write e.g. `from creevey.path_funcs import combine_outdir_dirname_extension` rather than `from creevey.path_funcs.path_funcs import combine_outdir_dirname_extension`.
 
 1. `pipelines` contains a `core` submodule that defines the `Pipeline` class in addition to submodules that define extensible instances of that class.
-- `load_funcs` provides functions such as `download_image` for reading files into memory.
-- `ops` provides functions such as `resize` for processing file contents after they have been loaded into memory.
-- `write_funcs` provides functions such as `write_image` for writing out the output of `ops`.
-- `path_funcs` provides functions such as `combine_outdir_dirname_extension` for deriving output paths from input paths.
+1. `load_funcs` provides functions such as `download_image` for reading files into memory.
+1. `ops` provides functions such as `resize` for processing file contents after they have been loaded into memory.
+1. `write_funcs` provides functions such as `write_image` for writing out the output of `ops`.
+1. `path_funcs` provides functions such as `combine_outdir_dirname_extension` for deriving output paths from input paths.

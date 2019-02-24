@@ -67,6 +67,19 @@ A `Pipeline` object's `run` method takes four arguments:
 1. The number `n_jobs` of threads to run (10 in this example).
 1. A Boolean `skip_existing` indicating whether to overwrite existing files or to skip processing input files that would result in overwriting existing files.
 
+### Extending an Existing Pipeline
+
+We can simplify our sample code snippet by using an existing pipeline for downloading and writing images and simply adding our `ops`.
+
+```python
+from creevey.pipelines.image import download_image_pipeline
+
+trim_resize_pipeline = download_image_pipeline
+trim_resize_pipeline.ops = [trim_bottom_100, resize_224]
+```
+
+More generally, it is easy to modify an existing `Pipeline` object simply by modifying the relevant attributes.
+
 ## Benefits
 
 For workflows that involve reading files into memory, processing their contents, and writing out the results, **Creevey handles piping the files through a series of functions with concurrency and (if desired) skipping over input files that would be written to locations that already exist**, while allowing the user full control over what those functions do.

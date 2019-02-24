@@ -3,6 +3,7 @@ from typing import Any, Callable, Iterable, Optional
 
 from creevey.constants import PathOrStr
 from joblib import delayed, Parallel
+import logging
 from tqdm import tqdm
 
 
@@ -61,7 +62,10 @@ class Pipeline:
         ):
             outpath = outpath_func(inpath)
             if skip_existing and Path(outpath).is_file():
-                pass
+                logging.warning(
+                    f'Skipping {inpath} because there is already a file at corresponding'
+                    f'output path {outpath}'
+                )
             else:
                 stage = self.load_func(inpath)
                 for op in self.ops:
@@ -99,7 +103,7 @@ class Pipeline:
         skip_existing
             Boolean indicating whether to skip items that would result
             in overwriting an existing file or to overwrite any such
-            files.
+            files. Log a warning for any files that are skipped.
         """
         Parallel(n_jobs=n_jobs, prefer='threads')(
             delayed(self.pipeline_func)(path, path_func, skip_existing)

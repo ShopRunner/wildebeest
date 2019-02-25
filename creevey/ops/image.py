@@ -53,4 +53,4 @@ def _find_min_dim_shape(image, min_dim):
     else:
         out_height = min_dim
         out_width = round(out_height * aspect_ratio, 1)
-    return (int(out_width), int(out_height))
+    return (int(out_height), int(out_width))

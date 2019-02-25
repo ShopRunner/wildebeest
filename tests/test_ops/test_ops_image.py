@@ -43,7 +43,7 @@ def test_resize_square_with_min_dim(sample_image):
 def test_resize_tall_with_min_dim(sample_image_tall):
     image = resize(sample_image_tall, min_dim=50)
     actual_shape = image.shape
-    expected_shape = (50, 68)
+    expected_shape = (68, 50)
     assert actual_shape == expected_shape
 
 
@@ -51,5 +51,5 @@ def test_resize_wide_with_min_dim(sample_image_tall):
     sample_image_wide = sample_image_tall.transpose()
     image = resize(sample_image_wide, min_dim=50)
     actual_shape = image.shape
-    expected_shape = (68, 50)
+    expected_shape = (50, 68)
     assert actual_shape == expected_shape

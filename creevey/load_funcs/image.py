@@ -56,5 +56,5 @@ def load_image(path: PathOrStr) -> np.array:
     num_channels = 1 if len(image.shape) == 2 else image.shape[2]
     if num_channels >= 3:
         # OpenCV loads as BGR, so reverse order of first three channels
-        image[:, :, :3] = image[:, :, :3][::-1]
+        image[:, :, :3] = image[:, :, 2::-1]
     return image

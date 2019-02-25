@@ -1,6 +1,6 @@
 import logging
 from pathlib import Path
-from typing import Any, Callable, Iterable, Optional
+from typing import Any, Callable, Iterable, Optional, Tuple
 
 from joblib import delayed, Parallel
 from tqdm import tqdm
@@ -59,7 +59,10 @@ class Pipeline:
 
     def _build_pipeline_func(self) -> Callable:
         def pipeline_func(
-            inpath: PathOrStr, outpath_func: PathOrStr, skip_existing: bool
+            inpath: PathOrStr,
+            outpath_func: PathOrStr,
+            skip_existing: bool,
+            exceptions_to_catch: Optional[Tuple[Exception]] = None,
         ):
             outpath = outpath_func(inpath)
             if skip_existing and Path(outpath).is_file():
@@ -68,10 +71,13 @@ class Pipeline:
                     f'output path {outpath}'
                 )
             else:
-                stage = self.load_func(inpath)
-                for op in self.ops:
-                    stage = op(stage)
-                self.write_func(stage, outpath)
+                try:
+                    stage = self.load_func(inpath)
+                    for op in self.ops:
+                        stage = op(stage)
+                    self.write_func(stage, outpath)
+                except exceptions_to_catch as e:
+                    logging.error(e, inpath)
 
         return pipeline_func
 
@@ -81,6 +87,7 @@ class Pipeline:
         path_func: Callable[[PathOrStr], PathOrStr],
         n_jobs: int,
         skip_existing: bool = True,
+        exceptions_to_catch: Optional[Tuple[Exception]] = None,
     ) -> None:
         """
         Run the pipeline.
@@ -105,8 +112,14 @@ class Pipeline:
             Boolean indicating whether to skip items that would result
             in overwriting an existing file or to overwrite any such
             files. Log a warning for any files that are skipped.
+        exceptions_to_catch
+            Tuple of exception types to catch. An exception of one of
+            these types will be logged with logging level ERROR and the
+            relevant file will be skipped.
         """
         Parallel(n_jobs=n_jobs, prefer='threads')(
-            delayed(self.pipeline_func)(path, path_func, skip_existing)
+            delayed(self.pipeline_func)(
+                path, path_func, skip_existing, exceptions_to_catch
+            )
             for path in tqdm(inpaths)
         )

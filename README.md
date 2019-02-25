@@ -72,12 +72,13 @@ trim_resize_pipeline.run(
 )
 ```
 
-A `Pipeline` object's `run` method takes four arguments:
+A `Pipeline` object's `run` method takes the following arguments:
  
 1. An iterable `inpaths` of input paths (a list of image URLs in this example).
 1. A function `outpath_func` for transforming each path in `inpaths` into a corresponding output path. In this example, `keep_filename_png_in_cwd` uses the filename from the URL but gives it a PNG extension and places it in the current working directory.
 1. The number `n_jobs` of threads to run (10 in this example).
 1. A Boolean `skip_existing` indicating whether to overwrite existing files or to skip processing input files that would result in overwriting existing files.
+1. A tuple `exceptions_to_catch` (optional) of exceptions types to catch and log without raising.
 
 ### Extending an Existing Pipeline
 

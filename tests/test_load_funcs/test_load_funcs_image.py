@@ -1,5 +1,4 @@
 from creevey.load_funcs.image import load_image
-
 from tests.conftest import SAMPLE_DATA_DIR
 
 

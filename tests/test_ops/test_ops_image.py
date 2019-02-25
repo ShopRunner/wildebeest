@@ -1,7 +1,7 @@
-from creevey.load_funcs.image import load_image
-from creevey.ops.image import resize
 import pytest
 
+from creevey.load_funcs.image import load_image
+from creevey.ops.image import resize
 from tests.conftest import SAMPLE_DATA_DIR
 
 

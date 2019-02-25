@@ -26,7 +26,7 @@ def write_image(image: np.array, path: PathOrStr) -> None:
         # point process switches to another thread that creates it
         # before coming back to this one
         try:
-            outdir.mkdir()
+            outdir.mkdir(parents=True)
         except OSError:
             pass
     cv.imwrite(str(path), image)

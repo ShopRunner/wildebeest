@@ -29,4 +29,8 @@ def write_image(image: np.array, path: PathOrStr) -> None:
             outdir.mkdir(parents=True)
         except OSError:
             pass
+    num_channels = 1 if len(image.shape) == 2 else image.shape[2]
+    if num_channels >= 3:
+        # OpenCV loads as BGR, so reverse order of first three channels
+        image[:, :, :3] = image[:, :, 2::-1]
     cv.imwrite(str(path), image)

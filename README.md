@@ -31,7 +31,7 @@ image_urls = [f'https://bit.ly/{filename}' for filename in image_filenames]
 keep_filename_png_in_cwd = partial(
     join_outdir_filename_extension, outdir='.', extension='.png'
 )
-run_record = trim_resize_pipeline.run(
+run_report = trim_resize_pipeline.run(
     inpaths=image_urls,
     path_func=keep_filename_png_in_cwd,
     n_jobs=10,
@@ -40,7 +40,9 @@ run_record = trim_resize_pipeline.run(
 )
 ```
 
-`trim_resize_pipeline.run(...)` returns a "run report:" a Pandas DataFrame with each input path as its index and columns indicating the corresponding output path ("outpath"), whether processing was skipped because a file already existed at the output path ("skipped_existing"), whether processing failed due to an exception in `exceptions_to_catch` ("exception_handled"), and a timestamp indicating when processing complete ("time_finished"). 
+`trim_resize_pipeline.run(...)` returns a "run report:" a Pandas DataFrame with each input path as its index and columns indicating the corresponding output path ("outpath"), whether processing was skipped because a file already existed at the output path ("skipped_existing"), whether processing failed due to an exception in `exceptions_to_catch` ("exception_handled"), and a timestamp indicating when processing complete ("time_finished").
+
+If `n_jobs` is greater than 1, then the order of the input files in the run report typically will not match the order in `inpaths`; a command like `run_report.loc[inpaths, :]` can be used to restore that ordering if desired. 
 
 ## The `Pipeline` Class
 
@@ -67,7 +69,7 @@ trim_resize_pipeline = Pipeline(
 Here is the code that runs the pipeline in the snippet above:
 
 ```python
-run_record = trim_resize_pipeline.run(
+run_report = trim_resize_pipeline.run(
     inpaths=image_urls,
     path_func=keep_filename_png_in_cwd,
     n_jobs=10,

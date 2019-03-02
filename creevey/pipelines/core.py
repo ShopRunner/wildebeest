@@ -58,43 +58,40 @@ class Pipeline:
         self.load_func = load_func
         self.ops = ops if ops is not None else []
         self.write_func = write_func
-        self.pipeline_func = self._build_pipeline_func()
 
-    def _build_pipeline_func(self) -> Callable:
-        def pipeline_func(
-            inpath: PathOrStr,
-            outpath_func: PathOrStr,
-            skip_existing: bool,
-            log_dict: dict,
-            exceptions_to_catch: Optional[Tuple[Exception]] = None,
-        ):
-            outpath = outpath_func(inpath)
-            skipped_existing = False
-            exception_handled = False
+    def pipeline_func(
+        self,
+        inpath: PathOrStr,
+        outpath_func: PathOrStr,
+        skip_existing: bool,
+        log_dict: dict,
+        exceptions_to_catch: Optional[Tuple[Exception]] = None,
+    ):
+        outpath = outpath_func(inpath)
+        skipped_existing = False
+        exception_handled = False
 
-            if skip_existing and Path(outpath).is_file():
-                skipped_existing = True
-                logging.warning(
-                    f'Skipping {inpath} because there is already a file at corresponding '
-                    f'output path {outpath}'
-                )
-            else:
-                try:
-                    stage = self.load_func(inpath)
-                    for op in self.ops:
-                        stage = op(stage)
-                    self.write_func(stage, outpath)
-                except exceptions_to_catch as e:
-                    exception_handled = True
-                    logging.error(e, inpath)
+        if skip_existing and Path(outpath).is_file():
+            skipped_existing = True
+            logging.warning(
+                f'Skipping {inpath} because there is already a file at corresponding '
+                f'output path {outpath}'
+            )
+        else:
+            try:
+                stage = self.load_func(inpath)
+                for op in self.ops:
+                    stage = op(stage)
+                self.write_func(stage, outpath)
+            except exceptions_to_catch as e:
+                exception_handled = True
+                logging.error(e, inpath)
 
-            inpath_logs = log_dict[inpath]
-            inpath_logs['time_finished'] = time.time()
-            inpath_logs['outpath'] = outpath
-            inpath_logs['skipped_existing'] = int(skipped_existing)
-            inpath_logs['exception_handled'] = int(exception_handled)
-
-        return pipeline_func
+        inpath_logs = log_dict[inpath]
+        inpath_logs['time_finished'] = time.time()
+        inpath_logs['outpath'] = outpath
+        inpath_logs['skipped_existing'] = int(skipped_existing)
+        inpath_logs['exception_handled'] = int(exception_handled)
 
     def run(
         self,

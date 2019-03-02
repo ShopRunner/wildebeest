@@ -121,10 +121,10 @@ class Pipeline:
                 logging.error(e, inpath)
 
         inpath_logs = log_dict[inpath]
-        inpath_logs['time_finished'] = time.time()
         inpath_logs['outpath'] = outpath
         inpath_logs['skipped_existing'] = int(skipped_existing)
         inpath_logs['exception_handled'] = int(exception_handled)
+        inpath_logs['time_finished'] = time.time()
 
     def run(
         self,

@@ -105,6 +105,8 @@ You define and run a `CustomReportingPipeline` object in the same way that you d
 
 Creevey's predefined pipeline component functions are all written to work with both basic `Pipeline` objects and `CustomReportingPipeline` objects by accepting the arguments needed for use in a `CustomReportingPipeline` but making them optional.
 
+Files that would be written to an output location where there is an existing file are skipped entirely when `skip_existing=True`, so custom logs will not be written for those files.
+
 ## Limitations
 
 Creevey provides concurrency through threading rather than multiprocessing, which is appropriate for **IO-bound rather than CPU-bound** workflows.

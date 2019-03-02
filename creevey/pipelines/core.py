@@ -111,20 +111,26 @@ class Pipeline:
                 f'output path {outpath}'
             )
         else:
-            try:
-                stage = self.load_func(inpath)
-                for op in self.ops:
-                    stage = op(stage)
-                self.write_func(stage, outpath)
-            except exceptions_to_catch as e:
-                exception_handled = True
-                logging.error(e, inpath)
+            if exceptions_to_catch is None:
+                self._run_pipeline_func(inpath, outpath)
+            else:
+                try:
+                    self._run_pipeline_func(inpath, outpath)
+                except exceptions_to_catch as e:
+                    exception_handled = True
+                    logging.error(e, inpath)
 
         inpath_logs = log_dict[inpath]
         inpath_logs['outpath'] = outpath
         inpath_logs['skipped_existing'] = int(skipped_existing)
         inpath_logs['exception_handled'] = int(exception_handled)
         inpath_logs['time_finished'] = time.time()
+
+    def _run_pipeline_func(self, inpath, outpath):
+        stage = self.load_func(inpath)
+        for op in self.ops:
+            stage = op(stage)
+        self.write_func(stage, outpath)
 
     def run(
         self,

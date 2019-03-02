@@ -103,6 +103,8 @@ The `Pipeline` class's `run` method returns a "run report" with basic informatio
 
 You define and run a `CustomReportingPipeline` object in the same way that you define and run a basic `Pipeline` object, except that the elements of `ops` and `write_func` need to accept the input path as an additional positional argument; and `write_func`, `ops` and `write_func` need to accept a `defaultdict(dict)` object as another additional positional argument. Creevey uses the name `log_dict` for that `defaultdict(dict)` object, which stores the run report information for a single file. You can then enrich your run reports in one of these functions by writing e.g. `log_dict[inpath]['mean_brightness'] = mean_brightness` (assuming that you have calculated `mean_brightness`).
 
+Creevey's predefined pipeline component functions are all written to work with both basic `Pipeline` objects and `CustomReportingPipeline` objects by accepting the arguments needed for use in a `CustomReportingPipeline` but making them optional.
+
 ## Limitations
 
 Creevey provides concurrency through threading rather than multiprocessing, which is appropriate for **IO-bound rather than CPU-bound** workflows.

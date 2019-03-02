@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
+# [1.1.0] - 2019-03-02
+### Added
+- Pipeline runs return "run reports"
+
 # [1.0.0] - 2019-02-23
 ### Changed
 - Redesigned library around `Pipeline` abstraction

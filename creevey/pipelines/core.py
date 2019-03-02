@@ -2,7 +2,7 @@ from collections import defaultdict
 import logging
 from pathlib import Path
 import time
-from typing import Any, Callable, Iterable, Optional, Tuple, Union
+from typing import Any, Callable, DefaultDict, Iterable, Optional, Tuple, Union
 
 from joblib import delayed, Parallel
 import pandas as pd
@@ -64,9 +64,42 @@ class Pipeline:
         inpath: PathOrStr,
         outpath_func: PathOrStr,
         skip_existing: bool,
-        log_dict: dict,
-        exceptions_to_catch: Optional[Tuple[Exception]] = None,
-    ):
+        log_dict: DefaultDict[str, dict],
+        exceptions_to_catch: Optional[Union[Tuple, Tuple[Exception]]] = None,
+    ) -> None:
+        """
+        Process one file
+
+        Use `self.load_func` to load the file at `inpath` into memory,
+        pipe the result through the functions in `self.ops`, and use
+        `self.write_func` to write it to `outpath_func(inpath)`.
+
+        If `skip_existing` is `True`, check up front whether
+        `outpath_func(inpath)` exists. If it does, skip the file.
+
+        Catch
+        if they arise during file processing.
+
+        Parameters
+        ----------
+        inpath
+        outpath_func
+        skip_existing
+        log_dict
+        exceptions_to_catch
+
+        Side effects
+        ------------
+        Record results in a dict within `log_dict[inpath]`:
+            - `outpath_func(inpath)` as "outpath"
+            - 0/1 indicating whether existing file was skipped as
+            "skipped_existing"
+            - 0/1 indicating whether exception of a type specified in
+            `exceptions_to_catch` was handled during processing as
+            "exception_handled"
+            - Timestamp indicating when processing finished as
+            "time_finished"
+        """
         outpath = outpath_func(inpath)
         skipped_existing = False
         exception_handled = False
@@ -100,7 +133,7 @@ class Pipeline:
         n_jobs: int,
         skip_existing: bool = True,
         exceptions_to_catch: Optional[Union[Exception, Tuple[Exception]]] = None,
-    ) -> None:
+    ) -> pd.DataFrame:
         """
         Run the pipeline.
 
@@ -128,6 +161,16 @@ class Pipeline:
             Tuple of exception types to catch. An exception of one of
             these types will be logged with logging level ERROR and the
             relevant file will be skipped.
+
+        Returns
+        -------
+        Pandas DataFrame "run report" with each input path as its
+        index and columns indicating the corresponding output path (
+        "outpath"), whether processing was skipped because a file
+        already existed at the output path ("skipped_existing"),
+        whether processing failed due to an exception in
+        `exceptions_to_catch` ("exception_handled"), and a timestamp
+        indicating when processing complete ("time_finished").
         """
         log_dict = defaultdict(dict)
 

@@ -97,6 +97,12 @@ trim_resize_pipeline.ops = [trim_bottom_100, resize_224]
 
 More generally, it is easy to modify an existing `Pipeline` object simply by modifying the relevant attributes.
 
+## The `CustomReportingPipeline` Class
+
+The `Pipeline` class's `run` method returns a "run report" with basic information about what happened during the run. The `CustomReportingPipeline` allows you to add additional information to these reports by adding to them within your `load_func`, `ops`, and `write_func`. For instance, when processing a set of image files you might wish to record each image's mean brightness while you already have it open so that you can later experiment with removing washed-out images from your dataset.
+
+You define and run a `CustomReportingPipeline` object in the same way that you define and run a basic `Pipeline` object, except that the elements of `ops` and `write_func` need to accept the input path as an additional positional argument; and `write_func`, `ops` and `write_func` need to accept a `defaultdict(dict)` object as another additional positional argument. Creevey uses the name `log_dict` for that `defaultdict(dict)` object, which stores the run report information for a single file. You can then enrich your run reports in one of these functions by writing e.g. `log_dict[inpath]['mean_brightness'] = mean_brightness` (assuming that you have calculated `mean_brightness`).
+
 ## Limitations
 
 Creevey provides concurrency through threading rather than multiprocessing, which is appropriate for **IO-bound rather than CPU-bound** workflows.

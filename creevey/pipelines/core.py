@@ -1,8 +1,11 @@
+from collections import defaultdict
 import logging
 from pathlib import Path
-from typing import Any, Callable, Iterable, Optional, Tuple
+import time
+from typing import Any, Callable, Iterable, Optional, Tuple, Union
 
 from joblib import delayed, Parallel
+import pandas as pd
 from tqdm import tqdm
 
 from creevey.constants import PathOrStr
@@ -62,10 +65,15 @@ class Pipeline:
             inpath: PathOrStr,
             outpath_func: PathOrStr,
             skip_existing: bool,
+            log_dict: dict,
             exceptions_to_catch: Optional[Tuple[Exception]] = None,
         ):
             outpath = outpath_func(inpath)
+            skipped_existing = False
+            exception_handled = False
+
             if skip_existing and Path(outpath).is_file():
+                skipped_existing = True
                 logging.warning(
                     f'Skipping {inpath} because there is already a file at corresponding '
                     f'output path {outpath}'
@@ -77,7 +85,14 @@ class Pipeline:
                         stage = op(stage)
                     self.write_func(stage, outpath)
                 except exceptions_to_catch as e:
+                    exception_handled = True
                     logging.error(e, inpath)
+
+            inpath_logs = log_dict[inpath]
+            inpath_logs['time_finished'] = time.time()
+            inpath_logs['outpath'] = outpath
+            inpath_logs['skipped_existing'] = int(skipped_existing)
+            inpath_logs['exception_handled'] = int(exception_handled)
 
         return pipeline_func
 
@@ -87,7 +102,7 @@ class Pipeline:
         path_func: Callable[[PathOrStr], PathOrStr],
         n_jobs: int,
         skip_existing: bool = True,
-        exceptions_to_catch: Optional[Tuple[Exception]] = None,
+        exceptions_to_catch: Optional[Union[Exception, Tuple[Exception]]] = None,
     ) -> None:
         """
         Run the pipeline.
@@ -117,9 +132,15 @@ class Pipeline:
             these types will be logged with logging level ERROR and the
             relevant file will be skipped.
         """
+        log_dict = defaultdict(dict)
+
         Parallel(n_jobs=n_jobs, prefer='threads')(
             delayed(self.pipeline_func)(
-                path, path_func, skip_existing, exceptions_to_catch
+                path, path_func, skip_existing, log_dict, exceptions_to_catch
             )
             for path in tqdm(inpaths)
         )
+
+        run_report = pd.DataFrame.from_dict(log_dict, orient='index')
+
+        return run_report

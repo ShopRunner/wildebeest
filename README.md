@@ -2,11 +2,11 @@
 
 ![](https://images.pottermore.com/bxd3o8b291gf/22qh5bCcA0g28OeKCwgwgE/70be84ace5da257fbd54d1ca0c06972c/ColinCreevey_WB_F2_ColinHoldingCamera_Still_080615_Land.jpg?w=320&h=320&fit=thumb&f=left&q=85)
 
-Creevey helps you process files. It is designed for **IO-bound** batch workflows that involve **reading files** into memory, **doing some processing** on their contents, and **writing out the results**. It provides a general abstraction for defining such workflows and running them across multiple threads. It also provides some predefined, extensible workflows and some reusable workflow components, particularly for image processing. 
+**Creevey provides a simple framework for batch file processing pipelines that handles threading, piping, logging, and (optionally) skipping existing files for you.** It is designed for IO-bound batch workflows that involve reading files into memory, doing some processing on their contents, and writing out the results. **Creevey also provides predefined, extensible pipelines and reusable pipeline components, particularly for image processing.** 
 
 ## Example
 
-For instance, this code takes a list of image URLs and for each one downloads the file contents, trims off its bottom 100 pixels, resizes it to 224x224, and writes the result to disk, using ten threads for concurrency.
+For instance, this code takes a list of image URLs and for each one downloads the file contents, trims off its bottom 100 pixels, resizes it to 224x224, and writes the result to disk, using ten threads for concurrency. Because `exceptions_to_catch=AttributeError` is being passed to the `run` call, it will catch `AttributeError`s that arise during file processing, logging them as errors but continuing execution. (This functionality is useful for handling corrupted input files.)
 
 ```python
 from functools import partial
@@ -31,13 +31,16 @@ image_urls = [f'https://bit.ly/{filename}' for filename in image_filenames]
 keep_filename_png_in_cwd = partial(
     join_outdir_filename_extension, outdir='.', extension='.png'
 )
-trim_resize_pipeline.run(
+run_record = trim_resize_pipeline.run(
     inpaths=image_urls,
     path_func=keep_filename_png_in_cwd,
     n_jobs=10,
     skip_existing=True,
+    exceptions_to_catch=AttributeError,
 )
 ```
+
+`trim_resize_pipeline.run(...)` returns a "run report:" a Pandas DataFrame with each input path as its index and columns indicating the corresponding output path ("outpath"), whether processing was skipped because a file already existed at the output path ("skipped_existing"), whether processing failed due to an exception in `exceptions_to_catch` ("exception_handled"), and a timestamp indicating when processing complete ("time_finished"). 
 
 ## The `Pipeline` Class
 
@@ -53,7 +56,7 @@ trim_resize_pipeline = Pipeline(
 )
 ```
 
- A `Pipeline` object has three attributes:
+ The `Pipeline` constructor takes three arguments:
  
 1. A function `load_func` that takes a string or Path object and returns some kind of data structure in memory. In this example, `download_image` takes an image URL and returns the contents of the corresponding image as a NumPy array.
 1. A list `ops` of single-argument functions that can be piped together, with the first taking the return value of `load_func` as its input. This example follows common practice for image data by using functions each of which takes a NumPy array and returns a NumPy array.
@@ -64,11 +67,12 @@ trim_resize_pipeline = Pipeline(
 Here is the code that runs the pipeline in the snippet above:
 
 ```python
-trim_resize_pipeline.run(
+run_record = trim_resize_pipeline.run(
     inpaths=image_urls,
     path_func=keep_filename_png_in_cwd,
     n_jobs=10,
     skip_existing=True,
+    exceptions_to_catch=AttributeError,
 )
 ```
 
@@ -78,7 +82,7 @@ A `Pipeline` object's `run` method takes the following arguments:
 1. A function `outpath_func` for transforming each path in `inpaths` into a corresponding output path. In this example, `keep_filename_png_in_cwd` uses the filename from the URL but gives it a PNG extension and places it in the current working directory.
 1. The number `n_jobs` of threads to run (10 in this example).
 1. A Boolean `skip_existing` indicating whether to overwrite existing files or to skip processing input files that would result in overwriting existing files.
-1. A tuple `exceptions_to_catch` (optional) of exceptions types to catch and log without raising.
+1. An exception type or tuple of exceptions types `exceptions_to_catch` (optional) to catch and log without raising.
 
 ### Extending an Existing Pipeline
 
@@ -93,15 +97,11 @@ trim_resize_pipeline.ops = [trim_bottom_100, resize_224]
 
 More generally, it is easy to modify an existing `Pipeline` object simply by modifying the relevant attributes.
 
-## Benefits
-
-For workflows that involve reading files into memory, processing their contents, and writing out the results, **Creevey handles piping the files through a series of functions with concurrency and (if desired) skipping over input files that would be written to locations that already exist**, while allowing the user full control over what those functions do.
-
 ## Limitations
 
 Creevey provides concurrency through threading rather than multiprocessing, which is appropriate for **IO-bound rather than CPU-bound** workflows.
 
-**Creevey does not force you to write threadsafe code.** It is intended to be used for workflows in which multiple files are all processed separately and written out to separate locations, which is a generally threadsafe pattern, but there are pitfalls. For instance, if your `write_func` checks whether an output directory exists and creates it if it does not, then it can happen that the process switches threads between checking whether the directory exists and attempting to create it, so that the attempt to create it raises an error. (One solution to this problem is to wrap the directory creation step in a `try/except` block, as in `creevey.write_funs.image.write_image`.) Note that [logging from multiple threads requires no special effort](https://docs.python.org/3/howto/logging-cookbook.html), so you can include logging in your pipeline functions.
+**Creevey does not force you to write threadsafe code.** It is intended to be used for workflows in which multiple files are all processed separately and written out to separate locations, which is a generally threadsafe pattern, but there are pitfalls. For instance, if your `write_func` checks whether an output directory exists and creates it if it does not, then it can happen that the process switches threads between checking whether the directory exists and attempting to create it, so that the attempt to create it raises an error. (One solution to this problem is to wrap the directory creation step in a `try/except` block, as in `creevey.write_funs.image.write_image`.)
 
 ## Structure
 

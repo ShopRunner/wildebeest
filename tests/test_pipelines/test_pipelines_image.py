@@ -1,7 +1,9 @@
 from functools import partial
 import logging
+from pathlib import Path
 
 import matplotlib.pyplot as plt
+import pandas as pd
 import pytest
 
 from creevey import Pipeline
@@ -21,7 +23,7 @@ keep_filename_png_in_cwd = partial(
 )
 
 
-@pytest.fixture
+@pytest.fixture(scope='session')
 def trim_resize_pipeline():
     for url in IMAGE_URLS:
         outpath = keep_filename_png_in_cwd(url)
@@ -50,7 +52,7 @@ def test_trim_resize_pipeline(trim_resize_pipeline):
     path_func = keep_filename_png_in_cwd
     inpaths = IMAGE_URLS
     trim_resize_pipeline.run(
-        inpaths=IMAGE_URLS, path_func=path_func, n_jobs=10, skip_existing=False
+        inpaths=inpaths, path_func=path_func, n_jobs=6, skip_existing=False
     )
     for path in inpaths:
         outpath = path_func(path)
@@ -59,18 +61,124 @@ def test_trim_resize_pipeline(trim_resize_pipeline):
 
 
 def test_skip_existing(trim_resize_pipeline, caplog):
+    inpaths = IMAGE_URLS
+
     trim_resize_pipeline.run(
-        inpaths=IMAGE_URLS,
+        inpaths=inpaths,
         path_func=keep_filename_png_in_cwd,
-        n_jobs=10,
+        n_jobs=6,
         skip_existing=False,
     )
     with caplog.at_level(logging.WARNING):
-        trim_resize_pipeline.run(
+        outpaths = [
+            OUTDIR / Path(filename).with_suffix('.png') for filename in IMAGE_FILENAMES
+        ]
+        skipped_existing = [1] * len(inpaths)
+        exception_handled = [0] * len(inpaths)
+        expected_run_report = pd.DataFrame(
+            {
+                'outpath': outpaths,
+                'skipped_existing': skipped_existing,
+                'exception_handled': exception_handled,
+            },
+            index=inpaths,
+        )
+        actual_run_report = trim_resize_pipeline.run(
             inpaths=IMAGE_URLS,
             path_func=keep_filename_png_in_cwd,
-            n_jobs=10,
+            n_jobs=6,
             skip_existing=True,
+        )
+        pd.testing.assert_frame_equal(
+            actual_run_report.sort_index().drop('time_finished', axis='columns'),
+            expected_run_report.sort_index(),
         )
         assert len(caplog.records) == len(IMAGE_URLS)
         assert caplog.records[0].levelname == 'WARNING'
+
+
+def test_logging(trim_resize_pipeline):
+    inpaths = IMAGE_URLS
+    outpaths = [
+        OUTDIR / Path(filename).with_suffix('.png') for filename in IMAGE_FILENAMES
+    ]
+    exception_handled = skipped_existing = [0] * len(inpaths)
+    expected_run_report = pd.DataFrame(
+        {
+            'outpath': outpaths,
+            'skipped_existing': skipped_existing,
+            'exception_handled': exception_handled,
+        },
+        index=inpaths,
+    )
+    actual_run_report = trim_resize_pipeline.run(
+        inpaths=inpaths,
+        path_func=keep_filename_png_in_cwd,
+        n_jobs=6,
+        skip_existing=False,
+    )
+    pd.testing.assert_frame_equal(
+        actual_run_report.sort_index().drop('time_finished', axis='columns'),
+        expected_run_report.sort_index(),
+    )
+
+
+@pytest.fixture
+def error_pipeline():
+    error_pipeline = Pipeline(
+        load_func=download_image, ops=[_raise_TypeError], write_func=write_image
+    )
+    return error_pipeline
+
+
+def _raise_TypeError(*args, **kwargs):
+    raise TypeError('Sample error for testing purposes')
+
+
+def test_raises_without_catch(error_pipeline):
+    with pytest.raises(TypeError):
+        error_pipeline.run(
+            inpaths=IMAGE_URLS,
+            path_func=keep_filename_png_in_cwd,
+            n_jobs=6,
+            skip_existing=False,
+        )
+
+
+def test_raises_with_different_catch(error_pipeline):
+    with pytest.raises(TypeError):
+        error_pipeline.run(
+            inpaths=IMAGE_URLS,
+            path_func=keep_filename_png_in_cwd,
+            n_jobs=6,
+            skip_existing=False,
+            exceptions_to_catch=(AttributeError,),
+        )
+
+
+def test_catches(error_pipeline):
+    inpaths = IMAGE_URLS
+    outpaths = [
+        OUTDIR / Path(filename).with_suffix('.png') for filename in IMAGE_FILENAMES
+    ]
+    skipped_existing = [0] * len(inpaths)
+    exception_handled = [1] * len(inpaths)
+    expected_run_report = pd.DataFrame(
+        {
+            'outpath': outpaths,
+            'skipped_existing': skipped_existing,
+            'exception_handled': exception_handled,
+        },
+        index=inpaths,
+    )
+    actual_run_report = error_pipeline.run(
+        inpaths=inpaths,
+        path_func=keep_filename_png_in_cwd,
+        n_jobs=1,
+        skip_existing=False,
+        exceptions_to_catch=(TypeError,),
+    )
+    pd.testing.assert_frame_equal(
+        actual_run_report.sort_index().drop('time_finished', axis='columns'),
+        expected_run_report.sort_index(),
+    )

@@ -1,7 +1,9 @@
-from typing import Optional, Tuple
+from typing import DefaultDict, Optional, Tuple
 
 import cv2 as cv
 import numpy as np
+
+from creevey.constants import PathOrStr
 
 
 def resize(
@@ -54,3 +56,48 @@ def _find_min_dim_shape(image, min_dim):
         out_height = min_dim
         out_width = round(out_height * aspect_ratio, 1)
     return (int(out_height), int(out_width))
+
+
+def record_mean_brightness(
+    image: np.array, inpath: PathOrStr, log_dict: DefaultDict[str, dict]
+) -> None:
+    """
+    Calculate mean image brightness
+
+    Image is assumed to be grayscale if it has a single channel, RGB if
+    it has three channels, RGBA if it has four. Brightness is calculated
+    by converting to grayscale if necessary and then taking the mean
+    pixel value.
+
+    Parameters
+    ----------
+    image
+    inpath
+        Image input path
+    log_dict
+        Dictionary of image metadata
+
+    Side effect
+    -----------
+    Adds a "mean_brightness" items to log_dict[inpath]
+    """
+    if len(image.shape) == 3:
+        num_bands = image.shape[2]
+    elif len(image.shape) == 2:
+        num_bands = 1
+    else:
+        raise ValueError('Image array must have two or three dimensions')
+
+    if num_bands == 1:
+        image_gray = image
+    elif num_bands == 3:
+        image_gray = cv.cvtColor(src=image, code=cv.COLOR_RGB2GRAY)
+    elif num_bands == 4:
+        image_gray = cv.cvtColor(src=image, code=cv.COLOR_RGBA2GRAY)
+    else:
+        raise ValueError(
+            f'{inpath} image has {num_channels} channels. Only '
+            f'1-channel grayscale, 3-channel RGB, and 4-channel RGBA '
+            f'images are supported.'
+        )
+    log_dict[inpath]['mean_brightness'] = image_gray.mean()

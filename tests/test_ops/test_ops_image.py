@@ -1,9 +1,10 @@
 from collections import defaultdict
+
+import numpy as np
 import pytest
 
 from creevey.load_funcs.image import load_image
 from creevey.ops.image import record_mean_brightness, resize
-import numpy as np
 from tests.conftest import SAMPLE_DATA_DIR
 
 

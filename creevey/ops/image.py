@@ -104,9 +104,9 @@ def record_mean_brightness(
         image_gray = cv.cvtColor(src=image, code=cv.COLOR_RGBA2GRAY)
     else:
         raise ValueError(
-            f'{inpath} image has {num_channels} channels. Only '
-            f'1-channel grayscale, 3-channel RGB, and 4-channel RGBA '
-            f'images are supported.'
+            f'{inpath} image has {num_bands} channels. Only 1-channel '
+            f'grayscale, 3-channel RGB, and 4-channel RGBA images are '
+            f'supported.'
         )
     log_dict[inpath]['mean_brightness'] = image_gray.mean()
 

@@ -1,6 +1,7 @@
+from typing import DefaultDict, Optional
+
 import cv2 as cv
 import numpy as np
-from typing import DefaultDict, Optional
 
 from creevey.constants import PathOrStr
 from creevey.load_funcs import get_response

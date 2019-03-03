@@ -1,6 +1,5 @@
 import logging
 import threading
-from typing import DefaultDict, Optional
 
 import requests
 from retrying import retry

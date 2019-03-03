@@ -1,11 +1,14 @@
 import cv2 as cv
 import numpy as np
+from typing import DefaultDict, Optional
 
 from creevey.constants import PathOrStr
 from creevey.load_funcs import get_response
 
 
-def download_image(url: str) -> np.array:
+def download_image(
+    url: str, log_dict: Optional[DefaultDict[str, dict]] = None
+) -> np.array:
     """
     Download an image
 
@@ -13,6 +16,9 @@ def download_image(url: str) -> np.array:
     ----------
     url
         Image URL
+    log_dict
+        Unused optional argument included in signature so that function
+        can be used in a `CustomReportingPipeline`
 
     Returns
     -------
@@ -29,7 +35,9 @@ def _load_image_from_response(response):
     return image
 
 
-def load_image(path: PathOrStr) -> np.array:
+def load_image(
+    path: PathOrStr, log_dict: Optional[DefaultDict[str, dict]] = None
+) -> np.array:
     """
     Load image from disk
 
@@ -38,7 +46,10 @@ def load_image(path: PathOrStr) -> np.array:
     Parameters
     ----------
     path
-        Path to image file
+        Path to local image file
+    log_dict
+        Unused optional argument included in signature so that function
+        can be used in a `CustomReportingPipeline`
 
     Returns
     -------

@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import DefaultDict
 
 import cv2 as cv
 import numpy as np
@@ -6,7 +7,12 @@ import numpy as np
 from creevey.constants import PathOrStr
 
 
-def write_image(image: np.array, path: PathOrStr) -> None:
+def write_image(
+    image: np.array,
+    path: PathOrStr,
+    inpath: PathOrStr = None,
+    log_dict: DefaultDict[str, dict] = None,
+) -> None:
     """
     Write image to specified path
 
@@ -19,6 +25,12 @@ def write_image(image: np.array, path: PathOrStr) -> None:
         Image as a NumPy array
     path
         Desired output path
+    inpath
+        Unused optional argument included in signature so that function
+        can be used in a `CustomReportingPipeline`
+    log_dict
+        Unused optional argument included in signature so that function
+        can be used in a `CustomReportingPipeline`
     """
     outdir = Path(path).parent
     if not outdir.exists():

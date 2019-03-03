@@ -10,6 +10,8 @@ def resize(
     image: np.array,
     shape: Optional[Tuple[int, int]] = None,
     min_dim: Optional[int] = None,
+    inpath: PathOrStr = None,
+    log_dict: DefaultDict[str, dict] = None,
 ) -> np.array:
     """
     Resize input image
@@ -26,6 +28,12 @@ def resize(
         resized so that it has this length along its smaller spatial
         dimension while preseving aspect ratio as closely as possible.
         Exactly one of `shape` and `min_dim` must be `None`.
+    inpath
+        Unused optional argument included in signature so that function
+        can be used in a `CustomReportingPipeline`
+    log_dict
+        Unused optional argument included in signature so that function
+        can be used in a `CustomReportingPipeline`
 
     Returns
     -------
@@ -101,3 +109,5 @@ def record_mean_brightness(
             f'images are supported.'
         )
     log_dict[inpath]['mean_brightness'] = image_gray.mean()
+
+    return image

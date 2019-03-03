@@ -5,6 +5,7 @@ import time
 from typing import Any, Callable, DefaultDict, Iterable, Optional, Tuple, Union
 
 from joblib import delayed, Parallel
+from numpy import iterable
 import pandas as pd
 from tqdm import tqdm
 
@@ -41,7 +42,7 @@ class Pipeline:
     def __init__(
         self,
         load_func: Callable[[PathOrStr], Any],
-        ops: Optional[Iterable[Callable[[Any], Any]]],
+        ops: Optional[Union[Callable[[Any], Any], Iterable[Callable[[Any], Any]]]],
         write_func: Callable[[Any, PathOrStr], None],
     ) -> None:
         """
@@ -56,7 +57,16 @@ class Pipeline:
         `load_func`, `ops`, and `write_func` are expected to take.
         """
         self.load_func = load_func
-        self.ops = ops if ops is not None else []
+        if callable(ops):
+            self.ops = [ops]
+        elif iterable(ops):
+            self.ops = ops
+        elif ops is None:
+            self.ops = []
+        else:
+            raise TypeError(
+                'ops must be callable, an iterable of ' 'callables, or `None`'
+            )
         self.write_func = write_func
 
     def pipeline_func(
@@ -112,10 +122,10 @@ class Pipeline:
             )
         else:
             if exceptions_to_catch is None:
-                self._run_pipeline_func(inpath, outpath)
+                self._run_pipeline_func(inpath, outpath, log_dict)
             else:
                 try:
-                    self._run_pipeline_func(inpath, outpath)
+                    self._run_pipeline_func(inpath, outpath, log_dict)
                 except exceptions_to_catch as e:
                     exception_handled = True
                     logging.error(e, inpath)
@@ -126,7 +136,9 @@ class Pipeline:
         inpath_logs['exception_handled'] = int(exception_handled)
         inpath_logs['time_finished'] = time.time()
 
-    def _run_pipeline_func(self, inpath, outpath):
+    def _run_pipeline_func(self, inpath, outpath, log_dict):
+        # Unused log_dict is included as input so that pipeline_func
+        # does not have to change in `CustomReportingPipeline`
         stage = self.load_func(inpath)
         for op in self.ops:
             stage = op(stage)
@@ -190,3 +202,11 @@ class Pipeline:
         run_report = pd.DataFrame.from_dict(log_dict, orient='index')
 
         return run_report
+
+
+class CustomReportingPipeline(Pipeline):
+    def _run_pipeline_func(self, inpath, outpath, log_dict):
+        stage = self.load_func(inpath, log_dict)
+        for op in self.ops:
+            stage = op(stage, inpath, log_dict)
+        self.write_func(stage, outpath, inpath, log_dict)

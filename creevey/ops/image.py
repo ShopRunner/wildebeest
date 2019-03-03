@@ -68,7 +68,7 @@ def _find_min_dim_shape(image, min_dim):
 
 def record_mean_brightness(
     image: np.array, inpath: PathOrStr, log_dict: DefaultDict[str, dict]
-) -> None:
+) -> np.array:
     """
     Calculate mean image brightness
 

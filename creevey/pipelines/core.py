@@ -205,6 +205,24 @@ class Pipeline:
 
 
 class CustomReportingPipeline(Pipeline):
+    """
+    Class for defining file processing pipelines with custom run
+    recording.
+
+    Differences from Pipeline parent class:
+
+    - `load_func`, each element of `ops`, and `write_func` must each
+    accept the string or `Path` object indicating the input item's
+    location as an additional positional argument.
+    - Each element of `ops` and `write_func` must each accept a
+    `defaultdict(dict)` object as an additional positional argument.
+    Functions defined in Creevey call this item `log_dict`.
+
+    Inside those functions, adding items to `log_dict[inpath]` causes
+    them to be added to the "run record" DataFrame that `self.run`
+    returns. See Creevey's README for further explanation.
+    """
+
     def _run_pipeline_func(self, inpath, outpath, log_dict):
         stage = self.load_func(inpath, log_dict)
         for op in self.ops:

@@ -7,25 +7,23 @@ from creevey.constants import PathOrStr
 from creevey.load_funcs import get_response
 
 
-def download_image(
-    url: str, log_dict: Optional[DefaultDict[str, dict]] = None
-) -> np.array:
+def download_image(inpath: str, **kwargs) -> np.array:
     """
     Download an image
 
+    `kwargs` is included only for compatibility with the
+    `CustomReportingPipeline` class.
+
     Parameters
     ----------
-    url
+    inpath
         Image URL
-    log_dict
-        Unused optional argument included in signature so that function
-        can be used in a `CustomReportingPipeline`
 
     Returns
     -------
     Image as NumPy array
     """
-    response = get_response(url)
+    response = get_response(inpath)
     image = _load_image_from_response(response)
     return image
 
@@ -36,21 +34,19 @@ def _load_image_from_response(response):
     return image
 
 
-def load_image(
-    path: PathOrStr, log_dict: Optional[DefaultDict[str, dict]] = None
-) -> np.array:
+def load_image(inpath: PathOrStr, **kwargs) -> np.array:
     """
     Load image from disk
 
     Assumes that image is RGB(A) if it has at least three channels.
 
+    `kwargs` is included only for compatibility with the
+    `CustomReportingPipeline` class.
+
     Parameters
     ----------
-    path
+    inpath
         Path to local image file
-    log_dict
-        Unused optional argument included in signature so that function
-        can be used in a `CustomReportingPipeline`
 
     Returns
     -------
@@ -61,9 +57,9 @@ def load_image(
     ValueError if image fails to load
     """
     # As of mid-2018 OpenCV is faster than Matplotlib or Pillow for IO
-    image = cv.imread(str(path), cv.IMREAD_UNCHANGED)
+    image = cv.imread(str(inpath), cv.IMREAD_UNCHANGED)
     if image is None:
-        raise ValueError(f'{path} failed to load')
+        raise ValueError(f'{inpath} failed to load')
 
     num_channels = 1 if len(image.shape) == 2 else image.shape[2]
     if num_channels >= 3:

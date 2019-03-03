@@ -7,17 +7,15 @@ import numpy as np
 from creevey.constants import PathOrStr
 
 
-def write_image(
-    image: np.array,
-    path: PathOrStr,
-    inpath: PathOrStr = None,
-    log_dict: DefaultDict[str, dict] = None,
-) -> None:
+def write_image(image: np.array, path: PathOrStr, **kwargs) -> None:
     """
     Write image to specified path
 
     Create output directory if it does not exist, with try/except for
     thread safety.
+
+    `kwargs` is included only for compatibility with the
+    `CustomReportingPipeline` class.
 
     Parameters
     ----------
@@ -25,12 +23,6 @@ def write_image(
         Image as a NumPy array
     path
         Desired output path
-    inpath
-        Unused optional argument included in signature so that function
-        can be used in a `CustomReportingPipeline`
-    log_dict
-        Unused optional argument included in signature so that function
-        can be used in a `CustomReportingPipeline`
     """
     outdir = Path(path).parent
     if not outdir.exists():

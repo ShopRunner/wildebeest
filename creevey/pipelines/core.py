@@ -122,10 +122,10 @@ class Pipeline:
             )
         else:
             if exceptions_to_catch is None:
-                self._run_pipeline_func(inpath, outpath, log_dict)
+                self._run_pipeline_func(inpath, outpath, log_dict=log_dict)
             else:
                 try:
-                    self._run_pipeline_func(inpath, outpath, log_dict)
+                    self._run_pipeline_func(inpath, outpath, log_dict=log_dict)
                 except exceptions_to_catch as e:
                     exception_handled = True
                     logging.error(e, inpath)
@@ -136,9 +136,10 @@ class Pipeline:
         inpath_logs['exception_handled'] = int(exception_handled)
         inpath_logs['time_finished'] = time.time()
 
-    def _run_pipeline_func(self, inpath, outpath, log_dict):
-        # Unused log_dict is included as input so that pipeline_func
-        # does not have to change in `CustomReportingPipeline`
+    def _run_pipeline_func(self, inpath, outpath, **kwargs):
+        # `kwargs` included to handle unused `log_dict` so that
+        # `pipeline_func` does not have to change in
+        # `CustomReportingPipeline`
         stage = self.load_func(inpath)
         for op in self.ops:
             stage = op(stage)
@@ -224,7 +225,7 @@ class CustomReportingPipeline(Pipeline):
     """
 
     def _run_pipeline_func(self, inpath, outpath, log_dict):
-        stage = self.load_func(inpath, log_dict)
+        stage = self.load_func(inpath, log_dict=log_dict)
         for op in self.ops:
-            stage = op(stage, inpath, log_dict)
-        self.write_func(stage, outpath, inpath, log_dict)
+            stage = op(stage, inpath=inpath, log_dict=log_dict)
+        self.write_func(stage, outpath, inpath=inpath, log_dict=log_dict)

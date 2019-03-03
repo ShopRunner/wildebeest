@@ -20,7 +20,7 @@ def _is_connection_error(exception):
     wait_exponential_max=10000,
     stop_max_attempt_number=10,
 )
-def get_response(url: str, log_dict: Optional[DefaultDict[str, dict]] = None) -> None:
+def get_response(url: str, **kwargs) -> None:
     """
     Make a GET request to the specified URL and return the response.
 
@@ -39,13 +39,13 @@ def get_response(url: str, log_dict: Optional[DefaultDict[str, dict]] = None) ->
     Raise `requests.exceptions.HTTPError` for other non-200 status
     codes.
 
+    `kwargs` is included only for compatibility with the
+    `CustomReportingPipeline` class.
+
     Parameters
     ----------
     url
         URL of file to download
-    log_dict
-        Unused optional argument included in signature so that function
-        can be used in a `CustomReportingPipeline`
     """
     session = _get_session()
     response = session.get(url)

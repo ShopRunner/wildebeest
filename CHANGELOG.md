@@ -5,7 +5,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 # [1.1.0] - 2019-03-02
 ### Added
-- Pipeline runs return "run reports"
+- `Pipeline` runs return "run reports"
+- `CustomReportingPipeline` class allows custom run report fields
 
 # [1.0.0] - 2019-02-23
 ### Changed

@@ -1,16 +1,72 @@
-from typing import Optional, Tuple
+from typing import DefaultDict, Optional, Tuple
 
 import cv2 as cv
 import numpy as np
+
+from creevey.constants import PathOrStr
+
+
+def record_mean_brightness(
+    image: np.array, inpath: PathOrStr, log_dict: DefaultDict[str, dict]
+) -> np.array:
+    """
+    Calculate mean image brightness
+
+    Image is assumed to be grayscale if it has a single channel, RGB if
+    it has three channels, RGBA if it has four. Brightness is calculated
+    by converting to grayscale if necessary and then taking the mean
+    pixel value.
+
+    Parameters
+    ----------
+    image
+    inpath
+        Image input path
+    log_dict
+        Dictionary of image metadata
+
+    Side effect
+    -----------
+    Adds a "mean_brightness" items to log_dict[inpath]
+    """
+    if len(image.shape) == 3:
+        num_bands = image.shape[2]
+    elif len(image.shape) == 2:
+        num_bands = 1
+    else:
+        raise ValueError('Image array must have two or three dimensions')
+
+    if num_bands == 1:
+        image_gray = image
+    elif num_bands == 3:
+        image_gray = cv.cvtColor(src=image, code=cv.COLOR_RGB2GRAY)
+    elif num_bands == 4:
+        image_gray = cv.cvtColor(src=image, code=cv.COLOR_RGBA2GRAY)
+    else:
+        raise ValueError(
+            f'{inpath} image has {num_bands} channels. Only 1-channel '
+            f'grayscale, 3-channel RGB, and 4-channel RGBA images are '
+            f'supported.'
+        )
+    log_dict[inpath]['mean_brightness'] = image_gray.mean()
+
+    return image
 
 
 def resize(
     image: np.array,
     shape: Optional[Tuple[int, int]] = None,
     min_dim: Optional[int] = None,
+    **kwargs,
 ) -> np.array:
     """
     Resize input image
+
+    `shape` or `min_dim` needs to be specified with `partial` before
+    this function can be used in a Creevey pipeline.
+
+    `kwargs` is included only for compatibility with the
+    `CustomReportingPipeline` class.
 
     Parameters
     ----------

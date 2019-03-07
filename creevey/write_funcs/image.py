@@ -6,12 +6,15 @@ import numpy as np
 from creevey.constants import PathOrStr
 
 
-def write_image(image: np.array, path: PathOrStr) -> None:
+def write_image(image: np.array, path: PathOrStr, **kwargs) -> None:
     """
     Write image to specified path
 
     Create output directory if it does not exist, with try/except for
     thread safety.
+
+    `kwargs` is included only for compatibility with the
+    `CustomReportingPipeline` class.
 
     Parameters
     ----------

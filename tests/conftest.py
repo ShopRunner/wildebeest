@@ -21,7 +21,7 @@ keep_filename_save_png_in_tempdir = partial(
 @pytest.fixture
 def generate_file_tree(scope='session'):
     if TEMP_DATA_DIR.exists():
-        rmtree(TEMP_DATA_DIR)
+        rmtree(str(TEMP_DATA_DIR))
     level0_dirs = ['tmp00', 'tmp01']
     level0_files = ['fake00.txt', 'fake01.png', 'fake02.JPG']
     for temp_dir in level0_dirs:
@@ -37,7 +37,7 @@ def generate_file_tree(scope='session'):
         filepath = level2_dirpath / filename
         filepath.touch()
     yield
-    rmtree(TEMP_DATA_DIR)
+    rmtree(str(TEMP_DATA_DIR))
 
 
 def delete_file_if_exists(path: Path):

@@ -7,7 +7,7 @@ import pandas as pd
 import pytest
 
 from creevey import Pipeline
-from creevey.load_funcs.image import download_image
+from creevey.load_funcs.image import load_image_from_url
 from creevey.ops.image import resize
 from creevey.write_funcs.image import write_image
 from tests.conftest import (
@@ -31,7 +31,7 @@ def trim_resize_pipeline():
     resize_224 = partial(resize, shape=IMAGE_RESIZE_SHAPE)
 
     trim_resize_pipeline = Pipeline(
-        load_func=download_image,
+        load_func=load_image_from_url,
         ops=[trim_bottom_100, resize_224],
         write_func=write_image,
     )

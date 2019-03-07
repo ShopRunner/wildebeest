@@ -3,7 +3,7 @@ from collections import defaultdict
 import numpy as np
 import pytest
 
-from creevey.load_funcs.image import load_image
+from creevey.load_funcs.image import load_image_from_disk
 from creevey.ops.image import record_mean_brightness, resize
 from tests.conftest import SAMPLE_DATA_DIR
 
@@ -12,7 +12,7 @@ from tests.conftest import SAMPLE_DATA_DIR
 def sample_image_square_rgb():
     filename = 'creevey_rgb.jpg'
     path = SAMPLE_DATA_DIR / filename
-    image = load_image(path)
+    image = load_image_from_disk(path)
     return image
 
 
@@ -20,7 +20,7 @@ def sample_image_square_rgb():
 def sample_image_tall_grayscale():
     filename = 'creevey_gray.jpg'
     path = SAMPLE_DATA_DIR / filename
-    image = load_image(path)
+    image = load_image_from_disk(path)
     return image
 
 
@@ -66,7 +66,6 @@ def test_resize_wide_with_min_dim(sample_image_tall_grayscale):
     assert actual_shape == expected_shape
 
 
-#
 def test_mean_brightness_grayscale(sample_image_tall_grayscale):
     log_dict = defaultdict(dict)
     image_path = SAMPLE_DATA_DIR / 'creevey_rgb.jpg'

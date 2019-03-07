@@ -12,7 +12,7 @@ For instance, the following code takes a list of image URLs and for each one dow
 from functools import partial
 
 from creevey import Pipeline
-from creevey.load_funcs.image import download_image
+from creevey.load_funcs.image import load_image_from_url
 from creevey.ops.image import resize
 from creevey.write_funcs.image import write_image
 from creevey.path_funcs import join_outdir_filename_extension
@@ -22,7 +22,7 @@ trim_bottom_100 = lambda image: image[:-100, :]
 resize_224 = partial(resize, shape=(224, 224))
 
 trim_resize_pipeline = Pipeline(
-    load_func=download_image, ops=[trim_bottom_100, resize_224], write_func=write_image
+    load_func=load_image_from_url, ops=[trim_bottom_100, resize_224], write_func=write_image
 )
 
 image_filenames = ['2RsJ8EQ', '2TqoToT', '2VocS58', '2scKPIp', '2TsO6Pc', '2SCv0q7']
@@ -99,9 +99,25 @@ Creevey provides concurrency through threading rather than multiprocessing, whic
 
 Creevey contains the following modules. Generally, each one has a submodule which shares its name that defines generic components and an `image` submodule that defines components for working with images. Items in the former are imported into the module namespace, so that you can write e.g. `from creevey.path_funcs import combine_outdir_dirname_extension` rather than `from creevey.path_funcs.path_funcs import combine_outdir_dirname_extension`.
 
+
 1. `pipelines` contains a `core` submodule that defines the `Pipeline` and `CustomReportingPipeline` classes in addition to submodules that define extensible instances of that class. The `Pipeline` class is also in the main `Creevey` namespace so that you can simply `from creevey import Pipeline`.
-1. `load_funcs` provides functions such as `download_image` for reading files into memory.
+1. `load_funcs` provides functions such as `load_image_from_url` for reading files into memory.
 1. `ops` provides functions such as `resize` for processing file contents after they have been loaded into memory.
 1. `write_funcs` provides functions such as `write_image` for writing out the output of `ops`.
 1. `path_funcs` provides functions such as `combine_outdir_dirname_extension` for deriving output paths from input paths.
 1. `util` contains utility functions that complement Creevey's core functionality, such as a function to generate a list of paths to all image files recursively within a specified directory.
+
+## Q&A
+
+### Question
+
+What if I want to download a file, write it to disk, do further processing on it, and then write it to disk again?
+
+### Response
+
+A Creevey pipeline starts with a `load_func` that loads an item into memory from a specified location (which can be e.g. a URL or a location on disk) and ends with a `write_func` that writes out an item to a specified location (which can be e.g. an S3 URI or a location on disk). If you want to write to disk twice as described, then you have two options: 
+
+1. Run two pipelines in succession, where the first downloads and writes to disk, and the second loads back in from disk, does the additional processing, and then writes to disk again.
+2. Create a `load_func` that writes to disk as a side effect.
+
+Option 2 is more efficient in theory because it avoids reading from disk. However, it is likely that you will need to iterate on your image processing, whereas you will only have to download and write to disk once. As a result, Option 1 can be more efficient in practice.

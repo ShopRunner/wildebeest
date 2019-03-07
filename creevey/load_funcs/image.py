@@ -5,7 +5,8 @@ from creevey.constants import PathOrStr
 from creevey.load_funcs import get_response
 
 
-def download_image(inpath: str, **kwargs) -> np.array:
+
+def load_image_from_url(inpath: str, **kwargs) -> np.array:
     """
     Download an image
 
@@ -28,11 +29,16 @@ def download_image(inpath: str, **kwargs) -> np.array:
 
 def _load_image_from_response(response):
     image = np.asarray(bytearray(response.content), dtype="uint8")
-    image = cv.imdecode(image, -1)  # load as-is, e.g. including alpha channel
+
+    # load all channels, including an alpha channel if present
+    load_all_channels_code = -1
+    image = cv.imdecode(image, flags=load_all_channels_code)
+
     return image
 
 
-def load_image(inpath: PathOrStr, **kwargs) -> np.array:
+
+def load_image_from_disk(inpath: PathOrStr, **kwargs) -> np.array:
     """
     Load image from disk
 

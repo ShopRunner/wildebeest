@@ -1,34 +1,45 @@
-import os
+from functools import partial
+from pathlib import Path
+from shutil import rmtree
+
+import pytest
+
+from creevey.path_funcs import join_outdir_filename_extension
 
 
-TEST_DIR = os.path.dirname(__file__)
-SAMPLE_DATA_DIR = os.path.join(TEST_DIR, 'sample_data')
+TEST_DIR = Path(__file__).parent
+SAMPLE_DATA_DIR = Path(TEST_DIR) / 'sample_data'
+TEMP_DATA_DIR = SAMPLE_DATA_DIR / 'tmp'
+IMAGE_FILENAMES = ['2RsJ8EQ', '2TqoToT', '2VocS58', '2scKPIp', '2TsO6Pc', '2SCv0q7']
+IMAGE_URLS = [f'https://bit.ly/{filename}' for filename in IMAGE_FILENAMES]
 
-MADEYE_IMAGE_URL = 'https://vignette.wikia.nocookie.net/p__/images/7/73/Mad-Eye_Moody%27s_%22mad_eye%22.jpeg/revision/latest?path-prefix=protagonist'  # noqa: E501
-STABLE_LOCAL_MADEYE_IMAGE_FILENAME = 'madeye.png'
-STABLE_LOCAL_MADEYE_IMAGE_PATH = os.path.join(
-    SAMPLE_DATA_DIR, STABLE_LOCAL_MADEYE_IMAGE_FILENAME
-)
-TEMP_LOCAL_MADEYE_IMAGE_FILENAME_DEFAULT = 'latest?path-prefix=protagonist.png'
-TEMP_LOCAL_MADEYE_IMAGE_PATH_DEFAULT = os.path.join(
-    SAMPLE_DATA_DIR, TEMP_LOCAL_MADEYE_IMAGE_FILENAME_DEFAULT
-)
-TEMP_LOCAL_MADEYE_IMAGE_FILENAME_CUSTOM = 'revision.png'
-TEMP_LOCAL_MADEYE_IMAGE_PATH_CUSTOM = os.path.join(
-    SAMPLE_DATA_DIR, TEMP_LOCAL_MADEYE_IMAGE_FILENAME_CUSTOM
+keep_filename_save_png_in_tempdir = partial(
+    join_outdir_filename_extension, outdir=TEMP_DATA_DIR, extension='.png'
 )
 
 
-PHILOSOPHERS_STONE_IMAGE_URL = 'https://vignette.wikia.nocookie.net/smurfsfanon/images/3/32/Philosopher%27s_Stone.jpg'
-STABLE_LOCAL_PHILOSOPHERS_STONE_IMAGE_FILENAME = 'philosophers_stone.png'
-STABLE_LOCAL_PHILOSOPHERS_STONE_IMAGE_PATH = os.path.join(
-    SAMPLE_DATA_DIR, STABLE_LOCAL_PHILOSOPHERS_STONE_IMAGE_FILENAME
-)
-TEMP_LOCAL_PHILOSOPHERS_STONE_IMAGE_FILENAME_DEFAULT = 'Philosopher%27s_Stone.png'
-TEMP_LOCAL_PHILOSOPHERS_STONE_IMAGE_PATH_DEFAULT = os.path.join(
-    SAMPLE_DATA_DIR, TEMP_LOCAL_PHILOSOPHERS_STONE_IMAGE_FILENAME_DEFAULT
-)
-TEMP_LOCAL_PHILOSOPHERS_STONE_IMAGE_FILENAME_CUSTOM = '32.png'
-TEMP_LOCAL_PHILOSOPHERS_STONE_IMAGE_PATH_CUSTOM = os.path.join(
-    SAMPLE_DATA_DIR, TEMP_LOCAL_PHILOSOPHERS_STONE_IMAGE_FILENAME_CUSTOM
-)
+@pytest.fixture
+def generate_file_tree(scope='session'):
+    if TEMP_DATA_DIR.exists():
+        rmtree(TEMP_DATA_DIR)
+    level0_dirs = ['tmp00', 'tmp01']
+    level0_files = ['fake00.txt', 'fake01.png', 'fake02.JPG']
+    for temp_dir in level0_dirs:
+        dirpath = TEMP_DATA_DIR / temp_dir
+        dirpath.mkdir(parents=True)
+    for filename in level0_files:
+        filepath = TEMP_DATA_DIR / filename
+        filepath.touch()
+    level2_dirpath = TEMP_DATA_DIR / level0_dirs[0] / 'temp10' / 'temp20'
+    level2_dirpath.mkdir(parents=True)
+    level3_files = ['fake30.pdf', 'fake31.BMP', 'fake32.txt']
+    for filename in level3_files:
+        filepath = level2_dirpath / filename
+        filepath.touch()
+    yield
+    rmtree(TEMP_DATA_DIR)
+
+
+def delete_file_if_exists(path: Path):
+    if path.is_file():
+        path.unlink()

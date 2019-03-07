@@ -25,7 +25,11 @@ def download_image(url: str) -> np.array:
 
 def _load_image_from_response(response):
     image = np.asarray(bytearray(response.content), dtype="uint8")
-    image = cv.imdecode(image, -1)  # load as-is, e.g. including alpha channel
+
+    # load all channels, including an alpha channel if present
+    load_all_channels_code = -1
+    image = cv.imdecode(image, flags=load_all_channels_code)
+
     return image
 
 

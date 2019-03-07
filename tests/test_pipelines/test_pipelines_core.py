@@ -5,7 +5,7 @@ import pandas as pd
 import pytest
 
 from creevey import CustomReportingPipeline
-from creevey.load_funcs.image import download_image
+from creevey.load_funcs.image import load_image_from_url
 from creevey.ops.image import record_mean_brightness
 from creevey.write_funcs.image import write_image
 from tests.conftest import (
@@ -24,7 +24,9 @@ def record_mean_brightness_pipeline():
         delete_file_if_exists(outpath)
 
     record_mean_brightness_pipeline = CustomReportingPipeline(
-        load_func=download_image, ops=record_mean_brightness, write_func=write_image
+        load_func=load_image_from_url,
+        ops=record_mean_brightness,
+        write_func=write_image,
     )
     yield record_mean_brightness_pipeline
     for url in IMAGE_URLS:

@@ -28,7 +28,7 @@ def sample_image_tall_grayscale():
 def sample_image_square_rgba():
     filename = 'creevey_rgba.png'
     path = SAMPLE_DATA_DIR / filename
-    image = load_image(path)
+    image = load_image_from_disk(path)
     return image
 
 

@@ -5,7 +5,6 @@ from creevey.constants import PathOrStr
 from creevey.load_funcs import get_response
 
 
-
 def load_image_from_url(inpath: str, **kwargs) -> np.array:
     """
     Download an image
@@ -35,7 +34,6 @@ def _load_image_from_response(response):
     image = cv.imdecode(image, flags=load_all_channels_code)
 
     return image
-
 
 
 def load_image_from_disk(inpath: PathOrStr, **kwargs) -> np.array:

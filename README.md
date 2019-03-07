@@ -113,3 +113,18 @@ Creevey contains the following modules. Generally, each one has a submodule whic
 1. `write_funcs` provides functions such as `write_image` for writing out the output of `ops`.
 1. `path_funcs` provides functions such as `combine_outdir_dirname_extension` for deriving output paths from input paths.
 1. `util` contains utility functions that complement Creevey's core functionality, such as a function to generate a list of paths to all image files recursively within a specified directory.
+
+## Q&A
+
+### Question
+
+What if I want to download a file, write it to disk, do further processing on it, and then write it to disk again?
+
+### Response
+
+A Creevey pipeline starts with a `load_func` that loads an item into memory from a specified location (which can be e.g. a URL or a location on disk) and ends with a `write_func` that writes out an item to a specified location (which can be e.g. an S3 URI or a location on disk). If you want to write to disk twice as described, then you have two options: 
+
+1. Run two pipelines in succession, where the first downloads and writes to disk, and the second loads back in from disk, does the additional processing, and then writes to disk again.
+2. Create a `load_func` that writes to disk as a side effect.
+
+Option 2 is more efficient in theory because it avoids reading from disk. However, it is likely that you will need to iterate on your image processing, whereas you will only have to download and write to disk once. As a result, Option 1 can be more efficient in practice.

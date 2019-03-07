@@ -12,7 +12,7 @@ For instance, this code takes a list of image URLs and for each one downloads th
 from functools import partial
 
 from creevey import Pipeline
-from creevey.load_funcs.image import download_image
+from creevey.load_funcs.image import load_image_from_url
 from creevey.ops.image import resize
 from creevey.write_funcs.image import write_image
 from creevey.path_funcs import join_outdir_filename_extension
@@ -22,7 +22,7 @@ trim_bottom_100 = lambda image: image[:-100, :]
 resize_224 = partial(resize, shape=(224, 224))
 
 trim_resize_pipeline = Pipeline(
-    load_func=download_image, ops=[trim_bottom_100, resize_224], write_func=write_image
+    load_func=load_image_from_url, ops=[trim_bottom_100, resize_224], write_func=write_image
 )
 
 image_filenames = ['2RsJ8EQ', '2TqoToT', '2VocS58', '2scKPIp', '2TsO6Pc', '2SCv0q7']
@@ -49,13 +49,13 @@ Here is the code that defines the `Pipeline` object in the snippet above:
  
 ```python
 trim_resize_pipeline = Pipeline(
-    load_func=download_image, ops=[trim_bottom_100, resize_224], write_func=write_image
+    load_func=load_image_from_url, ops=[trim_bottom_100, resize_224], write_func=write_image
 )
 ```
 
  A `Pipeline` object has three attributes:
  
-1. A function `load_func` that takes a string or Path object and returns some kind of data structure in memory. In this example, `download_image` takes an image URL and returns the contents of the corresponding image as a NumPy array.
+1. A function `load_func` that takes a string or Path object and returns some kind of data structure in memory. In this example, `load_image_from_url` takes an image URL and returns the contents of the corresponding image as a NumPy array.
 1. A list `ops` of single-argument functions that can be piped together, with the first taking the return value of `load_func` as its input. This example follows common practice for image data by using functions each of which takes a NumPy array and returns a NumPy array.
 1. A function `write_image` that takes the output of the last function in `ops` and writes it out to a specified location. In this example, `write_image` takes a NumPy array and writes it to disk.
  
@@ -108,7 +108,7 @@ Creevey provides concurrency through threading rather than multiprocessing, whic
 Creevey contains the following modules. Generally, each one has a submodule which shares its name that defines generic components and an `image` submodule that defines components for working with images. Items in the former are imported into the module namespace, so that you can write e.g. `from creevey.path_funcs import combine_outdir_dirname_extension` rather than `from creevey.path_funcs.path_funcs import combine_outdir_dirname_extension`.
 
 1. `pipelines` contains a `core` submodule that defines the `Pipeline` class in addition to submodules that define extensible instances of that class. The `Pipeline` class is also in the main `Creevey` namespace so that you can simply `from creevey import Pipeline`.
-1. `load_funcs` provides functions such as `download_image` for reading files into memory.
+1. `load_funcs` provides functions such as `load_image_from_url` for reading files into memory.
 1. `ops` provides functions such as `resize` for processing file contents after they have been loaded into memory.
 1. `write_funcs` provides functions such as `write_image` for writing out the output of `ops`.
 1. `path_funcs` provides functions such as `combine_outdir_dirname_extension` for deriving output paths from input paths.

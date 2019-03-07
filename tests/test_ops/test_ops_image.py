@@ -1,6 +1,6 @@
 import pytest
 
-from creevey.load_funcs.image import load_image
+from creevey.load_funcs.image import load_image_from_disk
 from creevey.ops.image import resize
 from tests.conftest import SAMPLE_DATA_DIR
 
@@ -9,7 +9,7 @@ from tests.conftest import SAMPLE_DATA_DIR
 def sample_image():
     filename = 'creevey_rgb.jpg'
     path = SAMPLE_DATA_DIR / filename
-    image = load_image(path)
+    image = load_image_from_disk(path)
     return image
 
 
@@ -17,7 +17,7 @@ def sample_image():
 def sample_image_tall():
     filename = 'creevey_gray.jpg'
     path = SAMPLE_DATA_DIR / filename
-    image = load_image(path)
+    image = load_image_from_disk(path)
     return image
 
 

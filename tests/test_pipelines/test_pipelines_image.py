@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import pytest
 
 from creevey import Pipeline
-from creevey.load_funcs.image import download_image
+from creevey.load_funcs.image import load_image_from_url
 from creevey.ops.image import resize
 from creevey.path_funcs import join_outdir_filename_extension
 from creevey.write_funcs.image import write_image
@@ -31,7 +31,7 @@ def trim_resize_pipeline():
     resize_224 = partial(resize, shape=IMAGE_SHAPE)
 
     trim_resize_pipeline = Pipeline(
-        load_func=download_image,
+        load_func=load_image_from_url,
         ops=[trim_bottom_100, resize_224],
         write_func=write_image,
     )

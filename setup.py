@@ -25,6 +25,7 @@ dev_packages = [
     'flake8',
     'flake8-docstrings',
     'flake8-import-order',
+    'matplotlib',
     'pytest',
     'pytest-cov',
 ]

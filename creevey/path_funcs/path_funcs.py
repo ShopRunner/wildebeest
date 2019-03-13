@@ -31,4 +31,4 @@ def join_outdir_filename_extension(
 
 
 def replace_dir(path: PathOrStr, outdir: PathOrStr) -> Path:
-    return outdir / path.name
+    return Path(outdir) / Path(path).name

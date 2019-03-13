@@ -3,6 +3,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
+# [1.2.2] - 2019-03-10
+### Fixed
+- Added empty `__init__.py` files, the absence of which seems to be causing problems when installing from PyPI.
+- Converted some `Path` objects to strings where required in Python 3.6.
+
 # [1.2.1] - 2019-03-10
 ### Fixed
 - Handled string path inputs in `replace_dir`

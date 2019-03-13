@@ -29,7 +29,7 @@ def find_files_with_extensions(
     extensions = [item if item.startswith('.') else '.' + item for item in extensions]
     file_list = [
         Path(dirpath) / fn
-        for dirpath, dirname, filenames in os.walk(str(search_dir))
+        for dirpath, dirname, filenames in os.walk(search_dir)
         for fn in filenames
         if Path(fn).suffix.lower() in extensions
     ]

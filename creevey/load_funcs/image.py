@@ -30,7 +30,7 @@ def _load_image_from_response(response):
     image = np.asarray(bytearray(response.content), dtype="uint8")
     image = cv.imdecode(image, cv.IMREAD_UNCHANGED)
     if image is None:
-        raise ValueError(f'{inpath} failed to load')
+        raise ValueError(f'{response.url} failed to load')
     _convert_to_rgb_if_needed(image)
 
     return image

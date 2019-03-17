@@ -50,7 +50,7 @@ def creevey_rgba_local():
 
 
 @pytest.fixture
-def creevey_rgb_remote():
+def creevey_rgba_remote():
     filename = 'creevey_rgba.png'
     url = f'{SAMPLE_DATA_BASE_URL}/{filename}'
     image = load_image_from_url(url)
@@ -125,5 +125,5 @@ def test_load_image_from_url_rgb(creevey_rgb_local, creevey_rgb_remote):
     np.testing.assert_equal(creevey_rgb_local, creevey_rgb_remote)
 
 
-def test_load_image_from_url_rgb(creevey_gray_local, creevey_gray_remote):
-    np.testing.assert_equal(creevey_gray_remote, creevey_gray_local)
+def test_load_image_from_url_rgba(creevey_rgba_local, creevey_rgba_remote):
+    np.testing.assert_equal(creevey_rgba_local, creevey_rgba_remote)

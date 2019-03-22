@@ -28,10 +28,10 @@ def load_image_from_url(inpath: str, **kwargs) -> np.array:
 
 def _load_image_from_response(response):
     image = np.asarray(bytearray(response.content), dtype="uint8")
-
-    # load all channels, including an alpha channel if present
-    load_all_channels_code = -1
-    image = cv.imdecode(image, flags=load_all_channels_code)
+    image = cv.imdecode(image, cv.IMREAD_UNCHANGED)
+    if image is None:
+        raise ValueError(f'{response.url} failed to load')
+    _convert_to_rgb_if_needed(image)
 
     return image
 
@@ -62,7 +62,17 @@ def load_image_from_disk(inpath: PathOrStr, **kwargs) -> np.array:
     image = cv.imread(str(inpath), cv.IMREAD_UNCHANGED)
     if image is None:
         raise ValueError(f'{inpath} failed to load')
+    _convert_to_rgb_if_needed(image)
+    return image
 
+
+def _convert_to_rgb_if_needed(image: np.array) -> np.array:
+    """
+    Reverse order of first three channels if image has at least three
+
+    Used as a helper function when loading images with OpenCV, which
+    uses BGR channel ordering rather than the more common RGB.
+    """
     num_channels = 1 if len(image.shape) == 2 else image.shape[2]
     if num_channels >= 3:
         # OpenCV loads as BGR, so reverse order of first three channels

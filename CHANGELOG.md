@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
+# [1.2.3] - 2019-03-17
+### Fixed
+- Load color channels from URL in RGB order
+
 # [1.2.2] - 2019-03-10
 ### Fixed
 - Added empty `__init__.py` files, the absence of which seems to be causing problems when installing from PyPI.

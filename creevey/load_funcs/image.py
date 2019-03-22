@@ -66,7 +66,7 @@ def load_image_from_disk(inpath: PathOrStr, **kwargs) -> np.array:
     return image
 
 
-def _convert_to_rgb_if_needed(image: np.array):
+def _convert_to_rgb_if_needed(image: np.array) -> np.array:
     """
     Reverse order of first three channels if image has at least three
 

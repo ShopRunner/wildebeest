@@ -67,6 +67,12 @@ def load_image_from_disk(inpath: PathOrStr, **kwargs) -> np.array:
 
 
 def _convert_to_rgb_if_needed(image: np.array):
+    """
+    Reverse order of first three channels if image has at least three
+
+    Used as a helper function when loading images with OpenCV, which
+    uses BGR channel ordering rather than the more common RGB.
+    """
     num_channels = 1 if len(image.shape) == 2 else image.shape[2]
     if num_channels >= 3:
         # OpenCV loads as BGR, so reverse order of first three channels

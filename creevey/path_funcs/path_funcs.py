@@ -48,6 +48,8 @@ def join_outdir_hashed_path_extension(
     """
     filename = str(uuid.uuid5(uuid.NAMESPACE_DNS, str(path)))
     filename = filename.replace('-', '')
+    if extension is None:
+        extension = path.suffix
     outpath = join_outdir_filename_extension(filename, outdir, extension)
     return outpath
 

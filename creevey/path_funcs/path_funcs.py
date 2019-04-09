@@ -1,13 +1,16 @@
 from pathlib import Path
+from typing import Optional
+import uuid
 
 from creevey.constants import PathOrStr
 
 
 def join_outdir_filename_extension(
-    path: PathOrStr, outdir: PathOrStr, extension: str
+    path: PathOrStr, outdir: PathOrStr, extension: Optional[str] = None
 ) -> Path:
     """
-    Join `outdir`, `path` filename, and `extension`
+    Construct path by combining specified `outdir`, filename from
+    `path`, and (optionally) specified extension
 
     Parameters
     ----------
@@ -16,17 +19,36 @@ def join_outdir_filename_extension(
     outdir
         Desired output directory
     extension
-        Desired output file extension
-
-    Returns
-    -------
-    Path object that results from joining input `outdir` with filename
-    from input `path` with input `extension`.
+        Desired output file extension. If `None`, keep extension from
+        `path`.
     """
     filename = Path(Path(path).name)
-    extension = extension if extension.startswith('.') else '.' + extension
-    filename_with_ext = filename.stem + extension
-    outpath = Path(outdir) / filename_with_ext
+    if extension is not None:
+        extension = extension if extension.startswith('.') else '.' + extension
+        filename = filename.stem + extension
+    outpath = Path(outdir) / filename
+    return outpath
+
+
+def join_outdir_hashed_path_extension(
+    path: PathOrStr, outdir: PathOrStr, extension: Optional[str] = None
+) -> Path:
+    """
+    Construct path by combining specified `outdir`, filename derived by
+    hashing `path`, and (optionally) specified extension.
+
+    Parameters
+    ----------
+    path
+        Input path to be hashed to generate output filename
+    outdir
+        Desired output directory
+    extension
+        Desired output extension. If `None`, keep extension from `path`.
+    """
+    filename = str(uuid.uuid5(uuid.NAMESPACE_DNS, str(path)))
+    filename = filename.replace('-', '')
+    outpath = join_outdir_filename_extension(filename, outdir, extension)
     return outpath
 
 

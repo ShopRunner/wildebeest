@@ -174,7 +174,7 @@ class Pipeline:
         skip_existing
             Boolean indicating whether to skip items that would result
             in overwriting an existing file or to overwrite any such
-            files. Log a warning for any files that are skipped.
+            files.
         exceptions_to_catch
             Tuple of exception types to catch. An exception of one of
             these types will be logged with logging level ERROR and the

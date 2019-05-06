@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
+# [1.3.1] - 201-5-6
+### Changed
+ - Instead of logging a warning for every file skipped, warn once up front and log with level DEBUG.
+
 # [1.3.0] - 201-4-9
 ### Added
  - Function to generate unique filenames from input paths, outdir, extension

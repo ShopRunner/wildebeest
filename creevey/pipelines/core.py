@@ -87,8 +87,7 @@ class Pipeline:
         If `skip_existing` is `True`, check up front whether
         `outpath_func(inpath)` exists. If it does, skip the file.
 
-        Catch
-        if they arise during file processing.
+        Catch `exceptions_to_catch` if they arise during file processing.
 
         Parameters
         ----------
@@ -116,7 +115,7 @@ class Pipeline:
 
         if skip_existing and Path(outpath).is_file():
             skipped_existing = True
-            logging.warning(
+            logging.debug(
                 f'Skipping {inpath} because there is already a file at corresponding '
                 f'output path {outpath}'
             )
@@ -175,11 +174,15 @@ class Pipeline:
         skip_existing
             Boolean indicating whether to skip items that would result
             in overwriting an existing file or to overwrite any such
-            files. Log a warning for any files that are skipped.
+            files.
         exceptions_to_catch
             Tuple of exception types to catch. An exception of one of
             these types will be logged with logging level ERROR and the
             relevant file will be skipped.
+
+        Side effects
+        ------------
+        Logs a warning when `skip_existing` is `True`.
 
         Returns
         -------
@@ -191,6 +194,13 @@ class Pipeline:
         `exceptions_to_catch` ("exception_handled"), and a timestamp
         indicating when processing complete ("time_finished").
         """
+        if skip_existing:
+            logging.warning(
+                'Skipping files that where a file exists at the output '
+                'location. Pass `skip_existing=False` to overwrite '
+                'existing files instead.'
+            )
+
         log_dict = defaultdict(dict)
 
         Parallel(n_jobs=n_jobs, prefer='threads')(

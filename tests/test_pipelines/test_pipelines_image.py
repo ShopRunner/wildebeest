@@ -87,7 +87,7 @@ def test_skip_existing(trim_resize_pipeline, caplog):
             actual_run_report.sort_index().drop('time_finished', axis='columns'),
             expected_run_report.sort_index(),
         )
-        assert len(caplog.records) == len(IMAGE_URLS)
+        assert len(caplog.records) == 1
         assert caplog.records[0].levelname == 'WARNING'
 
 

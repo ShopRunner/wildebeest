@@ -1,10 +1,10 @@
-import os
+import re
 from setuptools import find_packages, setup
 
-version_file_path = os.path.join(os.path.dirname(__file__), 'creevey', '_version.py')
+with open('CHANGELOG.md', 'r') as f:
+    changelog = f.read()
 
-with open(version_file_path, 'r') as version_file:
-    exec(version_file.read())
+__version__ = re.search(r'\[(\d+\.\d+\.\d+)\]', changelog).group(1)
 
 with open('README.md') as r:
     readme = r.read()

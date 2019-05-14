@@ -3,15 +3,15 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
-# [1.3.2] - 201-5-10
+# [1.3.2] - 2019-5-10
 ### Changed
  - Read version number from CHANGELOG.md in setup.py and _version.py
 
-# [1.3.1] - 201-5-6
+# [1.3.1] - 2019-5-6
 ### Changed
  - Instead of logging a warning for every file skipped, warn once up front and log with level DEBUG.
 
-# [1.3.0] - 201-4-9
+# [1.3.0] - 2019-4-9
 ### Added
  - Function to generate unique filenames from input paths, outdir, extension
  - Ability to keep original extension with using `join_outdir_filename_extension`

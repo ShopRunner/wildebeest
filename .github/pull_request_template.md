@@ -8,4 +8,5 @@ Pull Request Checklist
  - [ ] `black creevey tests --skip-string-normalization` leaves all files unchanged.
  - [ ] `flake8 creevey tests` passes locally.
  - [ ] CHANGELOG has been updated.
+ - [ ] _version.py has been updated.
  - [ ] README and docs have been updated (if applicable).

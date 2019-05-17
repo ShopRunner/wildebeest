@@ -1,10 +1,10 @@
-import re
+from pathlib import Path
 from setuptools import find_packages, setup
 
-with open('CHANGELOG.md', 'r') as f:
-    changelog = f.read()
+version_file_path = Path(__file__).parent/ 'newt' / '_version.py'
 
-__version__ = re.search(r'\[(\d+\.\d+\.\d+)\]', changelog).group(1)
+with open(version_file_path, 'r') as version_file:
+    exec(version_file.read())
 
 with open('README.md') as r:
     readme = r.read()

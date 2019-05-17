@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
+# [1.3.3] - 2019-5-17
+### Changed
+ - Revert reading version number from CHANGELOG.md in setup.py and _version.py
+
 # [1.3.2] - 2019-5-10
 ### Changed
  - Read version number from CHANGELOG.md in setup.py and _version.py

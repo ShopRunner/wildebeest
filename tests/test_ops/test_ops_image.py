@@ -103,17 +103,23 @@ def test_mean_brightness_rgba(sample_image_square_rgba):
 
 def test_centercrop_square_rgb(sample_image_square_rgb):
     expected_shape = (16, 16, 3)
-    actual_shape = centercrop(sample_image_square_rgb, 0.5).shape
+    actual_shape = centercrop(sample_image_square_rgb, reduction_factor=0.5).shape
     assert expected_shape == actual_shape
 
 
 def test_centercrop_tall_greyscale(sample_image_tall_grayscale):
     expected_shape = (17, 12)
-    actual_shape = centercrop(sample_image_tall_grayscale, 0.5).shape
+    actual_shape = centercrop(sample_image_tall_grayscale, reduction_factor=0.5).shape
     assert expected_shape == actual_shape
 
 
 def test_centercrop_square_rgba(sample_image_square_rgba):
     expected_shape = (16, 16, 4)
-    actual_shape = centercrop(sample_image_square_rgba, 0.5).shape
+    actual_shape = centercrop(sample_image_square_rgba, reduction_factor=0.5).shape
+    assert expected_shape == actual_shape
+
+
+def test_centercrop_reduction_factor(sample_image_square_rgb):
+    expected_shape = (19, 19, 3)
+    actual_shape = centercrop(sample_image_square_rgb, reduction_factor=0.6).shape
     assert expected_shape == actual_shape

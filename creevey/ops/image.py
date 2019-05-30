@@ -129,7 +129,11 @@ def centercrop(img_array: np.array, reduction_factor: float):
     -------
     Slice of input image corresponding to a cropped area around the center
     """
-    height, width, channels = img_array.shape
+    if len(img_array.shape) == 2:
+        height, width = img_array.shape
+    else:
+        height, width, channels = img_array.shape
+
     w_scale = width * reduction_factor
     h_scale = height * reduction_factor
 
@@ -139,4 +143,4 @@ def centercrop(img_array: np.array, reduction_factor: float):
     bottom = int((height + h_scale) // 2)
     print(left, top, right, bottom)
 
-    return img_array[top:bottom, left:right, :]
+    return img_array[top:bottom, left:right]

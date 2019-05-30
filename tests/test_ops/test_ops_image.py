@@ -4,7 +4,7 @@ import numpy as np
 import pytest
 
 from creevey.load_funcs.image import load_image_from_disk
-from creevey.ops.image import record_mean_brightness, resize
+from creevey.ops.image import centercrop, record_mean_brightness, resize
 from tests.conftest import SAMPLE_DATA_DIR
 
 
@@ -99,3 +99,21 @@ def test_mean_brightness_rgba(sample_image_square_rgba):
         sample_image_square_rgba, inpath=image_path, log_dict=log_dict
     )
     assert isinstance(log_dict[image_path]['mean_brightness'], float)
+
+
+def test_centercrop_square_rgb(sample_image_square_rgb):
+    expected_shape = (16, 16, 3)
+    actual_shape = centercrop(sample_image_square_rgb, .5).shape
+    assert expected_shape == actual_shape
+
+
+def test_centercrop_tall_greyscale(sample_image_tall_grayscale):
+    expected_shape = (17, 12)
+    actual_shape = centercrop(sample_image_tall_grayscale, .5).shape
+    assert expected_shape == actual_shape
+
+
+def test_centercrop_square_rgba(sample_image_square_rgba):
+    expected_shape = (16, 16, 4)
+    actual_shape = centercrop(sample_image_square_rgba, .5).shape
+    assert expected_shape == actual_shape

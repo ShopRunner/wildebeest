@@ -119,8 +119,8 @@ def centercrop(img_array: np.array, reduction_factor: float):
     Parameters
     ----------
     img_array:
-        Numpy array of an image. application of the crop
-        requires the array to have shape (height, width, channels)
+        Numpy array of an image. Function will handle 2D greyscale
+        images, RGB, and RGBA image arrays
     reduction_factor: float
         scale of center cropped box, 1.0 would be the full image
         value of .4 means a box of .4*width and .4*height

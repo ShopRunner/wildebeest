@@ -110,3 +110,33 @@ def _find_min_dim_shape(image, min_dim):
         out_height = min_dim
         out_width = round(out_height * aspect_ratio, 1)
     return (int(out_height), int(out_width))
+
+
+def centercrop(img_array: np.array, reduction_factor: float):
+    """
+    Crop the center out of an image
+
+    Parameters
+    ----------
+    img_array:
+        Numpy array of an image. application of the crop
+        requires the array to have shape (height, width, channels)
+    reduction_factor: float
+        scale of center cropped box, 1.0 would be the full image
+        value of .4 means a box of .4*width and .4*height
+
+    Returns
+    -------
+    Slice of input image corresponding to a cropped area around the center
+    """
+    height, width, channels = img_array.shape
+    w_scale = width * reduction_factor
+    h_scale = height * reduction_factor
+
+    left = int((width - w_scale) // 2)
+    top = int((height - h_scale) // 2)
+    right = int((width + w_scale) // 2)
+    bottom = int((height + h_scale) // 2)
+    print(left, top, right, bottom)
+
+    return img_array[top:bottom, left:right, :]

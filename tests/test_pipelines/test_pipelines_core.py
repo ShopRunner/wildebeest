@@ -56,9 +56,9 @@ def test_custom_reporting_pipeline(record_mean_brightness_pipeline):
         skip_existing=False,
     )
     pd.testing.assert_frame_equal(
-        actual_run_report.sort_index().drop(
-            ['time_finished', 'mean_brightness'], axis='columns'
-        ),
-        expected_run_report.sort_index(),
+        actual_run_report.sort_index(axis='index')
+        .sort_index(axis='columns')
+        .drop(['time_finished', 'mean_brightness'], axis='columns'),
+        expected_run_report.sort_index(axis='index').sort_index(axis='columns'),
     )
     assert np.issubdtype(actual_run_report.loc[:, 'mean_brightness'], np.number)

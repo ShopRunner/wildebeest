@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 # [1.4.2] - 2019-6-17
+### Changed
+ - provide one script to run pre-merge checks
+ - refine PR checklist
 ### Fixed
  - typo in README
 

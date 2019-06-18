@@ -5,7 +5,7 @@ Pull Request Checklist
  - [ ] Pull request includes a description of the change and the reason behind it.
  - [ ] Pull request includes unit tests for any new functionality. 
  - [ ] `./.ci/test.sh` passes locally.
- - [ ] `README.md` and other docs have been updated  as needed.
+ - [ ] `README.md` and other docs have been updated as needed.
 
 Maintainer's responsibilities 
  - [ ] `CHANGELOG.md` has been updated.

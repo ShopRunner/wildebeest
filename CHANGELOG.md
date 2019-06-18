@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
  - refine PR checklist
 ### Fixed
  - typo in README
+ - typo in `skip_existing=True` warning message
 
 # [1.4.1] - 2019-5-31
 ### Fixed

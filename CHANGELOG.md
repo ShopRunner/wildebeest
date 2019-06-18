@@ -3,6 +3,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
+# [1.4.2] - 2019-6-17
+### Changed
+ - provide one script to run pre-merge checks
+ - refine PR checklist
+### Fixed
+ - typo in README
+ - typo in `skip_existing=True` warning message
+
 # [1.4.1] - 2019-5-31
 ### Fixed
  - Sort actual and expected DataFrames by column name in `test_custom_reporting_pipeline` to avoid uninteresting indeterministic failure.

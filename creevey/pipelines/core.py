@@ -196,7 +196,7 @@ class Pipeline:
         """
         if skip_existing:
             logging.warning(
-                'Skipping files that where a file exists at the output '
+                'Skipping files where a file exists at the output '
                 'location. Pass `skip_existing=False` to overwrite '
                 'existing files instead.'
             )

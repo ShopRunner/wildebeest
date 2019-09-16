@@ -69,7 +69,7 @@ def _check_status(url, response):
             f'Failed to download {url} with status code {response.status_code}'
         )
     else:
-        requests.raise_for_status()
+        response.raise_for_status()
 
 
 class _HTTPErrorToRetry(requests.exceptions.HTTPError):

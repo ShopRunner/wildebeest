@@ -28,6 +28,7 @@ dev_packages = [
     'matplotlib',
     'pytest',
     'pytest-cov',
+    'responses',
 ]
 
 

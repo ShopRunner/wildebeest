@@ -112,7 +112,7 @@ def _find_min_dim_shape(image, min_dim):
     return (int(out_height), int(out_width))
 
 
-def centercrop(image: np.array, reduction_factor: float, **kwargs):
+def centercrop(image: np.array, reduction_factor: float, **kwargs) -> np.array:
     """
     Crop the center out of an image
 

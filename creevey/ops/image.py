@@ -121,7 +121,7 @@ def centercrop(image: np.array, reduction_factor: float, **kwargs) -> np.array:
 
     Parameters
     ----------
-    img_array:
+    image:
         Numpy array of an image. Function will handle 2D greyscale
         images, RGB, and RGBA image arrays
     reduction_factor: float

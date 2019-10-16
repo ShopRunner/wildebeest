@@ -153,9 +153,11 @@ def trim_padding(
 
     Remove rows and columns on the edges of the input image where all
     pixel values satisfy `comparison_op` with respect to `threshold`.
-    For instance, for an image with pixel values between 0 and 1, using
-    `threshold=.95` and `comparison_op=operator.gt` will remove
-    near-white padding, while using using `threshold=.5` and
+    For instance, for an RGB image with pixel values between 0 and 1,
+    using `threshold=.95` and `comparison_op=operator.gt` will result in
+    removing near-white padding (pixel values in all 3 channels greater
+    than .95 for all pixels in a block of rows or columns at the edge of
+    the image), while using using `threshold=.05` and
     `comparison_op=operator.lt` will remove near-black padding.
 
     `kwargs` is included only for compatibility with the
@@ -166,12 +168,14 @@ def trim_padding(
     image
         Numpy array of an image. Function will handle 2D greyscale
         images, RGB, and RGBA image arrays
-    reduction_factor
-        scale of center cropped box, 1.0 would be the full image
-        value of .4 means a box of .4*width and .4*height
+    threshold
+        Value to compare pixel values against
+    comparison_op
+        How to compare pixel values to `threshold`
 
     Returns
     -------
-    Slice of input image corresponding to a cropped area around the center
+    Slice of input image corresponding to a cropped area with padding
+    removed
     """
     return image

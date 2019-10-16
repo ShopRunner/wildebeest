@@ -1,4 +1,4 @@
-from typing import DefaultDict, Optional, Tuple
+from typing import Callable, DefaultDict, Optional, Tuple
 
 import cv2 as cv
 import numpy as np
@@ -112,7 +112,7 @@ def _find_min_dim_shape(image, min_dim):
     return (int(out_height), int(out_width))
 
 
-def centercrop(image: np.array, reduction_factor: float, **kwargs):
+def centercrop(image: np.array, reduction_factor: float, **kwargs) -> np.array:
     """
     Crop the center out of an image
 
@@ -121,7 +121,7 @@ def centercrop(image: np.array, reduction_factor: float, **kwargs):
 
     Parameters
     ----------
-    img_array:
+    image:
         Numpy array of an image. Function will handle 2D greyscale
         images, RGB, and RGBA image arrays
     reduction_factor: float
@@ -143,3 +143,35 @@ def centercrop(image: np.array, reduction_factor: float, **kwargs):
     bottom = int((height + h_scale) // 2)
 
     return image[top:bottom, left:right]
+
+
+def trim_padding(
+    image: np.array, threshold: int, comparison_op: Callable, **kwargs
+) -> np.array:
+    """
+    Remove padding from an image
+
+    Remove rows and columns on the edges of the input image where all
+    pixel values satisfy `comparison_op` with respect to `threshold`.
+    For instance, for an image with pixel values between 0 and 1, using
+    `threshold=.95` and `comparison_op=operator.gt` will remove
+    near-white padding, while using using `threshold=.5` and
+    `comparison_op=operator.lt` will remove near-black padding.
+
+    `kwargs` is included only for compatibility with the
+    `CustomReportingPipeline` class.
+
+    Parameters
+    ----------
+    img_array:
+        Numpy array of an image. Function will handle 2D greyscale
+        images, RGB, and RGBA image arrays
+    reduction_factor: float
+        scale of center cropped box, 1.0 would be the full image
+        value of .4 means a box of .4*width and .4*height
+
+    Returns
+    -------
+    Slice of input image corresponding to a cropped area around the center
+    """
+    return image

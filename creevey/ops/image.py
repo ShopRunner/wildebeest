@@ -121,10 +121,10 @@ def centercrop(image: np.array, reduction_factor: float, **kwargs) -> np.array:
 
     Parameters
     ----------
-    image:
+    image
         Numpy array of an image. Function will handle 2D greyscale
         images, RGB, and RGBA image arrays
-    reduction_factor: float
+    reduction_factor
         scale of center cropped box, 1.0 would be the full image
         value of .4 means a box of .4*width and .4*height
 
@@ -163,10 +163,10 @@ def trim_padding(
 
     Parameters
     ----------
-    img_array:
+    image
         Numpy array of an image. Function will handle 2D greyscale
         images, RGB, and RGBA image arrays
-    reduction_factor: float
+    reduction_factor
         scale of center cropped box, 1.0 would be the full image
         value of .4 means a box of .4*width and .4*height
 

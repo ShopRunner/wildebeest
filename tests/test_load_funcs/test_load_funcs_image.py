@@ -2,8 +2,8 @@ from unittest import mock
 
 import numpy as np
 import pytest
-import responses
 from requests.exceptions import HTTPError
+import responses
 
 from creevey.load_funcs.image import load_image_from_disk, load_image_from_url
 from tests.conftest import SAMPLE_DATA_DIR
@@ -18,19 +18,11 @@ def test_load_error_406():
     filename = 'creevey_gray.jpg'
     url = f'{SAMPLE_DATA_BASE_URL}/{filename}'
 
-    responses.add(
-        responses.GET,
-        url,
-        status=406,
-    )
+    responses.add(responses.GET, url, status=406)
 
     with pytest.raises(HTTPError):
-        with mock.patch(
-            'requests.Response',
-        ):
-            result = load_image_from_url(
-                inpath=url,
-            )
+        with mock.patch('requests.Response'):
+            result = load_image_from_url(inpath=url)
 
         assert result.status_code == 406
 

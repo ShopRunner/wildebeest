@@ -1,7 +1,7 @@
 from pathlib import Path
 from setuptools import find_packages, setup
 
-version_file_path = Path(__file__).parent/ 'creevey' / '_version.py'
+version_file_path = Path(__file__).parent / 'creevey' / '_version.py'
 
 with open(version_file_path, 'r') as version_file:
     exec(version_file.read())

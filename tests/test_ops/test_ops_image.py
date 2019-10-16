@@ -66,6 +66,10 @@ def test_resize_wide_with_min_dim(sample_image_tall_grayscale):
     assert actual_shape == expected_shape
 
 
+def test_resize_accepts_custom_reporting_args(sample_image_square_rgb):
+    resize(sample_image_square_rgb, shape=(5, 8), inpath='fake', log_dict={})
+
+
 def test_mean_brightness_grayscale(sample_image_tall_grayscale):
     log_dict = defaultdict(dict)
     image_path = SAMPLE_DATA_DIR / 'creevey_rgb.jpg'
@@ -123,3 +127,9 @@ def test_centercrop_reduction_factor(sample_image_square_rgb):
     expected_shape = (19, 19, 3)
     actual_shape = centercrop(sample_image_square_rgb, reduction_factor=0.6).shape
     assert expected_shape == actual_shape
+
+
+def test_centercrop_accepts_custom_reporting_args(sample_image_square_rgb):
+    centercrop(
+        sample_image_square_rgb, reduction_factor=0.5, inpath='fake', log_dict={}
+    )

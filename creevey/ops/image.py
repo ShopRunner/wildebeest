@@ -153,10 +153,10 @@ def trim_padding(
 
     Remove rows and columns on the edges of the input image where the
     brightness on a scale of 0 to 1 satisfies `comparison_op` with
-    respect to `threshold`. Brightness is evaluated by converting to
+    respect to `thresh`. Brightness is evaluated by converting to
     grayscale and normalizing if necessary. For instance, using
-    `threshold=.95` and `comparison_op=operator.gt` will result in
-    removing near-white padding, while using using `threshold=.05` and
+    `thresh=.95` and `comparison_op=operator.gt` will result in removing
+    near-white padding, while using using `thresh=.05` and
     `comparison_op=operator.lt` will remove near-black padding.
 
     `kwargs` is included only for compatibility with the

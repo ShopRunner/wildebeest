@@ -187,18 +187,14 @@ def test_trim_padding_grayscale(sample_image_tall_grayscale):
 
 
 def test_trim_black_padding_rgb(sample_image_square_rgb):
-    im_padded = _add_black_padding(sample_image_square_rgb)
+    im_padded = cv.copyMakeBorder(
+        src=sample_image_square_rgb,
+        top=np.random.randint(1, 100),
+        bottom=np.random.randint(1, 100),
+        left=np.random.randint(1, 100),
+        right=np.random.randint(1, 100),
+        borderType=cv.BORDER_CONSTANT,
+        value=3,
+    )
     actual = trim_padding(im_padded, thresh=0.05, comparison_op=operator.lt)
     np.testing.assert_almost_equal(actual, sample_image_square_rgb)
-
-
-def _add_black_padding(im):
-    l_pad = np.random.randint(1, 100)
-    r_pad = np.random.randint(1, 100)
-    t_pad = np.random.randint(1, 100)
-    b_pad = np.random.randint(1, 100)
-    im_padded = np.zeros(
-        (t_pad + im.shape[0] + b_pad, l_pad + im.shape[1] + r_pad, 3), dtype=np.float32
-    )
-    im_padded[t_pad : t_pad + im.shape[0], l_pad : l_pad + im.shape[1]] = im
-    return im_padded

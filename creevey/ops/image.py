@@ -1,4 +1,4 @@
-from typing import DefaultDict, Optional, Tuple
+from typing import Callable, DefaultDict, Optional, Tuple
 
 import cv2 as cv
 import numpy as np
@@ -112,7 +112,7 @@ def _find_min_dim_shape(image, min_dim):
     return (int(out_height), int(out_width))
 
 
-def centercrop(image: np.array, reduction_factor: float, **kwargs):
+def centercrop(image: np.array, reduction_factor: float, **kwargs) -> np.array:
     """
     Crop the center out of an image
 
@@ -121,10 +121,10 @@ def centercrop(image: np.array, reduction_factor: float, **kwargs):
 
     Parameters
     ----------
-    img_array:
+    image
         Numpy array of an image. Function will handle 2D greyscale
         images, RGB, and RGBA image arrays
-    reduction_factor: float
+    reduction_factor
         scale of center cropped box, 1.0 would be the full image
         value of .4 means a box of .4*width and .4*height
 
@@ -143,3 +143,78 @@ def centercrop(image: np.array, reduction_factor: float, **kwargs):
     bottom = int((height + h_scale) // 2)
 
     return image[top:bottom, left:right]
+
+
+def trim_padding(
+    image: np.array, comparison_op: Callable, thresh: int, **kwargs
+) -> np.array:
+    """
+    Remove padding from an image
+
+    Remove rows and columns on the edges of the input image where the
+    brightness on a scale of 0 to 1 satisfies `comparison_op` with
+    respect to `thresh`. Brightness is evaluated by converting to
+    grayscale and normalizing if necessary. For instance, using
+    `thresh=.95` and `comparison_op=operator.gt` will result in removing
+    near-white padding, while using using `thresh=.05` and
+    `comparison_op=operator.lt` will remove near-black padding.
+
+    `kwargs` is included only for compatibility with the
+    `CustomReportingPipeline` class.
+
+    Assumptions
+    -----------
+    - Image is grayscale, RGB, or RGBA.
+    - Pixel values are scaled between either 0 and 1 or 0 and 255. If
+    image is scaled between 0 and 255, then some pixel has a value
+    greater than 1.
+
+    Parameters
+    ----------
+    image
+        Numpy array of an image.
+    comparison_op
+        How to compare pixel values to `thresh`
+    thresh
+        Value to compare pixel values against
+
+    Returns
+    -------
+    Slice of input image corresponding to a cropped area with padding
+    removed
+    """
+    im_gray = _convert_to_grayscale(image)
+    im_gray = normalize_pixel_values(im_gray)
+    keep = ~comparison_op(im_gray, thresh)
+    x, y, w, h = cv.boundingRect(cv.findNonZero(keep.astype(int)))
+    return image[y : y + h, x : x + w]
+
+
+def normalize_pixel_values(image: np.array) -> np.array:
+    """
+    Normalize image so that pixel values are between 0 and 1
+
+    Assumes pixel values are scaled between either 0 and 1 or 0 and 255.
+    """
+    if image.max() > 1:
+        return image / 255
+    else:
+        return image
+
+
+def _convert_to_grayscale(image: np.array) -> np.array:
+    """
+    Convert image to grayscale.
+
+    Assumes image is grayscale, RGB, or RGBA.
+    """
+    grayscale = image.ndim == 2
+    if grayscale:
+        im_gray = image
+    else:
+        rgba = image.shape[2] == 4
+        if rgba:
+            im_gray = cv.cvtColor(image, cv.COLOR_RGBA2GRAY)
+        else:
+            im_gray = cv.cvtColor(image, cv.COLOR_RGB2GRAY)
+    return im_gray

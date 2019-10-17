@@ -1,10 +1,12 @@
 from collections import defaultdict
+import operator
 
+import cv2 as cv
 import numpy as np
 import pytest
 
 from creevey.load_funcs.image import load_image_from_disk
-from creevey.ops.image import centercrop, record_mean_brightness, resize
+from creevey.ops.image import centercrop, record_mean_brightness, resize, trim_padding
 from tests.conftest import SAMPLE_DATA_DIR
 
 
@@ -133,3 +135,66 @@ def test_centercrop_accepts_custom_reporting_args(sample_image_square_rgb):
     centercrop(
         sample_image_square_rgb, reduction_factor=0.5, inpath='fake', log_dict={}
     )
+
+
+def test_trim_padding_no_padding(sample_image_square_rgb):
+    image = trim_padding(
+        sample_image_square_rgb, thresh=0.95, comparison_op=operator.gt
+    )
+    np.testing.assert_almost_equal(image, sample_image_square_rgb)
+
+
+def test_trim_padding_rgb(sample_image_square_rgb):
+    im_padded = cv.copyMakeBorder(
+        src=sample_image_square_rgb,
+        top=np.random.randint(1, 100),
+        bottom=np.random.randint(1, 100),
+        left=np.random.randint(1, 100),
+        right=np.random.randint(1, 100),
+        borderType=cv.BORDER_CONSTANT,
+        value=[251, 252, 253],
+    )
+    actual = trim_padding(im_padded, thresh=0.95, comparison_op=operator.gt)
+    np.testing.assert_almost_equal(actual, sample_image_square_rgb)
+
+
+def test_trim_padding_rgba(sample_image_square_rgba):
+    im_padded = cv.copyMakeBorder(
+        src=sample_image_square_rgba,
+        top=np.random.randint(1, 100),
+        bottom=np.random.randint(1, 100),
+        left=np.random.randint(1, 100),
+        right=np.random.randint(1, 100),
+        borderType=cv.BORDER_CONSTANT,
+        value=[251, 252, 253],
+    )
+    actual = trim_padding(im_padded, thresh=0.95, comparison_op=operator.gt)
+    np.testing.assert_almost_equal(actual, sample_image_square_rgba)
+
+
+def test_trim_padding_grayscale(sample_image_tall_grayscale):
+    im_padded = cv.copyMakeBorder(
+        src=sample_image_tall_grayscale,
+        top=np.random.randint(1, 100),
+        bottom=np.random.randint(1, 100),
+        left=np.random.randint(1, 100),
+        right=np.random.randint(1, 100),
+        borderType=cv.BORDER_CONSTANT,
+        value=251,
+    )
+    actual = trim_padding(im_padded, thresh=0.95, comparison_op=operator.gt)
+    np.testing.assert_almost_equal(actual, sample_image_tall_grayscale)
+
+
+def test_trim_black_padding_rgb(sample_image_square_rgb):
+    im_padded = cv.copyMakeBorder(
+        src=sample_image_square_rgb,
+        top=np.random.randint(1, 100),
+        bottom=np.random.randint(1, 100),
+        left=np.random.randint(1, 100),
+        right=np.random.randint(1, 100),
+        borderType=cv.BORDER_CONSTANT,
+        value=3,
+    )
+    actual = trim_padding(im_padded, thresh=0.05, comparison_op=operator.lt)
+    np.testing.assert_almost_equal(actual, sample_image_square_rgb)

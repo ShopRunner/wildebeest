@@ -6,53 +6,6 @@ import numpy as np
 from creevey.constants import PathOrStr
 
 
-def record_mean_brightness(
-    image: np.array, inpath: PathOrStr, log_dict: DefaultDict[str, dict]
-) -> np.array:
-    """
-    Calculate mean image brightness
-
-    Image is assumed to be grayscale if it has a single channel, RGB if
-    it has three channels, RGBA if it has four. Brightness is calculated
-    by converting to grayscale if necessary and then taking the mean
-    pixel value.
-
-    Parameters
-    ----------
-    image
-    inpath
-        Image input path
-    log_dict
-        Dictionary of image metadata
-
-    Side effect
-    -----------
-    Adds a "mean_brightness" items to log_dict[inpath]
-    """
-    if len(image.shape) == 3:
-        num_bands = image.shape[2]
-    elif len(image.shape) == 2:
-        num_bands = 1
-    else:
-        raise ValueError('Image array must have two or three dimensions')
-
-    if num_bands == 1:
-        image_gray = image
-    elif num_bands == 3:
-        image_gray = cv.cvtColor(src=image, code=cv.COLOR_RGB2GRAY)
-    elif num_bands == 4:
-        image_gray = cv.cvtColor(src=image, code=cv.COLOR_RGBA2GRAY)
-    else:
-        raise ValueError(
-            f'{inpath} image has {num_bands} channels. Only 1-channel '
-            f'grayscale, 3-channel RGB, and 4-channel RGBA images are '
-            f'supported.'
-        )
-    log_dict[inpath]['mean_brightness'] = image_gray.mean()
-
-    return image
-
-
 def resize(
     image: np.array,
     shape: Optional[Tuple[int, int]] = None,
@@ -97,19 +50,6 @@ def _validate_resize_inputs(shape, min_dim) -> None:
         pass
     else:
         raise ValueError('Exactly one of `shape` and `min_dim` must be None')
-
-
-def _find_min_dim_shape(image, min_dim):
-    in_height, in_width = image.shape[:2]
-    aspect_ratio = in_width / in_height
-    format = 'tall' if aspect_ratio < 1 else 'wide'
-    if format == 'tall':
-        out_width = min_dim
-        out_height = round(out_width / aspect_ratio, 1)
-    else:
-        out_height = min_dim
-        out_width = round(out_height * aspect_ratio, 1)
-    return (int(out_height), int(out_width))
 
 
 def centercrop(image: np.array, reduction_factor: float, **kwargs) -> np.array:
@@ -218,6 +158,66 @@ def _convert_to_grayscale(image: np.array) -> np.array:
         else:
             im_gray = cv.cvtColor(image, cv.COLOR_RGB2GRAY)
     return im_gray
+
+
+def record_mean_brightness(
+    image: np.array, inpath: PathOrStr, log_dict: DefaultDict[str, dict]
+) -> np.array:
+    """
+    Calculate mean image brightness
+
+    Image is assumed to be grayscale if it has a single channel, RGB if
+    it has three channels, RGBA if it has four. Brightness is calculated
+    by converting to grayscale if necessary and then taking the mean
+    pixel value.
+
+    Parameters
+    ----------
+    image
+    inpath
+        Image input path
+    log_dict
+        Dictionary of image metadata
+
+    Side effect
+    -----------
+    Adds a "mean_brightness" items to log_dict[inpath]
+    """
+    if len(image.shape) == 3:
+        num_bands = image.shape[2]
+    elif len(image.shape) == 2:
+        num_bands = 1
+    else:
+        raise ValueError('Image array must have two or three dimensions')
+
+    if num_bands == 1:
+        image_gray = image
+    elif num_bands == 3:
+        image_gray = cv.cvtColor(src=image, code=cv.COLOR_RGB2GRAY)
+    elif num_bands == 4:
+        image_gray = cv.cvtColor(src=image, code=cv.COLOR_RGBA2GRAY)
+    else:
+        raise ValueError(
+            f'{inpath} image has {num_bands} channels. Only 1-channel '
+            f'grayscale, 3-channel RGB, and 4-channel RGBA images are '
+            f'supported.'
+        )
+    log_dict[inpath]['mean_brightness'] = image_gray.mean()
+
+    return image
+
+
+def _find_min_dim_shape(image, min_dim):
+    in_height, in_width = image.shape[:2]
+    aspect_ratio = in_width / in_height
+    format = 'tall' if aspect_ratio < 1 else 'wide'
+    if format == 'tall':
+        out_width = min_dim
+        out_height = round(out_width / aspect_ratio, 1)
+    else:
+        out_height = min_dim
+        out_width = round(out_height * aspect_ratio, 1)
+    return (int(out_height), int(out_width))
 
 
 def record_dhash(

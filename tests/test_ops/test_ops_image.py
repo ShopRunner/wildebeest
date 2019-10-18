@@ -8,8 +8,8 @@ import pytest
 from creevey.load_funcs.image import load_image_from_disk
 from creevey.ops.image import (
     centercrop,
-    record_mean_brightness,
     record_dhash,
+    record_mean_brightness,
     resize,
     trim_padding,
 )
@@ -211,7 +211,7 @@ class TestRecordDHash:
         )
         assert len(f'{log_dict["fake"]["dhash"]:b}') in [63, 64]
 
-    def test_record_dhash_rgb_hashlen_rgba(self, sample_image_tall_grayscale):
+    def test_record_dhash_rgb_hashlen_gray(self, sample_image_tall_grayscale):
         log_dict = defaultdict(dict)
         record_dhash(
             sample_image_tall_grayscale,

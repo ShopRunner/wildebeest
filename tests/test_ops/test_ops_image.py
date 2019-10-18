@@ -6,7 +6,13 @@ import numpy as np
 import pytest
 
 from creevey.load_funcs.image import load_image_from_disk
-from creevey.ops.image import centercrop, record_mean_brightness, resize, trim_padding
+from creevey.ops.image import (
+    centercrop,
+    record_mean_brightness,
+    record_dhash,
+    resize,
+    trim_padding,
+)
 from tests.conftest import SAMPLE_DATA_DIR
 
 
@@ -198,3 +204,91 @@ def test_trim_black_padding_rgb(sample_image_square_rgb):
     )
     actual = trim_padding(im_padded, thresh=0.05, comparison_op=operator.lt)
     np.testing.assert_almost_equal(actual, sample_image_square_rgb)
+
+
+def test_record_dhash_rgb_hashlen_rgb(sample_image_square_rgb):
+    log_dict = defaultdict(dict)
+    record_dhash(
+        sample_image_square_rgb, sqrt_hash_size=8, inpath='fake', log_dict=log_dict
+    )
+    assert len(f'{log_dict["fake"]["dhash"]:b}') in [63, 64]
+
+
+def test_record_dhash_rgb_hashlen_rgba(sample_image_square_rgba):
+    log_dict = defaultdict(dict)
+    record_dhash(
+        sample_image_square_rgba, sqrt_hash_size=8, inpath='fake', log_dict=log_dict
+    )
+    assert len(f'{log_dict["fake"]["dhash"]:b}') in [63, 64]
+
+
+def test_record_dhash_rgb_hashlen_rgba(sample_image_tall_grayscale):
+    log_dict = defaultdict(dict)
+    record_dhash(
+        sample_image_tall_grayscale, sqrt_hash_size=8, inpath='fake', log_dict=log_dict
+    )
+    assert len(f'{log_dict["fake"]["dhash"]:b}') in [63, 64]
+
+
+def test_record_dhash_hash_robust_to_resize_rgb(sample_image_square_rgb):
+    log_dict = defaultdict(dict)
+    record_dhash(
+        sample_image_square_rgb, sqrt_hash_size=8, inpath='original', log_dict=log_dict
+    )
+    record_dhash(
+        resize(sample_image_square_rgb, shape=(24, 24)),
+        sqrt_hash_size=8,
+        inpath='resized',
+        log_dict=log_dict,
+    )
+    bin(int(log_dict["original"]["dhash"]) ^ int(log_dict["resized"]["dhash"])).count(
+        "1"
+    ) < 10
+
+
+def test_record_dhash_hash_robust_to_resize_rgba(sample_image_square_rgba):
+    log_dict = defaultdict(dict)
+    record_dhash(
+        sample_image_square_rgba, sqrt_hash_size=8, inpath='original', log_dict=log_dict
+    )
+    record_dhash(
+        resize(sample_image_square_rgba, shape=(24, 24)),
+        sqrt_hash_size=8,
+        inpath='resized',
+        log_dict=log_dict,
+    )
+    bin(int(log_dict["original"]["dhash"]) ^ int(log_dict["resized"]["dhash"])).count(
+        "1"
+    ) < 10
+
+
+def test_record_dhash_hash_robust_to_resize_gray(sample_image_tall_grayscale):
+    log_dict = defaultdict(dict)
+    record_dhash(
+        sample_image_tall_grayscale,
+        sqrt_hash_size=8,
+        inpath='original',
+        log_dict=log_dict,
+    )
+    record_dhash(
+        resize(sample_image_tall_grayscale, shape=(24, 24)),
+        sqrt_hash_size=8,
+        inpath='resized',
+        log_dict=log_dict,
+    )
+    bin(int(log_dict["original"]["dhash"]) ^ int(log_dict["resized"]["dhash"])).count(
+        "1"
+    ) < 10
+
+
+def test_record_dhash_hash_is_different_for_non_duplicates(
+    sample_image_square_rgb, sample_image_tall_grayscale
+):
+    log_dict = defaultdict(dict)
+    record_dhash(
+        sample_image_square_rgb, sqrt_hash_size=8, inpath='im1', log_dict=log_dict
+    )
+    record_dhash(
+        sample_image_tall_grayscale, sqrt_hash_size=8, inpath='im2', log_dict=log_dict
+    )
+    bin(int(log_dict["im1"]["dhash"]) ^ int(log_dict["im2"]["dhash"])).count("1") > 10

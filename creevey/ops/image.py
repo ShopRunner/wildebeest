@@ -218,3 +218,51 @@ def _convert_to_grayscale(image: np.array) -> np.array:
         else:
             im_gray = cv.cvtColor(image, cv.COLOR_RGB2GRAY)
     return im_gray
+
+
+def record_dhash(
+    image: np.array,
+    inpath: PathOrStr,
+    log_dict: DefaultDict[str, dict],
+    sqrt_hash_size: int = 8,
+) -> np.array:
+    """
+    Record difference hash of image.
+
+    As a rule of thumb, hashes from two images should typically have a
+    Hamming distance less than 10 if and only if those images are
+    "duplicates", with some robustness to sources of noise such as
+    resizing and JPEG artifacts, where the Hamming distance between two
+    hashes `a` and `b` is computed as follows.
+
+    ```
+    bin(int(a) ^ int(b)).count("1")
+    ```
+
+    Assumes image is grayscale, RGB, or RGBA.
+
+    Source
+    ------
+    Adrian Rosebrock, "Building an Image Hashing Search Engine with
+    VP-Trees and OpenCV", *PyImageSearch*,
+    https://www.pyimagesearch.com/2019/08/26/building-an-image-hashing-search-engine-with-vp-trees-and-opencv/,
+    accessed on 18 October 2019.
+
+    Parameters
+    ----------
+    image
+    inpath
+        Image input path
+    log_dict
+        Dictionary of image metadata
+    sqrt_hash_size
+        Side length of 2D array used to compute hash, so that hash will
+        be up to `sqrt_hash_size`^2 bits long.
+    """
+    im_mod = _convert_to_grayscale(image)
+    im_mod = cv.resize(im_mod, (sqrt_hash_size + 1, sqrt_hash_size))
+    diff = im_mod[:, 1:] > im_mod[:, :-1]
+    log_dict[inpath]['dhash'] = sum(
+        [2 ** i for (i, v) in enumerate(diff.flatten()) if v]
+    )
+    return image

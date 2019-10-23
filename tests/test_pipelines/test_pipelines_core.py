@@ -6,35 +6,41 @@ import pytest
 
 from creevey import CustomReportingPipeline
 from creevey.load_funcs.image import load_image_from_url
-from creevey.ops.image import record_mean_brightness
+from creevey.ops import get_report_output_decorator
+from creevey.ops.image import calculate_mean_brightness
 from creevey.write_funcs.image import write_image
 from tests.conftest import (
     delete_file_if_exists,
-    IMAGE_FILENAMES,
-    IMAGE_URLS,
     keep_filename_save_png_in_tempdir,
     TEMP_DATA_DIR,
+    IMAGE_FILENAMES,
+    IMAGE_URLS,
 )
 
 
+@get_report_output_decorator(key='mean_brightness')
+def report_mean_brightness(image):
+    return calculate_mean_brightness(image)
+
+
 @pytest.fixture(scope='session')
-def record_mean_brightness_pipeline():
+def report_mean_brightness_pipeline():
     for url in IMAGE_URLS:
         outpath = keep_filename_save_png_in_tempdir(url)
         delete_file_if_exists(outpath)
 
-    record_mean_brightness_pipeline = CustomReportingPipeline(
+    report_mean_brightness_pipeline = CustomReportingPipeline(
         load_func=load_image_from_url,
-        ops=record_mean_brightness,
+        ops=report_mean_brightness,
         write_func=write_image,
     )
-    yield record_mean_brightness_pipeline
+    yield report_mean_brightness_pipeline
     for url in IMAGE_URLS:
         outpath = keep_filename_save_png_in_tempdir(url)
         delete_file_if_exists(outpath)
 
 
-def test_custom_reporting_pipeline(record_mean_brightness_pipeline):
+def test_custom_reporting_pipeline(report_mean_brightness_pipeline):
     inpaths = IMAGE_URLS
     outpaths = [
         TEMP_DATA_DIR / Path(filename).with_suffix('.png')
@@ -49,7 +55,7 @@ def test_custom_reporting_pipeline(record_mean_brightness_pipeline):
         },
         index=inpaths,
     )
-    actual_run_report = record_mean_brightness_pipeline.run(
+    actual_run_report = report_mean_brightness_pipeline.run(
         inpaths=inpaths,
         path_func=keep_filename_save_png_in_tempdir,
         n_jobs=6,

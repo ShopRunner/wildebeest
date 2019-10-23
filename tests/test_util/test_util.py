@@ -1,5 +1,6 @@
 from creevey.util import find_files_with_extensions
-from tests.conftest import generate_file_tree, TEMP_DATA_DIR  # noqa: F401
+from tests.conftest import TEMP_DATA_DIR
+from tests.fixtures.misc import generate_file_tree
 
 
 def test_find_files_with_extensions_without_dot(generate_file_tree):  # noqa: F811

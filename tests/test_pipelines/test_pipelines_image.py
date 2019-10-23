@@ -12,10 +12,10 @@ from creevey.ops.image import resize
 from creevey.write_funcs.image import write_image
 from tests.conftest import (
     delete_file_if_exists,
-    IMAGE_FILENAMES,
-    IMAGE_URLS,
     keep_filename_save_png_in_tempdir,
     TEMP_DATA_DIR,
+    IMAGE_FILENAMES,
+    IMAGE_URLS,
 )
 
 IMAGE_RESIZE_SHAPE = (224, 224)

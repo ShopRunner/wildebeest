@@ -6,13 +6,8 @@ import numpy as np
 import pytest
 
 from creevey.load_funcs.image import load_image_from_disk
-from creevey.ops.image import (
-    centercrop,
-    record_dhash,
-    record_mean_brightness,
-    resize,
-    trim_padding,
-)
+from creevey.ops.image.image_transforms import centercrop, resize, trim_padding
+from creevey.ops.image.image_stats import report_dhash, record_mean_brightness
 from tests.conftest import SAMPLE_DATA_DIR
 
 
@@ -199,21 +194,21 @@ class TestTrimPadding:
 class TestRecordDHash:
     def test_record_dhash_rgb_hashlen_rgb(self, sample_image_square_rgb):
         log_dict = defaultdict(dict)
-        record_dhash(
+        report_dhash(
             sample_image_square_rgb, sqrt_hash_size=8, inpath='fake', log_dict=log_dict
         )
         assert len(f'{log_dict["fake"]["dhash"]:b}') in [63, 64]
 
     def test_record_dhash_rgb_hashlen_rgba(self, sample_image_square_rgba):
         log_dict = defaultdict(dict)
-        record_dhash(
+        report_dhash(
             sample_image_square_rgba, sqrt_hash_size=8, inpath='fake', log_dict=log_dict
         )
         assert len(f'{log_dict["fake"]["dhash"]:b}') in [63, 64]
 
     def test_record_dhash_rgb_hashlen_gray(self, sample_image_tall_grayscale):
         log_dict = defaultdict(dict)
-        record_dhash(
+        report_dhash(
             sample_image_tall_grayscale,
             sqrt_hash_size=8,
             inpath='fake',
@@ -223,13 +218,13 @@ class TestRecordDHash:
 
     def test_record_dhash_hash_robust_to_resize_rgb(self, sample_image_square_rgb):
         log_dict = defaultdict(dict)
-        record_dhash(
+        report_dhash(
             sample_image_square_rgb,
             sqrt_hash_size=8,
             inpath='original',
             log_dict=log_dict,
         )
-        record_dhash(
+        report_dhash(
             resize(sample_image_square_rgb, shape=(24, 24)),
             sqrt_hash_size=8,
             inpath='resized',
@@ -241,13 +236,13 @@ class TestRecordDHash:
 
     def test_record_dhash_hash_robust_to_resize_rgba(self, sample_image_square_rgba):
         log_dict = defaultdict(dict)
-        record_dhash(
+        report_dhash(
             sample_image_square_rgba,
             sqrt_hash_size=8,
             inpath='original',
             log_dict=log_dict,
         )
-        record_dhash(
+        report_dhash(
             resize(sample_image_square_rgba, shape=(24, 24)),
             sqrt_hash_size=8,
             inpath='resized',
@@ -259,13 +254,13 @@ class TestRecordDHash:
 
     def test_record_dhash_hash_robust_to_resize_gray(self, sample_image_tall_grayscale):
         log_dict = defaultdict(dict)
-        record_dhash(
+        report_dhash(
             sample_image_tall_grayscale,
             sqrt_hash_size=8,
             inpath='original',
             log_dict=log_dict,
         )
-        record_dhash(
+        report_dhash(
             resize(sample_image_tall_grayscale, shape=(24, 24)),
             sqrt_hash_size=8,
             inpath='resized',
@@ -279,10 +274,10 @@ class TestRecordDHash:
         self, sample_image_square_rgb, sample_image_tall_grayscale
     ):
         log_dict = defaultdict(dict)
-        record_dhash(
+        report_dhash(
             sample_image_square_rgb, sqrt_hash_size=8, inpath='im1', log_dict=log_dict
         )
-        record_dhash(
+        report_dhash(
             sample_image_tall_grayscale,
             sqrt_hash_size=8,
             inpath='im2',

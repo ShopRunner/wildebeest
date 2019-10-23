@@ -151,8 +151,8 @@ def get_report_output_decorator(key: Hashable) -> Callable:
 
     def report_output_decorator(func):
         @functools.wraps(func)
-        def _inner_report_output_wrapper(func_input, log_dict, inpath):
-            return report_output(func_input, func, log_dict, inpath, key)
+        def _inner_report_output_wrapper(*args, **kwargs):
+            return report_output(func=func, *args, **kwargs, key=key)
 
         return _inner_report_output_wrapper
 

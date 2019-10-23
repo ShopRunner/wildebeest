@@ -3,17 +3,31 @@ from collections import defaultdict
 import numpy as np
 
 from creevey.ops.image.transforms import resize
+from creevey.ops.helpers import get_report_output_decorator, report_output
 from creevey.ops.image.stats import calculate_dhash, calculate_mean_brightness
 from tests.conftest import SAMPLE_DATA_DIR
 
-# class TestRecordMeanBrightness:
-#     def test_record_mean_brightness_grayscale(self, sample_image_tall_grayscale):
-#         log_dict = defaultdict(dict)
-#         image_path = SAMPLE_DATA_DIR / 'creevey_rgb.jpg'
-#         record_mean_brightness(
-#             sample_image_tall_grayscale, inpath=image_path, log_dict=log_dict
-#         )
-#         assert isinstance(log_dict[image_path]['mean_brightness'], float)
+
+class TestCalculateMeanBrightness:
+    def test_calculate_mean_brightness_grayscale(self, sample_image_tall_grayscale):
+        actual = calculate_mean_brightness(sample_image_tall_grayscale)
+        assert isinstance(actual, float)
+
+
+class TestReportMeanBrightness:  # integration tests for calculate_mean_brightness and reporting functions
+    @get_report_output_decorator(key='mean_brightness')
+    def decorator_report_mean_brightness(self, image):
+        return calculate_mean_brightness(image)
+
+    def test_record_mean_brightness_grayscale(self, sample_image_tall_grayscale):
+        log_dict = defaultdict(dict)
+        image_path = SAMPLE_DATA_DIR / 'creevey_rgb.jpg'
+        self.decorator_report_mean_brightness(
+            sample_image_tall_grayscale, inpath=image_path, log_dict=log_dict
+        )
+        assert isinstance(log_dict[image_path]['mean_brightness'], float)
+
+
 #
 #     def test_record_mean_brightness_all_black(self, sample_image_tall_grayscale):
 #         log_dict = defaultdict(dict)

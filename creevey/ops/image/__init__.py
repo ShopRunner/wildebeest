@@ -1,2 +1,2 @@
-from .image_stats import *
-from .image_transforms import *
+from .stats import *
+from .transforms import *

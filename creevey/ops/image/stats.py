@@ -4,7 +4,7 @@ from typing import DefaultDict
 import cv2 as cv
 import numpy as np
 from creevey import PathOrStr
-from creevey.ops.image.image_transforms import convert_to_grayscale
+from creevey.ops.image.transforms import convert_to_grayscale
 from creevey.ops.helpers.report import report_output
 
 

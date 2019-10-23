@@ -2,8 +2,8 @@ from collections import defaultdict
 
 import numpy as np
 
-from creevey.ops.image.image_transforms import resize
-from creevey.ops.image.image_stats import calculate_dhash, calculate_mean_brightness
+from creevey.ops.image.transforms import resize
+from creevey.ops.image.stats import calculate_dhash, calculate_mean_brightness
 from tests.conftest import SAMPLE_DATA_DIR
 
 # class TestRecordMeanBrightness:

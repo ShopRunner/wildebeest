@@ -1,2 +1,2 @@
-from ._version import __version__
-from .pipelines import *  # noqa: F401, F403
+from creevey._version import __version__
+from creevey.pipelines import *

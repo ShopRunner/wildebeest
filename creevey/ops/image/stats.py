@@ -25,11 +25,12 @@ def calculate_dhash(image: np.array, sqrt_hash_size: int = 8) -> np.array:
     """
     Calculate difference hash of image.
 
-    As a rule of thumb, hashes from two images should typically have a
-    Hamming distance less than 10 if and only if those images are
-    "duplicates", with some robustness to sources of noise such as
-    resizing and JPEG artifacts, where the Hamming distance between two
-    hashes `a` and `b` is computed as `bin(a ^ b).count("1")`.
+    As a rule of thumb, with `sqrt_hash_size=8`, hashes from two images
+    should typically have a Hamming distance less than 10 if and only if
+    those images are "duplicates", with some robustness to sources of
+    noise such as resizing and JPEG artifacts, where the Hamming
+    distance between two hashes `a` and `b` is computed as
+    `bin(a ^ b).count("1")`.
 
     Assumes image is grayscale, RGB, or RGBA.
 

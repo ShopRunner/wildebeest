@@ -81,13 +81,45 @@ More generally, it is easy to modify an existing `Pipeline` object simply by mod
 
 ## The `CustomReportingPipeline` Class
 
-The `Pipeline` class's `run` method returns a "run report" with basic information about what happened during the run. The `CustomReportingPipeline` allows you to add additional information to these reports by adding to them within your `load_func`, `ops`, and `write_func`. For instance, when processing a set of image files you might wish to record each image's mean brightness while you already have it open so that you can later experiment with removing washed-out images from your dataset.
+The `Pipeline` class's `run` method returns a "run report" with basic information about what happened during the run. The `CustomReportingPipeline` allows you to add additional information to these reports by adding to them within your `load_func`, `ops`, and `write_func`. For instance, when processing a set of image files you might wish to record each image's mean brightness while you already have it open so that you can later experiment with removing washed-out images from your dataset. Here is an example of a `CustomReportingPipeline` that records the brightness of each image in the run report output during the download.
+
+```python
+from functools import partial
+
+from creevey import CustomReportingPipeline
+from creevey.load_funcs.image import load_image_from_url
+from creevey.ops import get_report_output_decorator
+from creevey.ops.image import calculate_mean_brightness
+from creevey.path_funcs import join_outdir_filename_extension
+from creevey.write_funcs.image import write_image
+
+@get_report_output_decorator(key='mean_brightness')
+def report_mean_brightness(image):
+    return calculate_mean_brightness(image)
+
+report_brightness_pipeline = CustomReportingPipeline(
+    load_func=load_image_from_url, ops=[report_mean_brightness], write_func=write_image
+)
+
+image_filenames = ['2RsJ8EQ', '2TqoToT', '2VocS58', '2scKPIp', '2TsO6Pc', '2SCv0q7']
+image_urls = [f'https://bit.ly/{filename}' for filename in image_filenames]
+
+keep_filename_png_in_cwd = partial(
+    join_outdir_filename_extension, outdir='.', extension='.png'
+)
+run_report = report_brightness_pipeline.run(
+    inpaths=image_urls,
+    path_func=keep_filename_png_in_cwd,
+    n_jobs=1,
+    skip_existing=False,
+)
+```
 
 You define and run a `CustomReportingPipeline` object in the same way that you define and run a basic `Pipeline` object, except that the elements of `ops` and `write_func` need to accept the input path as an additional keyword argument "inpath"; and `write_func`, `ops` and `write_func` need to accept a `defaultdict(dict)` object as another keyword argument "log_dict", which stores the run report information for a single file. You can then enrich your run reports in one of these functions by writing e.g. `log_dict[inpath]['mean_brightness'] = mean_brightness` inside one of the functions in the pipeline (assuming that you have calculated `mean_brightness`).
 
-Creevey has some predefined pipeline component functions such as `record_mean_brightness` that are designed for use with `CustomReportingPipeline` objects. These functions all have names that start with "record." Other Creevey functions accept arbitrary keyword arguments so that they they work with `CustomReportingPipeline` objects, but they do not do any custom logging. You can add logging to them if desired by writing wrappers, or you can simply add another pipeline stage that does logging.
+`creevey.ops.image.stats` defines some functions such as `calculate_mean_brightness` that take an image and return a statistic. It uses a decorator defined in `creevey.ops.report` to define corresponding functions such as `report_mean_brightness` and add those statistics to the run report when used within a `CustomReportingPipeline` and return the image. 
 
-Files that would be written to an output location where there is an existing file are skipped entirely when `skip_existing=True`, so custom logs will not be written for those files.
+Files that would be written to an output location where there is an existing file are skipped entirely when `skip_existing=True`, so custom reports will not be written for those files.
 
 ## Limitations
 

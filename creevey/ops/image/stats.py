@@ -54,5 +54,5 @@ def calculate_dhash(image: np.array, sqrt_hash_size: int = 8) -> np.array:
 
 
 @get_report_output_decorator(key='dhash')
-def report_dhash(image):
-    return calculate_dhash(image)
+def report_dhash(image, sqrt_hash_size: int = 8):
+    return calculate_dhash(image=image, sqrt_hash_size=sqrt_hash_size)

@@ -118,3 +118,6 @@ spark-warehouse/
 
 # local mlflow logs
 mlruns/
+
+# ephemeral stuff
+scratch

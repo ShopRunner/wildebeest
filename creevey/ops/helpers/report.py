@@ -148,7 +148,7 @@ def get_report_output_decorator(key: Hashable) -> Callable:
         Dictionary key in which to store function output for each
         inpath
     """
-
+    # noqa: D202
     def report_output_decorator(func):
         return partial(report_output, func=func, key=key)
 

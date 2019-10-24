@@ -4,7 +4,7 @@ import cv2 as cv
 import numpy as np
 import pytest
 
-from creevey.ops.image import resize, centercrop, trim_padding
+from creevey.ops.image import centercrop, resize, trim_padding
 
 
 class TestResize:

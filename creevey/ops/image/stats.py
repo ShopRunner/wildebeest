@@ -1,7 +1,8 @@
 import cv2 as cv
 import numpy as np
-from creevey.ops.image.transforms import convert_to_grayscale
+
 from creevey.ops.helpers.report import get_report_output_decorator
+from creevey.ops.image.transforms import convert_to_grayscale
 
 
 def calculate_mean_brightness(image: np.array) -> float:

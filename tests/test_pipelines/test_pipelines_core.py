@@ -11,10 +11,10 @@ from creevey.ops.image import calculate_mean_brightness
 from creevey.write_funcs.image import write_image
 from tests.conftest import (
     delete_file_if_exists,
-    keep_filename_save_png_in_tempdir,
-    TEMP_DATA_DIR,
     IMAGE_FILENAMES,
     IMAGE_URLS,
+    keep_filename_save_png_in_tempdir,
+    TEMP_DATA_DIR,
 )
 
 

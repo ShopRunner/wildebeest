@@ -1,5 +1,5 @@
 """Code for reporting information calculating during processing"""
-import functools
+from functools import partial
 from typing import Any, Callable, DefaultDict, Hashable
 
 from creevey.constants import PathOrStr
@@ -8,8 +8,8 @@ from creevey.constants import PathOrStr
 def report_output(
     func_input: Any,
     func: Callable,
-    log_dict: DefaultDict[str, dict],
     inpath: PathOrStr,
+    log_dict: DefaultDict[str, dict],
     key: Hashable,
 ) -> Any:
     """
@@ -150,10 +150,6 @@ def get_report_output_decorator(key: Hashable) -> Callable:
     """
 
     def report_output_decorator(func):
-        @functools.wraps(func)
-        def _inner_report_output_wrapper(*args, **kwargs):
-            return report_output(func=func, *args, **kwargs, key=key)
-
-        return _inner_report_output_wrapper
+        return partial(report_output, func=func, key=key)
 
     return report_output_decorator

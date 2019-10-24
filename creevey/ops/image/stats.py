@@ -1,11 +1,7 @@
-from functools import partial
-from typing import DefaultDict
-
 import cv2 as cv
 import numpy as np
-from creevey import PathOrStr
 from creevey.ops.image.transforms import convert_to_grayscale
-from creevey.ops.helpers.report import report_output
+from creevey.ops.helpers.report import get_report_output_decorator
 
 
 def calculate_mean_brightness(image: np.array) -> float:
@@ -19,7 +15,12 @@ def calculate_mean_brightness(image: np.array) -> float:
     return convert_to_grayscale(image).mean()
 
 
-def calculate_dhash(image: np.array, sqrt_hash_size: int = 8, **kwargs) -> np.array:
+@get_report_output_decorator(key='mean_brightness')
+def report_mean_brightness(image):
+    return calculate_mean_brightness(image)
+
+
+def calculate_dhash(image: np.array, sqrt_hash_size: int = 8) -> np.array:
     """
     Calculate difference hash of image.
 
@@ -27,11 +28,7 @@ def calculate_dhash(image: np.array, sqrt_hash_size: int = 8, **kwargs) -> np.ar
     Hamming distance less than 10 if and only if those images are
     "duplicates", with some robustness to sources of noise such as
     resizing and JPEG artifacts, where the Hamming distance between two
-    hashes `a` and `b` is computed as follows.
-
-    ```
-    bin(int(a) ^ int(b)).count("1")
-    ```
+    hashes `a` and `b` is computed as `bin(a ^ b).count("1")`.
 
     Assumes image is grayscale, RGB, or RGBA.
 
@@ -55,4 +52,6 @@ def calculate_dhash(image: np.array, sqrt_hash_size: int = 8, **kwargs) -> np.ar
     return sum([2 ** i for (i, v) in enumerate(diff.flatten()) if v])
 
 
-report_dhash = partial(report_output, func=calculate_dhash, key='dhash')
+@get_report_output_decorator(key='dhash')
+def report_dhash(image):
+    return calculate_dhash(image)

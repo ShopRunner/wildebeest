@@ -1,5 +1,5 @@
 from creevey.util.image import find_image_files
-from tests.conftest import generate_file_tree, TEMP_DATA_DIR  # noqa: F401
+from tests.conftest import TEMP_DATA_DIR
 
 
 def test_find_images(generate_file_tree):  # noqa: F811

@@ -7,6 +7,6 @@ Pull Request Checklist
  - [ ] `./.ci/test.sh` passes locally.
  - [ ] `README.md` and other docs have been updated as needed.
 
-Maintainer's responsibilities 
+Maintainer's responsibilities
  - [ ] `CHANGELOG.md` has been updated.
  - [ ] `_version.py` has been updated.

@@ -12,7 +12,7 @@ If you see an open issue you'd like to be fixed, take a stab at it and open a PR
 
 ## Steps for Making a Pull Request
 
-1. Fork the project from GitHub.
+1. Fork the project from GitHub. (Internal ShopRunner contributors can skip this step.)
 2. Clone the forked repo to your local disk. 
 
 ```bash
@@ -35,14 +35,14 @@ pip install -e .
 6. Make your changes.
 7. Update the unit tests, _version.py, and CHANGELOG.
 8. Run `black creevey tests --skip-string-normalization` to format code.
-9. Check that unit tests pass and the linter doesn't complain.
+9. Check that unit tests pass and the linter doesn't complain:
      
  ```bash
  pytest
  flake8 creevey tests
  ```
  
-10. Submit your PR.
+10. Submit your PR against the `wip` branch.
 
 
 We prefer single quotes for strings unless using double quotes allows us to avoid escaping internal single quotes. We use numpy style for docstrings and run code using CPython 3.6+.

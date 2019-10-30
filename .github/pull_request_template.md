@@ -1,4 +1,4 @@
-Contributors from outside ShopRunner should feel free to submit a PR without having completed all of the items below. 
+Contributors from outside ShopRunner should feel free to submit a PR without having completed all of the items below. See [CONTRIBUTING.md](https://github.com/ShopRunner/creevey/blob/master/CONTRIBUTING.md) for additional information. 
 
 **General Pull Request Checklist**
 

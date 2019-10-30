@@ -33,10 +33,7 @@ pip install -e .
 ```
 
 6. Make your changes.
-7. Write unit tests for any bugs fixed and any new functionality.
-8. Run `black creevey tests --skip-string-normalization` to format code.
-9. Run `./.ci/test.sh` to check that unit tests pass and the linter doesn't complain.
-10. Update `_version.py` and `CHANGELOG.md`. Non-ShopRunner contributors can skip this step.
-11. Submit your PR against the `wip` branch.
+7. Complete all items in the [pull request checklist](https://github.com/ShopRunner/creevey/blob/master/.github/pull_request_template.md) that you feel comfortable with. Feel free to submit a PR with some loose ends, particularly if you are not sure about how to complete a checklist item.
+8. Submit your PR against the `wip` branch.
 
 We prefer single quotes for strings unless using double quotes allows us to avoid escaping internal single quotes. We use numpy style for docstrings and run code using CPython 3.6+.

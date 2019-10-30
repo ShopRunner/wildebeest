@@ -14,4 +14,4 @@ The maintainer will complete the following steps for external contributions.
 **Additional Items for ShopRunner Contributors**
 
  - [ ] `CHANGELOG.md` has been updated.
- - [ ] `_version.py` has been updated. 
+ - [ ] `_version.py` has been updated.

@@ -12,7 +12,7 @@ If you see an open issue you'd like to be fixed, take a stab at it and open a PR
 
 ## Steps for Making a Pull Request
 
-1. Fork the project from GitHub. (Internal ShopRunner contributors can skip this step.)
+1. Fork the project from GitHub. (Internal ShopRunner contributors can just clone the repo and skip to Step 4.)
 2. Clone the forked repo to your local disk. 
 
 ```bash

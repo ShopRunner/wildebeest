@@ -36,4 +36,8 @@ pip install -e .
 7. Complete all items in the [pull request checklist](https://github.com/ShopRunner/creevey/blob/master/.github/pull_request_template.md) that you feel comfortable with. Feel free to submit a PR with some loose ends, particularly if you are not sure about how to complete a checklist item.
 8. Submit your PR against the `wip` branch.
 
-We prefer single quotes for strings unless using double quotes allows us to avoid escaping internal single quotes. We use numpy style for docstrings and run code using CPython 3.6+.
+## Additional Notes
+
+- We prefer single quotes for one-libe strings unless using double quotes allows us to avoid escaping internal single quotes.
+- We use [numpy style](https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_numpy.html) for docstrings.
+- We want Creevey to be compatible with Python 3.6+.

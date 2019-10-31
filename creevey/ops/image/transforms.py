@@ -1,9 +1,7 @@
-from typing import Callable, DefaultDict, Optional, Tuple
+from typing import Callable, Optional, Tuple
 
 import cv2 as cv
 import numpy as np
-
-from creevey.constants import PathOrStr
 
 
 def resize(
@@ -123,7 +121,7 @@ def trim_padding(
     Slice of input image corresponding to a cropped area with padding
     removed
     """
-    im_gray = _convert_to_grayscale(image)
+    im_gray = convert_to_grayscale(image)
     im_gray = normalize_pixel_values(im_gray)
     keep = ~comparison_op(im_gray, thresh)
     x, y, w, h = cv.boundingRect(cv.findNonZero(keep.astype(int)))
@@ -142,7 +140,7 @@ def normalize_pixel_values(image: np.array) -> np.array:
         return image
 
 
-def _convert_to_grayscale(image: np.array) -> np.array:
+def convert_to_grayscale(image: np.array) -> np.array:
     """
     Convert image to grayscale.
 
@@ -160,53 +158,6 @@ def _convert_to_grayscale(image: np.array) -> np.array:
     return im_gray
 
 
-def record_mean_brightness(
-    image: np.array, inpath: PathOrStr, log_dict: DefaultDict[str, dict]
-) -> np.array:
-    """
-    Calculate mean image brightness
-
-    Image is assumed to be grayscale if it has a single channel, RGB if
-    it has three channels, RGBA if it has four. Brightness is calculated
-    by converting to grayscale if necessary and then taking the mean
-    pixel value.
-
-    Parameters
-    ----------
-    image
-    inpath
-        Image input path
-    log_dict
-        Dictionary of image metadata
-
-    Side effect
-    -----------
-    Adds a "mean_brightness" items to log_dict[inpath]
-    """
-    if len(image.shape) == 3:
-        num_bands = image.shape[2]
-    elif len(image.shape) == 2:
-        num_bands = 1
-    else:
-        raise ValueError('Image array must have two or three dimensions')
-
-    if num_bands == 1:
-        image_gray = image
-    elif num_bands == 3:
-        image_gray = cv.cvtColor(src=image, code=cv.COLOR_RGB2GRAY)
-    elif num_bands == 4:
-        image_gray = cv.cvtColor(src=image, code=cv.COLOR_RGBA2GRAY)
-    else:
-        raise ValueError(
-            f'{inpath} image has {num_bands} channels. Only 1-channel '
-            f'grayscale, 3-channel RGB, and 4-channel RGBA images are '
-            f'supported.'
-        )
-    log_dict[inpath]['mean_brightness'] = image_gray.mean()
-
-    return image
-
-
 def _find_min_dim_shape(image, min_dim):
     in_height, in_width = image.shape[:2]
     aspect_ratio = in_width / in_height
@@ -218,51 +169,3 @@ def _find_min_dim_shape(image, min_dim):
         out_height = min_dim
         out_width = round(out_height * aspect_ratio, 1)
     return (int(out_height), int(out_width))
-
-
-def record_dhash(
-    image: np.array,
-    inpath: PathOrStr,
-    log_dict: DefaultDict[str, dict],
-    sqrt_hash_size: int = 8,
-) -> np.array:
-    """
-    Record difference hash of image.
-
-    As a rule of thumb, hashes from two images should typically have a
-    Hamming distance less than 10 if and only if those images are
-    "duplicates", with some robustness to sources of noise such as
-    resizing and JPEG artifacts, where the Hamming distance between two
-    hashes `a` and `b` is computed as follows.
-
-    ```
-    bin(int(a) ^ int(b)).count("1")
-    ```
-
-    Assumes image is grayscale, RGB, or RGBA.
-
-    Source
-    ------
-    Adrian Rosebrock, "Building an Image Hashing Search Engine with
-    VP-Trees and OpenCV", *PyImageSearch*,
-    https://www.pyimagesearch.com/2019/08/26/building-an-image-hashing-search-engine-with-vp-trees-and-opencv/,
-    accessed on 18 October 2019.
-
-    Parameters
-    ----------
-    image
-    inpath
-        Image input path
-    log_dict
-        Dictionary of image metadata
-    sqrt_hash_size
-        Side length of 2D array used to compute hash, so that hash will
-        be up to `sqrt_hash_size`^2 bits long.
-    """
-    im_mod = _convert_to_grayscale(image)
-    im_mod = cv.resize(im_mod, (sqrt_hash_size + 1, sqrt_hash_size))
-    diff = im_mod[:, 1:] > im_mod[:, :-1]
-    log_dict[inpath]['dhash'] = sum(
-        [2 ** i for (i, v) in enumerate(diff.flatten()) if v]
-    )
-    return image

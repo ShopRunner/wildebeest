@@ -72,10 +72,21 @@ def test_custom_reporting_pipeline(report_mean_brightness_pipeline):
 
 
 def test_no_write_func():
-    load_images_pipeline = Pipeline(
-        load_func=load_image_from_disk, ops=None, write_func=None
-    )
-    load_images_pipeline.run(
+    Pipeline(
+        load_func=load_image_from_disk,
+        ops=[lambda image: image[:-1, :]],
+        write_func=None,
+    ).run(
         inpaths=[path for path in SAMPLE_DATA_DIR.iterdir() if path.suffix == '.png'],
         n_jobs=1,
     )
+
+
+def test_reporting_no_write_func():
+    run_report = CustomReportingPipeline(
+        load_func=load_image_from_disk, ops=[report_mean_brightness], write_func=None
+    ).run(
+        inpaths=[path for path in SAMPLE_DATA_DIR.iterdir() if path.suffix == '.png'],
+        n_jobs=1,
+    )
+    assert "mean_brightness" in run_report.columns

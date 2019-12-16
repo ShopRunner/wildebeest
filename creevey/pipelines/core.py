@@ -57,9 +57,7 @@ class Pipeline:
         elif ops is None:
             self.ops = []
         else:
-            raise TypeError(
-                'ops must be callable, an iterable of ' 'callables, or `None`'
-            )
+            raise TypeError('ops must be callable, an iterable of callables, or `None`')
 
         self.write_func = write_func
 
@@ -85,7 +83,7 @@ class Pipeline:
         ----------
         inpaths
             Iterable of string or Path objects pointing to resources to
-            be processed and written out.
+            be processed.
         n_jobs
             Number of threads to use.
         path_func
@@ -94,7 +92,8 @@ class Pipeline:
         skip_existing
             Boolean indicating whether to skip items that would result
             in overwriting an existing file or to overwrite any such
-            files.
+            files. Defaults to `True` if `self.write_func` is not `None`
+            and `False` otherwise.
         exceptions_to_catch
             Tuple of exception types to catch. An exception of one of
             these types will be logged with logging level ERROR and the
@@ -103,7 +102,8 @@ class Pipeline:
         Raises
         ------
         ValueError
-            If `path_func` is `None` but `self.write_func` is not.
+            `path_func` is `None` and either `skip_existing` is `True`
+            or `self.write_func` is not `None`.
 
         Warns
         -----
@@ -122,8 +122,9 @@ class Pipeline:
         an exception of a type included in `exceptions_to_catch`.
         """
         if skip_existing is None:
-            skip_existing = True if self.write_func else False
+            skip_existing = self.write_func is not None
         self._check_run_params(path_func=path_func, skip_existing=skip_existing)
+
         if skip_existing:
             warnings.warn(
                 'Skipping files where a file exists at the output '
@@ -144,18 +145,20 @@ class Pipeline:
             for path in tqdm(inpaths)
         )
 
-        run_report = pd.DataFrame.from_dict(log_dict, orient='index')
+        return pd.DataFrame.from_dict(log_dict, orient='index')
 
-        return run_report
-
-    def _check_run_params(self, path_func, skip_existing):
-        if skip_existing and path_func is None:
-            raise ValueError('`skip_existing` must be `False` if `path_func` is `None`')
-        if path_func is None and self.write_func is not None:
-            raise ValueError(
-                '`path_func` can be `None` only if `self.write_func` is `None`.'
-            )
-        return skip_existing
+    def _check_run_params(
+        self, path_func: Optional[Callable], skip_existing: bool
+    ) -> None:
+        if path_func is None:
+            if skip_existing:
+                raise ValueError(
+                    '`skip_existing` must be `False` if `path_func` is `None`'
+                )
+            if self.write_func is not None:
+                raise ValueError(
+                    '`self.write_funct` must be `None` if `path_func` is `None`.'
+                )
 
     def pipeline_func(
         self,
@@ -182,19 +185,20 @@ class Pipeline:
         ----------
         inpath
             Input path
+        log_dict
+            Dictionary used to store information for `run_report`.
         path_func
             See `self.run` docstring.
         skip_existing
             See `self.run` docstring.
-        log_dict
-            Dictionary used to store information for `run_report`.
         exceptions_to_catch
             See `self.run` docstring.
 
         Raises
         ------
         ValueError
-            If `skip_existing` is `True` and `path_func` is `None`.
+            `path_func` is `None` and either `skip_existing` is `True`
+            or `self.write_func` is not `None`.
 
         Notes
         -----
@@ -209,6 +213,8 @@ class Pipeline:
         - Timestamp indicating when processing finished as
         "time_finished"
         """
+        if skip_existing is None:
+            skip_existing = self.write_func is not None
         self._check_run_params(path_func=path_func, skip_existing=skip_existing)
 
         skipped_existing = False
@@ -234,12 +240,11 @@ class Pipeline:
                     inpath=inpath, path_func=path_func, log_dict=log_dict
                 )
 
-        inpath_logs = log_dict[inpath]
         if path_func is not None:
-            inpath_logs['outpath'] = path_func(inpath)
-        inpath_logs['skipped_existing'] = int(skipped_existing)
-        inpath_logs['exception_handled'] = int(exception_handled)
-        inpath_logs['time_finished'] = time.time()
+            log_dict[inpath]['outpath'] = path_func(inpath)
+        log_dict[inpath]['skipped_existing'] = int(skipped_existing)
+        log_dict[inpath]['exception_handled'] = int(exception_handled)
+        log_dict[inpath]['time_finished'] = time.time()
 
     def _run_pipeline_func(
         self,
@@ -262,13 +267,9 @@ class CustomReportingPipeline(Pipeline):
     Class for defining file processing pipelines with custom run
     recording.
 
-    Differences from Pipeline parent class:
-
-    - `load_func`, each element of `ops`, and `write_func` must each
-    accept the string or `Path` object indicating the input item's
-    location as an additional positional argument.
-    - Each element of `ops` and `write_func` must each accept a
-    `defaultdict(dict)` object as an additional positional argument.
+    Each element of `ops` and `write_func` must accept the string or
+    `Path` object indicating the input item's location and a
+    `defaultdict(dict)` object as additional positional arguments.
     Functions defined in Creevey call this item `log_dict`.
 
     Inside those functions, adding items to `log_dict[inpath]` causes

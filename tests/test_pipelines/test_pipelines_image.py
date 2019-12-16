@@ -12,7 +12,7 @@ from creevey.ops.image import resize
 from creevey.write_funcs.image import write_image
 from tests.conftest import (
     delete_file_if_exists,
-    IMAGE_FILENAMES,
+    IMAGE_DOWNLOAD_FILENAMES,
     IMAGE_URLS,
     keep_filename_save_png_in_tempdir,
     TEMP_DATA_DIR,
@@ -53,7 +53,7 @@ def test_trim_resize_pipeline(trim_resize_pipeline):
         assert image.shape[:2] == IMAGE_RESIZE_SHAPE
 
 
-def test_skip_existing(trim_resize_pipeline, caplog):
+def test_skip_existing(trim_resize_pipeline):
     inpaths = IMAGE_URLS
 
     trim_resize_pipeline.run(
@@ -62,40 +62,38 @@ def test_skip_existing(trim_resize_pipeline, caplog):
         n_jobs=6,
         skip_existing=False,
     )
-    with caplog.at_level(logging.WARNING):
-        outpaths = [
-            TEMP_DATA_DIR / Path(filename).with_suffix('.png')
-            for filename in IMAGE_FILENAMES
-        ]
-        skipped_existing = [1] * len(inpaths)
-        exception_handled = [0] * len(inpaths)
-        expected_run_report = pd.DataFrame(
-            {
-                'outpath': outpaths,
-                'skipped_existing': skipped_existing,
-                'exception_handled': exception_handled,
-            },
-            index=inpaths,
-        )
+    outpaths = [
+        TEMP_DATA_DIR / Path(filename).with_suffix('.png')
+        for filename in IMAGE_DOWNLOAD_FILENAMES
+    ]
+    skipped_existing = [1] * len(inpaths)
+    exception_handled = [0] * len(inpaths)
+    expected_run_report = pd.DataFrame(
+        {
+            'outpath': outpaths,
+            'skipped_existing': skipped_existing,
+            'exception_handled': exception_handled,
+        },
+        index=inpaths,
+    )
+    with pytest.warns(UserWarning):
         actual_run_report = trim_resize_pipeline.run(
             inpaths=IMAGE_URLS,
             path_func=keep_filename_save_png_in_tempdir,
             n_jobs=6,
             skip_existing=True,
         )
-        pd.testing.assert_frame_equal(
-            actual_run_report.sort_index().drop('time_finished', axis='columns'),
-            expected_run_report.sort_index(),
-        )
-        assert len(caplog.records) == 1
-        assert caplog.records[0].levelname == 'WARNING'
+    pd.testing.assert_frame_equal(
+        actual_run_report.sort_index().drop('time_finished', axis='columns'),
+        expected_run_report.sort_index(),
+    )
 
 
 def test_logging(trim_resize_pipeline):
     inpaths = IMAGE_URLS
     outpaths = [
         TEMP_DATA_DIR / Path(filename).with_suffix('.png')
-        for filename in IMAGE_FILENAMES
+        for filename in IMAGE_DOWNLOAD_FILENAMES
     ]
     exception_handled = skipped_existing = [0] * len(inpaths)
     expected_run_report = pd.DataFrame(
@@ -155,7 +153,7 @@ def test_catches(error_pipeline):
     inpaths = IMAGE_URLS
     outpaths = [
         TEMP_DATA_DIR / Path(filename).with_suffix('.png')
-        for filename in IMAGE_FILENAMES
+        for filename in IMAGE_DOWNLOAD_FILENAMES
     ]
     skipped_existing = [0] * len(inpaths)
     exception_handled = [1] * len(inpaths)

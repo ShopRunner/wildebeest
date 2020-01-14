@@ -19,7 +19,7 @@ def _is_connection_error(exception):
     wait_exponential_max=10000,
     stop_max_attempt_number=10,
 )
-def get_response(url: str, **kwargs) -> None:
+def get_response(url: str, timeout=5, **kwargs) -> None:
     """
     Make a GET request to the specified URL and return the response.
 
@@ -47,7 +47,7 @@ def get_response(url: str, **kwargs) -> None:
         URL of file to download
     """
     session = _get_session()
-    response = session.get(url)
+    response = session.get(url, timeout=timeout)
     _check_status(url, response)
     return response
 

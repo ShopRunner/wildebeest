@@ -24,14 +24,7 @@ def write_image(image: np.array, path: PathOrStr, **kwargs) -> None:
         Desired output path
     """
     outdir = Path(path).parent
-    if not outdir.exists():
-        # need try/except in case directory does not exist but at this
-        # point process switches to another thread that creates it
-        # before coming back to this one
-        try:
-            outdir.mkdir(parents=True)
-        except OSError:
-            pass
+    outdir.mkdir(parents=True, exist_ok=True)
     num_channels = 1 if len(image.shape) == 2 else image.shape[2]
     if num_channels >= 3:
         # OpenCV wants to write BGR, so reverse order of first three

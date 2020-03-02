@@ -42,6 +42,9 @@ def write_image(image: np.array, path: PathOrStr, **kwargs) -> None:
     tmp_path = tmp_dir / path.name
     try:
         cv.imwrite(str(tmp_path), image)
+        assert (
+            tmp_path.exists()
+        ), f"Attempt to write image temporarily to {tmp_path} failed."
         os.rename(tmp_path, path)
     finally:
         if tmp_path.exists():

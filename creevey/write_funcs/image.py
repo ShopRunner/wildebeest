@@ -1,6 +1,5 @@
 import os
 from pathlib import Path
-import tempfile
 
 import cv2 as cv
 import numpy as np
@@ -13,7 +12,7 @@ def write_image(image: np.array, path: PathOrStr, **kwargs) -> None:
     Write image to specified path.
 
     Create output directory if it does not exist.
-    
+
     Write to a temporary in a directory ".tmp" inside the output
     directory and then rename the file so that we don't create a partial
     image file if write process is interrupted. ".tmp" directory is not
@@ -36,7 +35,8 @@ def write_image(image: np.array, path: PathOrStr, **kwargs) -> None:
         # channels
         image[:, :, :3] = image[:, :, 2::-1]
 
-    outdir = Path(path).parent
+    path = Path(path)
+    outdir = path.parent
     tmp_dir = outdir / '.tmp'
     tmp_dir.mkdir(parents=True, exist_ok=True)
     tmp_path = tmp_dir / path.name

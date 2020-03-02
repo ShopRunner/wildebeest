@@ -41,7 +41,7 @@ def write_image(image: np.array, path: PathOrStr, **kwargs) -> None:
     tmp_dir.mkdir(parents=True, exist_ok=True)
     tmp_path = tmp_dir / path.name
     try:
-        cv.imwrite(tmp_path, image)
+        cv.imwrite(str(tmp_path), image)
         os.rename(tmp_path, path)
     finally:
         if tmp_path.exists():

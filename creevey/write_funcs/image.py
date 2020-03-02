@@ -12,9 +12,13 @@ def write_image(image: np.array, path: PathOrStr, **kwargs) -> None:
     """
     Write image to specified path.
 
-    Create output directory if it does not exist. Write to a tempfile
-    and then rename it so that we don't create a partial image file if
-    write process is interrupted.
+    Create output directory if it does not exist.
+    
+    Write to a temporary in a directory ".tmp" inside the output
+    directory and then rename the file so that we don't create a partial
+    image file if write process is interrupted. ".tmp" directory is not
+    deleted, but temporary files are deleted even if there is an
+    exception during writing or renaming.
 
     `kwargs` is included only for compatibility with the
     `CustomReportingPipeline` class.
@@ -26,19 +30,19 @@ def write_image(image: np.array, path: PathOrStr, **kwargs) -> None:
     path
         Desired output path
     """
-    outdir = Path(path).parent
-    outdir.mkdir(parents=True, exist_ok=True)
-
     num_channels = 1 if len(image.shape) == 2 else image.shape[2]
     if num_channels >= 3:
         # OpenCV wants to write BGR, so reverse order of first three
         # channels
         image[:, :, :3] = image[:, :, 2::-1]
 
-    temp_path = Path(tempfile.NamedTemporaryFile(delete=False).name).with_suffix('.png')
+    outdir = Path(path).parent
+    tmp_dir = outdir / '.tmp'
+    tmp_dir.mkdir(parents=True, exist_ok=True)
+    tmp_path = tmp_dir / path.name
     try:
-        cv.imwrite(str(temp_path), image)
-        os.rename(temp_path, path)
+        cv.imwrite(tmp_path, image)
+        os.rename(tmp_path, path)
     finally:
-        if temp_path.exists():
-            temp_path.unlink()
+        if tmp_path.exists():
+            tmp_path.unlink()

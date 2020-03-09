@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
+# [1.6.3] - 2020-3-2
+### Fixed
+ - `write_image` writes to a tempfile in a ".tmp" subdirectory in the output directory rather than in an arbitrary location to avoid issues when writing to a mounted volume.
+
 # [1.6.2] - 2020-2-28
 ### Changed
  - `write_image` writes to a tempfile and then renames it to ensure that it does not create partial image files if writing is interrupted.

@@ -239,7 +239,7 @@ class CustomReportingPipeline(Pipeline):
     Functions defined in Creevey call this item `log_dict`.
 
     Inside those functions, adding items to `log_dict[inpath]` causes
-    them to be added to the "run record" DataFrame that `self.run`
+    them to be added to the "run record" DataFrame that the pipeline
     returns. See Creevey's README for further explanation.
     """
 

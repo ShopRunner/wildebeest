@@ -55,7 +55,7 @@ def test_custom_reporting_pipeline(report_mean_brightness_pipeline):
         },
         index=inpaths,
     )
-    actual_run_report = report_mean_brightness_pipeline.run(
+    actual_run_report = report_mean_brightness_pipeline(
         inpaths=inpaths,
         path_func=keep_filename_save_png_in_tempdir,
         n_jobs=6,

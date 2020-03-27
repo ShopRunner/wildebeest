@@ -69,6 +69,85 @@ class Pipeline:
             )
         self.write_func = write_func
 
+    def __call__(
+        self,
+        inpaths: Iterable[PathOrStr],
+        path_func: Callable[[PathOrStr], PathOrStr],
+        n_jobs: int,
+        skip_existing: bool = True,
+        exceptions_to_catch: Optional[Union[Exception, Tuple[Exception]]] = None,
+    ) -> pd.DataFrame:
+        """
+        Run the pipeline.
+
+        Across `n_jobs` threads, for each path in `inpaths`, if
+        `skip_existing` is `True` and `path_func` of that path exists,
+        do not do anything. Otherwise, use `load_func` to get the
+        resource from that path, pipe its output through `ops`, and
+        write out the result with `write_func`.
+
+        Parameters
+        ----------
+        inpaths
+            Iterable of string or Path objects pointing to resources to
+            be processed and written out.
+        path_func
+            Function that takes each input path and returns the desired
+            corresponding output path.
+        n_jobs
+            Number of threads to use.
+        skip_existing
+            Boolean indicating whether to skip items that would result
+            in overwriting an existing file or to overwrite any such
+            files.
+        exceptions_to_catch
+            Tuple of exception types to catch. An exception of one of
+            these types will be logged with logging level ERROR and the
+            relevant file will be skipped.
+
+        Side effects
+        ------------
+        Logs a warning when `skip_existing` is `True`.
+
+        Returns
+        -------
+        Pandas DataFrame "run report" with each input path as its
+        index and columns indicating the corresponding output path (
+        "outpath"), whether processing was skipped because a file
+        already existed at the output path ("skipped_existing"),
+        whether processing failed due to an exception in
+        `exceptions_to_catch` ("exception_handled"), and a timestamp
+        indicating when processing complete ("time_finished").
+        """
+        if skip_existing:
+            logging.warning(
+                'Skipping files where a file exists at the output '
+                'location. Pass `skip_existing=False` to overwrite '
+                'existing files instead.'
+            )
+
+        log_dict = defaultdict(dict)
+
+        Parallel(n_jobs=n_jobs, prefer='threads')(
+            delayed(self.pipeline_func)(
+                path, path_func, skip_existing, log_dict, exceptions_to_catch
+            )
+            for path in tqdm(inpaths)
+        )
+
+        run_report = pd.DataFrame.from_dict(log_dict, orient='index')
+
+        return run_report
+
+    def run(self, *args, **kwargs):
+        """
+        Alias for `self.__call__`
+
+        Provided for compatibility with code written before
+        `self.__call__` was added.
+        """
+        return self(*args, **kwargs)
+
     def pipeline_func(
         self,
         inpath: PathOrStr,
@@ -143,76 +222,6 @@ class Pipeline:
         for op in self.ops:
             stage = op(stage)
         self.write_func(stage, outpath)
-
-    def run(
-        self,
-        inpaths: Iterable[PathOrStr],
-        path_func: Callable[[PathOrStr], PathOrStr],
-        n_jobs: int,
-        skip_existing: bool = True,
-        exceptions_to_catch: Optional[Union[Exception, Tuple[Exception]]] = None,
-    ) -> pd.DataFrame:
-        """
-        Run the pipeline.
-
-        Across `n_jobs` threads, for each path in `inpaths`, if
-        `skip_existing` is `True` and `path_func` of that path exists,
-        do not do anything. Otherwise, use `load_func` to get the
-        resource from that path, pipe its output through `ops`, and
-        write out the result with `write_func`.
-
-        Parameters
-        ----------
-        inpaths
-            Iterable of string or Path objects pointing to resources to
-            be processed and written out.
-        path_func
-            Function that takes each input path and returns the desired
-            corresponding output path.
-        n_jobs
-            Number of threads to use.
-        skip_existing
-            Boolean indicating whether to skip items that would result
-            in overwriting an existing file or to overwrite any such
-            files.
-        exceptions_to_catch
-            Tuple of exception types to catch. An exception of one of
-            these types will be logged with logging level ERROR and the
-            relevant file will be skipped.
-
-        Side effects
-        ------------
-        Logs a warning when `skip_existing` is `True`.
-
-        Returns
-        -------
-        Pandas DataFrame "run report" with each input path as its
-        index and columns indicating the corresponding output path (
-        "outpath"), whether processing was skipped because a file
-        already existed at the output path ("skipped_existing"),
-        whether processing failed due to an exception in
-        `exceptions_to_catch` ("exception_handled"), and a timestamp
-        indicating when processing complete ("time_finished").
-        """
-        if skip_existing:
-            logging.warning(
-                'Skipping files where a file exists at the output '
-                'location. Pass `skip_existing=False` to overwrite '
-                'existing files instead.'
-            )
-
-        log_dict = defaultdict(dict)
-
-        Parallel(n_jobs=n_jobs, prefer='threads')(
-            delayed(self.pipeline_func)(
-                path, path_func, skip_existing, log_dict, exceptions_to_catch
-            )
-            for path in tqdm(inpaths)
-        )
-
-        run_report = pd.DataFrame.from_dict(log_dict, orient='index')
-
-        return run_report
 
 
 class CustomReportingPipeline(Pipeline):

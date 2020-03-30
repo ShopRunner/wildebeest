@@ -55,7 +55,7 @@ def test_custom_reporting_pipeline(report_mean_brightness_pipeline):
         },
         index=inpaths,
     )
-    actual_run_report = report_mean_brightness_pipeline.run(
+    actual_run_report = report_mean_brightness_pipeline(
         inpaths=inpaths,
         path_func=keep_filename_save_png_in_tempdir,
         n_jobs=6,
@@ -68,3 +68,12 @@ def test_custom_reporting_pipeline(report_mean_brightness_pipeline):
         expected_run_report.sort_index(axis='index').sort_index(axis='columns'),
     )
     assert np.issubdtype(actual_run_report.loc[:, 'mean_brightness'], np.number)
+
+
+def test_run_method(report_mean_brightness_pipeline):
+    report_mean_brightness_pipeline.run(
+        inpaths=IMAGE_URLS,
+        path_func=keep_filename_save_png_in_tempdir,
+        n_jobs=6,
+        skip_existing=False,
+    )

@@ -47,7 +47,7 @@ def report_output(
     >>     join_outdir_filename_extension, outdir='.', extension='.png'
     >> )
     >> print(
-    >>     report_brightness_pipeline.run(
+    >>     report_brightness_pipeline(
     >>         inpaths=image_urls,
     >>         path_func=keep_filename_png_in_cwd,
     >>         n_jobs=1,
@@ -126,7 +126,7 @@ def get_report_output_decorator(key: Hashable) -> Callable:
     >>     join_outdir_filename_extension, outdir='.', extension='.png'
     >> )
     >> print(
-    >>     report_brightness_pipeline.run(
+    >>     report_brightness_pipeline(
     >>         inpaths=image_urls,
     >>         path_func=keep_filename_png_in_cwd,
     >>         n_jobs=1,

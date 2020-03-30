@@ -6,7 +6,7 @@
 
 ## Example
 
-For instance, the following code takes a list of image URLs and for each one downloads the file contents, trims off its bottom 100 pixels, resizes it to 224x224, and writes the result to disk, using ten threads for concurrency. Because `exceptions_to_catch=AttributeError` is being passed to the `run` call, this code will catch `AttributeError`s that arise during file processing, logging them as errors but continuing execution. (This error-handling functionality is useful for dealing with occasional corrupted input files.)
+For instance, the following code takes a list of image URLs and for each one downloads the file contents, trims off its bottom 100 pixels, resizes it to 224x224, and writes the result to disk, using ten threads for concurrency. Because the pipline is called with `exceptions_to_catch=AttributeError`, this code will catch `AttributeError`s that arise during file processing, logging them as errors but continuing execution. (This error-handling functionality is useful for dealing with occasional corrupted input files.)
 
 ```python
 from functools import partial
@@ -31,7 +31,7 @@ image_urls = [f'https://bit.ly/{filename}' for filename in image_filenames]
 keep_filename_png_in_cwd = partial(
     join_outdir_filename_extension, outdir='.', extension='.png'
 )
-run_report = trim_resize_pipeline.run(
+run_report = trim_resize_pipeline(
     inpaths=image_urls,
     path_func=keep_filename_png_in_cwd,
     n_jobs=10,
@@ -40,7 +40,7 @@ run_report = trim_resize_pipeline.run(
 )
 ```
 
-`trim_resize_pipeline.run(...)` returns a "run report:" a Pandas DataFrame with each input path as its index and columns indicating the corresponding output path ("outpath"), whether processing was skipped because a file already existed at the output path ("skipped_existing"), whether processing failed due to an exception in `exceptions_to_catch` ("exception_handled"), and a timestamp indicating when processing completed ("time_finished").
+`trim_resize_pipeline(...)` returns a "run report:" a Pandas DataFrame with each input path as its index and columns indicating the corresponding output path ("outpath"), whether processing was skipped because a file already existed at the output path ("skipped_existing"), whether processing failed due to an exception in `exceptions_to_catch` ("exception_handled"), and a timestamp indicating when processing completed ("time_finished").
 
 If `n_jobs` is greater than 1, then the order of the input files in the run report typically will not match the order in `inpaths`; a command like `run_report.loc[inpaths, :]` can be used to restore the original ordering if desired. 
 
@@ -108,7 +108,7 @@ image_urls = [f'https://bit.ly/{filename}' for filename in image_filenames]
 keep_filename_png_in_cwd = partial(
     join_outdir_filename_extension, outdir='.', extension='.png'
 )
-run_report = pipeline.run(
+run_report = pipeline(
     inpaths=image_urls,
     path_func=keep_filename_png_in_cwd,
     n_jobs=1,

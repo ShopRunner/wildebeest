@@ -44,7 +44,7 @@ def trim_resize_pipeline():
 def test_trim_resize_pipeline(trim_resize_pipeline):
     path_func = keep_filename_save_png_in_tempdir
     inpaths = IMAGE_URLS
-    trim_resize_pipeline.run(
+    trim_resize_pipeline(
         inpaths=inpaths, path_func=path_func, n_jobs=6, skip_existing=False
     )
     for path in inpaths:
@@ -56,7 +56,7 @@ def test_trim_resize_pipeline(trim_resize_pipeline):
 def test_skip_existing(trim_resize_pipeline, caplog):
     inpaths = IMAGE_URLS
 
-    trim_resize_pipeline.run(
+    trim_resize_pipeline(
         inpaths=inpaths,
         path_func=keep_filename_save_png_in_tempdir,
         n_jobs=6,
@@ -77,7 +77,7 @@ def test_skip_existing(trim_resize_pipeline, caplog):
             },
             index=inpaths,
         )
-        actual_run_report = trim_resize_pipeline.run(
+        actual_run_report = trim_resize_pipeline(
             inpaths=IMAGE_URLS,
             path_func=keep_filename_save_png_in_tempdir,
             n_jobs=6,
@@ -106,7 +106,7 @@ def test_logging(trim_resize_pipeline):
         },
         index=inpaths,
     )
-    actual_run_report = trim_resize_pipeline.run(
+    actual_run_report = trim_resize_pipeline(
         inpaths=inpaths,
         path_func=keep_filename_save_png_in_tempdir,
         n_jobs=6,
@@ -132,7 +132,7 @@ def _raise_TypeError(*args, **kwargs):
 
 def test_raises_without_catch(error_pipeline):
     with pytest.raises(TypeError):
-        error_pipeline.run(
+        error_pipeline(
             inpaths=IMAGE_URLS,
             path_func=keep_filename_save_png_in_tempdir,
             n_jobs=6,
@@ -142,7 +142,7 @@ def test_raises_without_catch(error_pipeline):
 
 def test_raises_with_different_catch(error_pipeline):
     with pytest.raises(TypeError):
-        error_pipeline.run(
+        error_pipeline(
             inpaths=IMAGE_URLS,
             path_func=keep_filename_save_png_in_tempdir,
             n_jobs=6,
@@ -167,7 +167,7 @@ def test_catches(error_pipeline):
         },
         index=inpaths,
     )
-    actual_run_report = error_pipeline.run(
+    actual_run_report = error_pipeline(
         inpaths=inpaths,
         path_func=keep_filename_save_png_in_tempdir,
         n_jobs=1,

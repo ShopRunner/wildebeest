@@ -6,7 +6,7 @@
 
 ## Example
 
-For instance, the following code takes a list of image URLs and for each one downloads the file contents, trims off its bottom 100 pixels, resizes it to 224x224, and writes the result to disk, using ten threads for concurrency. Because `exceptions_to_catch=AttributeError` is being passed to the `run` call, this code will catch `AttributeError`s that arise during file processing, logging them as errors but continuing execution. (This error-handling functionality is useful for dealing with occasional corrupted input files.)
+For instance, the following code takes a list of image URLs and for each one downloads the file contents, trims off its bottom 100 pixels, resizes it to 224x224, and writes the result to disk, using ten threads for concurrency. Because the pipline is called with `exceptions_to_catch=AttributeError`, this code will catch `AttributeError`s that arise during file processing, logging them as errors but continuing execution. (This error-handling functionality is useful for dealing with occasional corrupted input files.)
 
 ```python
 from functools import partial

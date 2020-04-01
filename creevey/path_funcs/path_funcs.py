@@ -55,4 +55,14 @@ def join_outdir_hashed_path_extension(
 
 
 def replace_dir(path: PathOrStr, outdir: PathOrStr) -> Path:
+    """
+    Replace the directory of `path` with `outdir`.
+
+    Parameters
+    ----------
+    path
+        Input path
+    outdir
+        Output directory
+    """
     return Path(outdir) / Path(path).name

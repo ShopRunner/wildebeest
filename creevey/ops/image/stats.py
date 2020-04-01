@@ -17,7 +17,7 @@ def calculate_mean_brightness(image: np.array) -> float:
 
 
 @get_report_output_decorator(key='mean_brightness')
-def report_mean_brightness(image):
+def report_mean_brightness(image):  # noqa: D103
     return calculate_mean_brightness(image)
 
 
@@ -55,5 +55,5 @@ def calculate_dhash(image: np.array, sqrt_hash_size: int = 8) -> np.array:
 
 
 @get_report_output_decorator(key='dhash')
-def report_dhash(image, sqrt_hash_size: int = 8):
+def report_dhash(image, sqrt_hash_size: int = 8):  # noqa: D103
     return calculate_dhash(image=image, sqrt_hash_size=sqrt_hash_size)

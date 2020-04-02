@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
+# [1.7.1] - 2020-4-1
+### Added
+ - Example text scraping application.
+
 # [1.7.0] - 2020-3-27
 ### Added
  - Pipelines can now be called directly rather than through a `.run()` method; `.run()` still exists as an alias for backwards compatibility.

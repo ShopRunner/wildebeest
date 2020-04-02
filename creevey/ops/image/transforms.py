@@ -32,10 +32,6 @@ def resize(
         resized so that it has this length along its smaller spatial
         dimension while preseving aspect ratio as closely as possible.
         Exactly one of `shape` and `min_dim` must be `None`.
-
-    Returns
-    -------
-    NumPy array with specified shape
     """
     _validate_resize_inputs(shape, min_dim)
     if min_dim is not None:
@@ -66,10 +62,6 @@ def centercrop(image: np.array, reduction_factor: float, **kwargs) -> np.array:
     reduction_factor
         scale of center cropped box, 1.0 would be the full image
         value of .4 means a box of .4*width and .4*height
-
-    Returns
-    -------
-    Slice of input image corresponding to a cropped area around the center
     """
     height, width, *channels = image.shape
 
@@ -101,12 +93,13 @@ def trim_padding(
     `kwargs` is included only for compatibility with the
     `CustomReportingPipeline` class.
 
-    Assumptions
-    -----------
-    - Image is grayscale, RGB, or RGBA.
-    - Pixel values are scaled between either 0 and 1 or 0 and 255. If
-    image is scaled between 0 and 255, then some pixel has a value
-    greater than 1.
+    Assumes:
+
+        Image is grayscale, RGB, or RGBA.
+
+        Pixel values are scaled between either 0 and 1 or 0 and 255. If
+        image is scaled between 0 and 255, then some pixel has a value
+        greater than 1.
 
     Parameters
     ----------
@@ -116,11 +109,6 @@ def trim_padding(
         How to compare pixel values to `thresh`
     thresh
         Value to compare pixel values against
-
-    Returns
-    -------
-    Slice of input image corresponding to a cropped area with padding
-    removed
     """
     im_gray = convert_to_grayscale(image)
     im_gray = normalize_pixel_values(im_gray)

@@ -186,7 +186,7 @@ class Pipeline:
         ----
         Records results in a dict within `log_dict[inpath]` with the
         following attributes
-        
+
         outpath
             output path
         skipped_existing

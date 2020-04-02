@@ -35,10 +35,10 @@ def calculate_dhash(image: np.array, sqrt_hash_size: int = 8) -> np.array:
 
     Assumes image is grayscale, RGB, or RGBA.
 
-    Source
-    ------
-    Adrian Rosebrock, "Building an Image Hashing Search Engine with
-    VP-Trees and OpenCV", *PyImageSearch*,
+    Note
+    ----
+    Based on Adrian Rosebrock, "Building an Image Hashing Search Engine
+    with VP-Trees and OpenCV", *PyImageSearch*,
     https://www.pyimagesearch.com/2019/08/26/building-an-image-hashing-search-engine-with-vp-trees-and-opencv/,
     accessed on 18 October 2019.
 

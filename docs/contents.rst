@@ -14,7 +14,7 @@ pipelines
    :members:
 
 image
-^^^^
+^^^^^
 
 .. automodule:: creevey.pipelines.image
    :special-members: __call__

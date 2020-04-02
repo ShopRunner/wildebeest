@@ -154,7 +154,7 @@ Files that would be written to an output location where there is an existing fil
 Non-Image Example: Text Scraping
 --------------------------------
 
-Creevey is not limited to images! It applies anywhere you want to process data from many sources. For instance, we can use it to scrape onlne text. The example below uses it to get titles and crude word counts for four blog posts.
+Creevey is not limited to images! It applies anywhere you want to process data from many sources. For instance, we can use it to scrape online text. The example below uses it to get titles and crude word counts for four blog posts.
 
 .. code-block:: python
 

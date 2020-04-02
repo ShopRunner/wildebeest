@@ -1,0 +1,2 @@
+.. automodule:: creevey.pipelines
+   :members:

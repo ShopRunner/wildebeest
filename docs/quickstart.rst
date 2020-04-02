@@ -2,8 +2,11 @@
 Quickstart
 ==========
 
+Basic Pipelines
+---------------
+
 Example: Downloading and Processing Images
-------------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 For instance, the following code takes a list of image URLs and for each one downloads the file contents, trims off its bottom 100 pixels, resizes it to 224x224, and writes the result to disk, using ten threads for concurrency. Because the pipline is called with ``exceptions_to_catch=AttributeError``\ , this code will catch ``AttributeError``\ s that arise during file processing, logging them as errors but continuing execution. (This error-handling functionality is useful for dealing with occasional corrupted input files.)
 
@@ -50,12 +53,12 @@ For instance, the following code takes a list of image URLs and for each one dow
 If ``n_jobs`` is greater than 1, then the order of the input files in the run report typically will not match the order in ``inpaths``\ ; a command like ``run_report.loc[inpaths, :]`` can be used to restore the original ordering if desired. 
 
 The ``Pipeline`` Class
---------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Creevey's core abstraction is the ``Pipeline`` class.
 
 Creating a ``Pipeline``
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
  A ``Pipeline`` constructor takes three arguments:
 
@@ -65,7 +68,7 @@ Creating a ``Pipeline``
 #. A function ``write_image`` that takes the output of the last function in ``ops`` and writes it out to a specified location. In this example, ``write_image`` takes a NumPy array image and writes it to disk.
 
 Running a ``Pipeline``
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 A ``Pipeline`` object takes the following arguments when called:
 
@@ -77,7 +80,7 @@ A ``Pipeline`` object takes the following arguments when called:
 #. An exception type or tuple of exceptions types ``exceptions_to_catch`` (optional) to catch and log without raising.
 
 Extending an Existing Pipeline
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 We can simplify our sample code snippet by using an existing pipeline for downloading and writing images and simply adding our ``ops``.
 
@@ -90,8 +93,11 @@ We can simplify our sample code snippet by using an existing pipeline for downlo
 
 More generally, it is easy to modify an existing ``Pipeline`` object simply by modifying the relevant attributes.
 
-Example: Custom Reporting
--------------------------
+Adding Custom Reporting
+-----------------------
+
+Example: Recording Image Properties
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 When a ``Pipeline`` object is called, returns a "run report" with basic information about what happened during the run. The ``CustomReportingPipeline`` allows you to add additional information to these reports by adding to them within your ``load_func``\ , ``ops``\ , and ``write_func``. For instance, when processing a set of image files you might wish to record each image's mean brightness while you already have it open so that you can later experiment with removing washed-out images from your dataset. Here is an example of a ``CustomReportingPipeline`` that uses a built-in ``report_mean_brightness`` function to record the brightness of each image and a custom ``report_is_grayscale`` function to record whether or not it is grayscale. The pipeline runs those functions on each image during the download process and returns their outputs in the final run report. 
 
@@ -136,14 +142,17 @@ Here is the resulting run report:
    :alt: 
 
 
+The ``CustomReporting`` Class
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 You define and run a ``CustomReportingPipeline`` object in the same way that you define and run a basic ``Pipeline`` object, except that the elements of ``ops`` and ``write_func`` need to accept the input path as an additional keyword argument "inpath"; and ``write_func``\ , ``ops`` and ``write_func`` need to accept a ``defaultdict(dict)`` object as another keyword argument "log_dict", which stores the run report information for a single file. You can then enrich your run reports in one of these functions by writing e.g. ``log_dict[inpath]['mean_brightness'] = mean_brightness`` inside one of the functions in the pipeline (assuming that you have calculated ``mean_brightness``\ ).
 
 The ``get_report_output_decorator`` function can be used as in the example above to modify a function that takes a single input and returns a single output for use in a ``CustomReportingPipeline``. It wraps the function it decorates to return  that function's input and add its output to ``log_dict[inpath]`` with the specified key. 
 
 Files that would be written to an output location where there is an existing file are skipped entirely when ``skip_existing=True``\ , so custom reports will not be written for those files.
 
-Text Scraping Example
----------------------
+Non-Image Example: Text Scraping
+--------------------------------
 
 Creevey is not limited to images! It applies anywhere you want to process data from many sources. For instance, we can use it to scrape onlne text. The example below uses it to get titles and crude word counts for four blog posts.
 

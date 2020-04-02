@@ -1,3 +1,4 @@
+"""Miscellaneous utilities"""
 import os
 from pathlib import Path
 from typing import Iterable, List

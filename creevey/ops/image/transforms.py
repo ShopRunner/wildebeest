@@ -1,3 +1,4 @@
+"""Functions that take an image and return a transformed image"""
 from typing import Callable, Optional, Tuple
 
 import cv2 as cv

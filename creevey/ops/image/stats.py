@@ -1,3 +1,4 @@
+"""Functions that record information about an image"""
 import cv2 as cv
 import numpy as np
 

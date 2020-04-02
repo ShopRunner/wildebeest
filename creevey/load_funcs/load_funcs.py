@@ -26,8 +26,8 @@ def get_response(url: str, timeout: int = 5, **kwargs) -> None:
     Maintain a common session within each thread to reduce request
     overhead.
 
-    Error Handling
-    --------------
+    Note
+    ----
     Retry up to ten times on `requests.exceptions.ConnectionError`
     instances and 5xx status codes, waiting 2^x seconds between each
     retry, with a max of 10 seconds.

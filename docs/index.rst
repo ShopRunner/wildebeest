@@ -13,11 +13,9 @@ Creevey is a file processing framework. It is designed for IO-bound workflows th
 Creevey was developed for deep learning computer vision projects, so in addition to the general framework it also provides predefined components for image processing. However, it can be used for any project that involves processing data from many sources.
 
 .. toctree::
-   :maxdepth: 2
    
    quickstart.rst
-   structure.rst
-   modules.rst
+   contents.rst
    limitations.rst
    contrib.rst
 

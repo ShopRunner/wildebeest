@@ -1,6 +1,9 @@
 
-Example
--------
+Quickstart
+==========
+
+Example: Downloading and Processing Images
+------------------------------------------
 
 For instance, the following code takes a list of image URLs and for each one downloads the file contents, trims off its bottom 100 pixels, resizes it to 224x224, and writes the result to disk, using ten threads for concurrency. Because the pipline is called with ``exceptions_to_catch=AttributeError``\ , this code will catch ``AttributeError``\ s that arise during file processing, logging them as errors but continuing execution. (This error-handling functionality is useful for dealing with occasional corrupted input files.)
 
@@ -87,8 +90,8 @@ We can simplify our sample code snippet by using an existing pipeline for downlo
 
 More generally, it is easy to modify an existing ``Pipeline`` object simply by modifying the relevant attributes.
 
-The ``CustomReportingPipeline`` Class
------------------------------------------
+Example: Custom Reporting
+-------------------------
 
 When a ``Pipeline`` object is called, returns a "run report" with basic information about what happened during the run. The ``CustomReportingPipeline`` allows you to add additional information to these reports by adding to them within your ``load_func``\ , ``ops``\ , and ``write_func``. For instance, when processing a set of image files you might wish to record each image's mean brightness while you already have it open so that you can later experiment with removing washed-out images from your dataset. Here is an example of a ``CustomReportingPipeline`` that uses a built-in ``report_mean_brightness`` function to record the brightness of each image and a custom ``report_is_grayscale`` function to record whether or not it is grayscale. The pipeline runs those functions on each image during the download process and returns their outputs in the final run report. 
 
@@ -139,8 +142,8 @@ The ``get_report_output_decorator`` function can be used as in the example above
 
 Files that would be written to an output location where there is an existing file are skipped entirely when ``skip_existing=True``\ , so custom reports will not be written for those files.
 
-Text Example
-------------
+Text Scraping Example
+---------------------
 
 Creevey is not limited to images! It applies anywhere you want to process data from many sources. For instance, we can use it to scrape onlne text. The example below uses it to get titles and crude word counts for four blog posts.
 

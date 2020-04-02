@@ -17,8 +17,9 @@ Creevey was developed for deep learning computer vision projects, so in addition
    :maxdepth: 2
    :caption: Contents:
    
-   contrib.rst
    quickstart.rst
+   limitations.rst
+   contrib.rst
 
 
 Indices and tables

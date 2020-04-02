@@ -6,7 +6,7 @@
 Welcome to creevey's documentation!
 ===================================
 
-.. mdinclude:: ../../README.md
+.. mdinclude:: ../README.md
 
 
 .. toctree::

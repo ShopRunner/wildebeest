@@ -1,6 +1,6 @@
 .. _contrib:
 
-.. mdinclude:: ../../CONTRIBUTING.md
+.. mdinclude:: ../CONTRIBUTING.md
 
 
-.. mdinclude:: ../../CONDUCT.md
+.. mdinclude:: ../CONDUCT.md

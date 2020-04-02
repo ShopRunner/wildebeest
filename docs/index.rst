@@ -18,6 +18,7 @@ Creevey was developed for deep learning computer vision projects, so in addition
    :caption: Contents:
    
    quickstart.rst
+   structure.rst
    limitations.rst
    contrib.rst
 

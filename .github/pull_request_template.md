@@ -16,3 +16,4 @@ The maintainer will complete the following steps for external contributions.
  - [ ] `CHANGELOG.md` has been updated.
  - [ ] `_version.py` has been updated.
  - [ ] Version number has been updated in `docs/conf.py`.
+ - [ ] Confirm that docs build correctly: activate the branch in [Admin](https://readthedocs.org/projects/creevey/versions/), trigger a build with a push or manually in [Builds](https://readthedocs.org/projects/creevey/versions/), and click on the link on the build page to view the result.

@@ -15,3 +15,4 @@ The maintainer will complete the following steps for external contributions.
 
  - [ ] `CHANGELOG.md` has been updated.
  - [ ] `_version.py` has been updated.
+ - [ ] Version number has been updated in `docs/conf.py`.

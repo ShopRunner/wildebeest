@@ -3,6 +3,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
+# [2.0.0] - 2020-4-3
+### Changed
+ - Renamed `pipelines/core.py` to `pipelines/pipelines.py`
+ - Moved most of the README content to readthedocs.
+### Added
+ - Docstrings in readthedocs.
+
 # [1.7.2] - 2020-4-2
 ### Added
  - Example text scraping application.

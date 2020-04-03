@@ -22,10 +22,8 @@ project = 'creevey'
 copyright = '2019 Shoprunner'
 author = 'gsganden, sugi-chan'
 
-# The short X.Y version
-version = ''
-# The full version, including alpha/beta/rc tags
-release = '2.0.0'
+
+release = version = '2.0.0'
 
 
 # -- General configuration ---------------------------------------------------

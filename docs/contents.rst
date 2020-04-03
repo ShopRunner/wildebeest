@@ -17,7 +17,6 @@ image
 ^^^^^
 
 .. automodule:: creevey.pipelines.image
-   :special-members: __call__
    :members:
 
 load_funcs

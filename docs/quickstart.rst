@@ -44,6 +44,7 @@ For instance, the following code takes a list of image URLs and for each one dow
 
 ``trim_resize_pipeline(...)`` returns a "run report:" a Pandas DataFrame with each input path as its index and columns indicating the corresponding output path ("outpath"), whether processing was skipped because a file already existed at the output path ("skipped_existing"), whether processing failed due to an exception in ``exceptions_to_catch`` ("exception_handled"), and a timestamp indicating when processing completed ("time_finished"):
 
+If you are doing exploratory work and don't really care about the errors right now, you can pass ``exceptions_to_catch=BaseException`` to the pipeline call above, and creevey will simply catch all Exceptions, downloading as many images as it can.
 
 .. image:: ./images/run_report_image.png
    :target: ./images/run_report_image.png

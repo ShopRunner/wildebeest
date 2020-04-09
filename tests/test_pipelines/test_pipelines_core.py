@@ -55,19 +55,21 @@ def test_custom_reporting_pipeline(report_mean_brightness_pipeline):
         },
         index=inpaths,
     )
-    actual_run_report = report_mean_brightness_pipeline(
+    report_mean_brightness_pipeline(
         inpaths=inpaths,
         path_func=keep_filename_save_png_in_tempdir,
         n_jobs=6,
         skip_existing=False,
     )
     pd.testing.assert_frame_equal(
-        actual_run_report.sort_index(axis='index')
+        report_mean_brightness_pipeline.run_report_.sort_index(axis='index')
         .sort_index(axis='columns')
         .drop(['time_finished', 'mean_brightness'], axis='columns'),
         expected_run_report.sort_index(axis='index').sort_index(axis='columns'),
     )
-    assert np.issubdtype(actual_run_report.loc[:, 'mean_brightness'], np.number)
+    assert np.issubdtype(
+        report_mean_brightness_pipeline.run_report_.loc[:, 'mean_brightness'], np.number
+    )
 
 
 def test_run_method(report_mean_brightness_pipeline):

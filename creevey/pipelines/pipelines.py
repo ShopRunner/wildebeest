@@ -36,6 +36,7 @@ class Pipeline:
         the output of `load_func` if `ops` is `None` or empty) and a
         string or `Path` object and writes the former to the location
         specified by the latter.
+    run_report_
     """
 
     def __init__(
@@ -66,7 +67,32 @@ class Pipeline:
             raise TypeError(
                 'ops must be callable, an iterable of ' 'callables, or `None`'
             )
+        self._run_report_ = None
         self.write_func = write_func
+
+    @property
+    def run_report_(self):
+        """
+        Pandas DataFrame of information about the most recent run.
+
+        Stores input path in the index, output path as "outpath", 0/1
+        indicating whether processing was skipped because a file already
+        existed at the output path as "skipped_existing", whether
+        processing failed due to a handled exception as
+        "exception_handled", and a timestamp indicating when processing
+        completed as "time_finished".
+
+        Raises
+        ------
+        AttributeError
+            If no run report is available because pipeline has not been
+            run.
+        """
+        if self._run_report_ is None:
+            raise AttributeError(
+                'Pipeline has not been run, so there is no run report.'
+            )
+        return self._run_report_
 
     def __call__(
         self,
@@ -104,20 +130,16 @@ class Pipeline:
             these types will be logged with logging level ERROR and the
             relevant file will be skipped.
 
-        Returns
-        -------
-        pd.DataFrame
-            Run report with each input path as its index and columns
-            indicating the corresponding output path  ("outpath"),
-            whether processing was skipped because a file already
-            existed at the output path ("skipped_existing"), whether
-            processing failed due to an exception in
-            `exceptions_to_catch` ("exception_handled"), and a timestamp
-            indicating when processing complete ("time_finished").
+        Raises
+        ------
+        CreeveyProcessingError
+            If any unhandled errors arise during file processing
 
-        Note
-        ----
+        Notes
+        -----
         Logs a warning when `skip_existing` is `True`.
+
+        Stores a run report in `self.run_report_`
         """
         if skip_existing:
             logging.warning(
@@ -128,16 +150,17 @@ class Pipeline:
 
         log_dict = defaultdict(dict)
 
-        Parallel(n_jobs=n_jobs, prefer='threads')(
-            delayed(self._pipeline_func)(
-                path, path_func, skip_existing, log_dict, exceptions_to_catch
+        try:
+            Parallel(n_jobs=n_jobs, prefer='threads')(
+                delayed(self._pipeline_func)(
+                    path, path_func, skip_existing, log_dict, exceptions_to_catch
+                )
+                for path in tqdm(inpaths)
             )
-            for path in tqdm(inpaths)
-        )
-
-        run_report = pd.DataFrame.from_dict(log_dict, orient='index')
-
-        return run_report
+        except Exception as e:
+            raise CreeveyProcessingError from e
+        finally:
+            self._run_report_ = pd.DataFrame.from_dict(log_dict, orient='index')
 
     def run(self, *args, **kwargs):
         """
@@ -258,3 +281,9 @@ class CustomReportingPipeline(Pipeline):
         for op in self.ops:
             stage = op(stage, inpath=inpath, log_dict=log_dict)
         self.write_func(stage, outpath, inpath=inpath, log_dict=log_dict)
+
+
+class CreeveyProcessingError(Exception):
+    """Raised when unhandled exception arises during file processing"""
+
+    pass

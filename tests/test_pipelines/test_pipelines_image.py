@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import pytest
 
-from creevey import Pipeline
+from creevey import Pipeline, CreeveyProcessingError
 from creevey.load_funcs.image import load_image_from_url
 from creevey.ops.image import resize
 from creevey.write_funcs.image import write_image
@@ -77,14 +77,16 @@ def test_skip_existing(trim_resize_pipeline, caplog):
             },
             index=inpaths,
         )
-        actual_run_report = trim_resize_pipeline(
+        trim_resize_pipeline(
             inpaths=IMAGE_URLS,
             path_func=keep_filename_save_png_in_tempdir,
             n_jobs=6,
             skip_existing=True,
         )
         pd.testing.assert_frame_equal(
-            actual_run_report.sort_index().drop('time_finished', axis='columns'),
+            trim_resize_pipeline.run_report_.sort_index().drop(
+                'time_finished', axis='columns'
+            ),
             expected_run_report.sort_index(),
         )
         assert len(caplog.records) == 1
@@ -106,14 +108,16 @@ def test_logging(trim_resize_pipeline):
         },
         index=inpaths,
     )
-    actual_run_report = trim_resize_pipeline(
+    trim_resize_pipeline(
         inpaths=inpaths,
         path_func=keep_filename_save_png_in_tempdir,
         n_jobs=6,
         skip_existing=False,
     )
     pd.testing.assert_frame_equal(
-        actual_run_report.sort_index().drop('time_finished', axis='columns'),
+        trim_resize_pipeline.run_report_.sort_index().drop(
+            'time_finished', axis='columns'
+        ),
         expected_run_report.sort_index(),
     )
 
@@ -130,8 +134,8 @@ def _raise_TypeError(*args, **kwargs):
     raise TypeError('Sample error for testing purposes')
 
 
-def test_raises_without_catch(error_pipeline):
-    with pytest.raises(TypeError):
+def test_raises_with_no_catch(error_pipeline):
+    with pytest.raises(CreeveyProcessingError):
         error_pipeline(
             inpaths=IMAGE_URLS,
             path_func=keep_filename_save_png_in_tempdir,
@@ -141,7 +145,7 @@ def test_raises_without_catch(error_pipeline):
 
 
 def test_raises_with_different_catch(error_pipeline):
-    with pytest.raises(TypeError):
+    with pytest.raises(CreeveyProcessingError):
         error_pipeline(
             inpaths=IMAGE_URLS,
             path_func=keep_filename_save_png_in_tempdir,
@@ -149,6 +153,19 @@ def test_raises_with_different_catch(error_pipeline):
             skip_existing=False,
             exceptions_to_catch=(AttributeError,),
         )
+
+
+def test_run_report_with_raise(error_pipeline):
+    try:
+        error_pipeline(
+            inpaths=IMAGE_URLS,
+            path_func=keep_filename_save_png_in_tempdir,
+            n_jobs=6,
+            skip_existing=False,
+        )
+    except CreeveyProcessingError:
+        pass
+    assert error_pipeline.run_report_ is not None
 
 
 def test_catches(error_pipeline):
@@ -167,7 +184,7 @@ def test_catches(error_pipeline):
         },
         index=inpaths,
     )
-    actual_run_report = error_pipeline(
+    error_pipeline(
         inpaths=inpaths,
         path_func=keep_filename_save_png_in_tempdir,
         n_jobs=1,
@@ -175,6 +192,6 @@ def test_catches(error_pipeline):
         exceptions_to_catch=(TypeError,),
     )
     pd.testing.assert_frame_equal(
-        actual_run_report.sort_index().drop('time_finished', axis='columns'),
+        error_pipeline.run_report_.sort_index().drop('time_finished', axis='columns'),
         expected_run_report.sort_index(),
     )

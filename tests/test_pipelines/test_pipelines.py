@@ -3,8 +3,9 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import pytest
+import requests
 
-from creevey import CustomReportingPipeline
+from creevey import CustomReportingPipeline, Pipeline
 from creevey.load_funcs.image import load_image_from_url
 from creevey.ops import get_report_output_decorator
 from creevey.ops.image import calculate_mean_brightness
@@ -79,3 +80,23 @@ def test_run_method(report_mean_brightness_pipeline):
         n_jobs=6,
         skip_existing=False,
     )
+
+
+@pytest.fixture(scope='session')
+def custom_check_existing_pipeline():
+    return Pipeline(
+        load_func=load_image_from_url,
+        ops=report_mean_brightness,
+        write_func=write_image,
+        check_existing_func=lambda url: requests.head(url),
+    )
+
+
+def test_custom_check_existing_function(custom_check_existing_pipeline):
+    custom_check_existing_pipeline(
+        inpaths=IMAGE_URLS,
+        path_func=keep_filename_save_png_in_tempdir,
+        n_jobs=6,
+        skip_existing=True,
+    )
+    assert custom_check_existing_pipeline.loc[:, "skipped_existing"].all()

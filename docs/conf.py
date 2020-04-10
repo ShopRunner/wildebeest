@@ -14,6 +14,7 @@
 #
 import os
 import sys
+
 sys.path.insert(0, os.path.abspath('../creevey'))
 
 # -- Project information -----------------------------------------------------
@@ -23,7 +24,7 @@ copyright = '2019 Shoprunner'
 author = 'gsganden, sugi-chan'
 
 
-release = version = '2.0.0'
+release = version = '3.0.0'
 
 
 # -- General configuration ---------------------------------------------------

@@ -100,9 +100,6 @@ def custom_check_existing_pipeline():
 
 def test_custom_check_existing_func(custom_check_existing_pipeline):
     custom_check_existing_pipeline(
-        inpaths=IMAGE_URLS,
-        path_func=keep_filename_save_png_in_tempdir,
-        n_jobs=1,
-        skip_existing=True,
+        inpaths=IMAGE_URLS, path_func=lambda x: x, n_jobs=1, skip_existing=True,
     )
     assert custom_check_existing_pipeline.run_report_.loc[:, "skipped_existing"].all()

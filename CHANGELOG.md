@@ -3,6 +3,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
+# [3.0.0] - 2020-4-9
+### Changed
+ - Run report is now stored in `<Pipeline object>.run_report_` rather than being returned.
+### Added
+ - If an otherwise unhandled exception arises during file processing, it is caught and a `CreeveyProcessingException` is raised instead.
+
 # [2.0.0] - 2020-4-3
 ### Changed
  - Renamed `pipelines/core.py` to `pipelines/pipelines.py`

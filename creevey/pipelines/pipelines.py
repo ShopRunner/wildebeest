@@ -50,7 +50,7 @@ class Pipeline:
             Union[Callable[[Any], Any], Iterable[Callable[[Any], Any]]]
         ] = None,
         check_existing_func: Optional[Callable[[Any], bool]] = (
-            lambda x: Path(x).exists()
+            lambda x: Path(x).is_file()
         ),
     ) -> None:
         self.load_func = load_func
@@ -102,10 +102,10 @@ class Pipeline:
         Run the pipeline.
 
         Across `n_jobs` threads, for each path in `inpaths`, if
-        `skip_existing` is `True` and `path_func` of that path exists,
-        do not do anything. Otherwise, use `load_func` to get the
-        resource from that path, pipe its output through `ops`, and
-        write out the result with `write_func`.
+        `skip_existing` and `self.check_existing_func(path_func(path))`
+        are both `True`, do not do anything. Otherwise, use `load_func`
+        to get the resource from that path, pipe its output through
+        `ops`, and write out the result with `write_func`.
 
         Parameters
         ----------
@@ -183,7 +183,8 @@ class Pipeline:
         `self.write_func` to write it to `outpath_func(inpath)`.
 
         If `skip_existing` is `True`, check up front whether
-        `outpath_func(inpath)` exists. If it does, skip the file.
+        `self.check_existing_func(outpath_func(inpath))` exists. If it
+        does, skip the file.
 
         Catch `exceptions_to_catch` if they arise during file
         processing.
@@ -220,7 +221,7 @@ class Pipeline:
         skipped_existing = False
         exception_handled = False
 
-        if skip_existing and Path(outpath).is_file():
+        if skip_existing and self.check_existing_func(outpath):
             skipped_existing = True
             logging.debug(
                 f'Skipping {inpath} because there is already a file at corresponding '

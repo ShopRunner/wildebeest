@@ -14,7 +14,7 @@ For instance, the following code takes a list of image URLs and for each one dow
 
    from functools import partial
 
-   from creevey import Pipeline
+   from creevey import CreeveyProcessingError, Pipeline
    from creevey.load_funcs.image import load_image_from_url
    from creevey.ops.image import resize
    from creevey.write_funcs.image import write_image
@@ -34,7 +34,7 @@ For instance, the following code takes a list of image URLs and for each one dow
    keep_filename_png_in_cwd = partial(
        join_outdir_filename_extension, outdir='.', extension='.png'
    )
-   run_report = trim_resize_pipeline(
+   trim_resize_pipeline(
        inpaths=image_urls,
        path_func=keep_filename_png_in_cwd,
        n_jobs=10,
@@ -42,14 +42,28 @@ For instance, the following code takes a list of image URLs and for each one dow
        exceptions_to_catch=AttributeError,
    )
 
-``trim_resize_pipeline(...)`` returns a "run report:" a Pandas DataFrame with each input path as its index and columns indicating the corresponding output path ("outpath"), whether processing was skipped because a file already existed at the output path ("skipped_existing"), whether processing failed due to an exception in ``exceptions_to_catch`` ("exception_handled"), and a timestamp indicating when processing completed ("time_finished"):
-
-If you are doing exploratory work and don't really care about the errors right now, you can pass ``exceptions_to_catch=BaseException`` to the pipeline call above, and creevey will simply catch all Exceptions, downloading as many images as it can.
+After it runs, ``trim_resize_pipeline(...)`` has an attribute called ``run_report_``: a Pandas DataFrame with each input path as its index and columns indicating the corresponding output path ("outpath"), whether processing was skipped because a file already existed at the output path ("skipped_existing"), whether processing failed due to an exception in ``exceptions_to_catch`` ("exception_handled"), and a timestamp indicating when processing completed ("time_finished"):
 
 .. image:: ./images/run_report_image.png
    :target: ./images/run_report_image.png
    :alt: 
 
+If you are doing exploratory work and don't really care about the errors right now, you can pass ``exceptions_to_catch=BaseException`` to the pipeline call above, and Creevey will simply catch all exceptions, downloading as many images as it can.
+
+If an exception of a type not specified in ``exceptions_to_catch`` is raised during a pipeline run, Creevey will catch it, raise a ``CreeveyProcessingError`` from it, and still generate a run report. You might wish to write code like this to dump a run report to a file in case of an unexpected exception:
+
+.. code-block:: python
+    try:
+        trim_resize_pipeline(
+            inpaths=image_urls,
+            path_func=keep_filename_png_in_cwd,
+            n_jobs=10,
+            skip_existing=True,
+            exceptions_to_catch=AttributeError,
+        )
+    except CreeveyProcessingError:
+        trim_resize_pipeline.run_report_.to_parquet('run_report.parquet')
+        raise
 
 If ``n_jobs`` is greater than 1, then the order of the input files in the run report typically will not match the order in ``inpaths``\ ; a command like ``run_report.loc[inpaths, :]`` can be used to restore the original ordering if desired. 
 
@@ -100,7 +114,7 @@ Adding Custom Reporting
 Example: Recording Image Properties
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-When a ``Pipeline`` object is called, returns a "run report" with basic information about what happened during the run. The ``CustomReportingPipeline`` allows you to add additional information to these reports by adding to them within your ``load_func``\ , ``ops``\ , and ``write_func``. For instance, when processing a set of image files you might wish to record each image's mean brightness while you already have it open so that you can later experiment with removing washed-out images from your dataset. Here is an example of a ``CustomReportingPipeline`` that uses a built-in ``report_mean_brightness`` function to record the brightness of each image and a custom ``report_is_grayscale`` function to record whether or not it is grayscale. The pipeline runs those functions on each image during the download process and returns their outputs in the final run report. 
+When a ``Pipeline`` object is called, it returns a "run report" with basic information about what happened during the run. The ``CustomReportingPipeline`` allows you to add additional information to these reports by adding to them within your ``load_func``\ , ``ops``\ , and ``write_func``. For instance, when processing a set of image files you might wish to record each image's mean brightness while you already have it open so that you can later experiment with removing washed-out images from your dataset. Here is an example of a ``CustomReportingPipeline`` that uses a built-in ``report_mean_brightness`` function to record the brightness of each image and a custom ``report_is_grayscale`` function to record whether or not it is grayscale. The pipeline runs those functions on each image during the download process and returns their outputs in the final run report. 
 
 .. code-block:: python
 
@@ -128,7 +142,7 @@ When a ``Pipeline`` object is called, returns a "run report" with basic informat
    keep_filename_png_in_cwd = partial(
        join_outdir_filename_extension, outdir='.', extension='.png'
    )
-   run_report = pipeline(
+   pipeline(
        inpaths=image_urls,
        path_func=keep_filename_png_in_cwd,
        n_jobs=1,

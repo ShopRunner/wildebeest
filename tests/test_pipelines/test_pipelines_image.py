@@ -155,17 +155,17 @@ def test_raises_with_different_catch(error_pipeline):
         )
 
 
-def test_run_report_with_raise(error_pipeline):
+def test_run_report_with_raise(trim_resize_pipeline):
     try:
-        error_pipeline(
-            inpaths=IMAGE_URLS,
+        trim_resize_pipeline(
+            inpaths=IMAGE_URLS[:1] + [None] + IMAGE_URLS[1:],
             path_func=keep_filename_save_png_in_tempdir,
-            n_jobs=6,
+            n_jobs=1,
             skip_existing=False,
         )
     except CreeveyProcessingError:
         pass
-    assert error_pipeline.run_report_ is not None
+    assert len(trim_resize_pipeline.run_report_) == 1
 
 
 def test_catches(error_pipeline):

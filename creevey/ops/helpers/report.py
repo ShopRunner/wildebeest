@@ -46,14 +46,13 @@ def report_output(
     >>> keep_filename_png_in_cwd = partial(
     >>>     join_outdir_filename_extension, outdir='.', extension='.png'
     >>> )
-    >>> print(
-    >>>     report_brightness_pipeline(
-    >>>         inpaths=image_urls,
-    >>>         path_func=keep_filename_png_in_cwd,
-    >>>         n_jobs=1,
-    >>>         skip_existing=False,
-    >>>     )
+    >>> report_brightness_pipeline(
+    >>>     inpaths=image_urls,
+    >>>     path_func=keep_filename_png_in_cwd,
+    >>>     n_jobs=1,
+    >>>     skip_existing=False,
     >>> )
+    >>> print(report_brightness_pipeline.run_report_)
                                 mean_brightness  ... time_finished
     https://bit.ly/2RsJ8EQ        78.570605  ...  1.571842e+09
     https://bit.ly/2SCv0q7       130.348113  ...  1.571842e+09
@@ -126,14 +125,13 @@ def get_report_output_decorator(key: Hashable) -> Callable:
     >>> keep_filename_png_in_cwd = partial(
     >>>     join_outdir_filename_extension, outdir='.', extension='.png'
     >>> )
-    >>> print(
-    >>>     report_brightness_pipeline(
-    >>>         inpaths=image_urls,
-    >>>         path_func=keep_filename_png_in_cwd,
-    >>>         n_jobs=1,
-    >>>         skip_existing=False,
-    >>>     )
+    >>> report_brightness_pipeline(
+    >>>     inpaths=image_urls,
+    >>>     path_func=keep_filename_png_in_cwd,
+    >>>     n_jobs=1,
+    >>>     skip_existing=False,
     >>> )
+    >>> print(report_brightness_pipeline.run_report_)
                                 mean_brightness  ... time_finished
     https://bit.ly/2RsJ8EQ        78.570605  ...  1.571843e+09
     https://bit.ly/2SCv0q7       130.348113  ...  1.571843e+09

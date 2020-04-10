@@ -102,4 +102,4 @@ def test_custom_check_existing_func(custom_check_existing_pipeline):
     custom_check_existing_pipeline(
         inpaths=IMAGE_URLS, path_func=lambda x: x, n_jobs=6, skip_existing=True,
     )
-    assert custom_check_existing_pipeline.run_report_.loc[:, "skipped_existing"].all()
+    assert custom_check_existing_pipeline.run_report_.loc[:, 'skipped_existing'].all()

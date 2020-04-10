@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
  - Run report is now stored in `<Pipeline object>.run_report_` rather than being returned.
 ### Added
  - If an otherwise unhandled exception arises during file processing, it is caught and a `CreeveyProcessingException` is raised instead.
+ - Pipelines can now use a custom function to check whether the output file already exists.
 
 # [2.0.0] - 2020-4-3
 ### Changed

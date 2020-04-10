@@ -24,7 +24,7 @@ def report_mean_brightness(image):
     return calculate_mean_brightness(image)
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope='function')
 def report_mean_brightness_pipeline():
     for url in IMAGE_URLS:
         outpath = keep_filename_save_png_in_tempdir(url)
@@ -82,21 +82,27 @@ def test_run_method(report_mean_brightness_pipeline):
     )
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope='function')
 def custom_check_existing_pipeline():
-    return Pipeline(
+    for url in IMAGE_URLS:
+        outpath = keep_filename_save_png_in_tempdir(url)
+        delete_file_if_exists(outpath)
+
+    yield Pipeline(
         load_func=load_image_from_url,
-        ops=report_mean_brightness,
         write_func=write_image,
         check_existing_func=lambda url: requests.head(url),
     )
+    for url in IMAGE_URLS:
+        outpath = keep_filename_save_png_in_tempdir(url)
+        delete_file_if_exists(outpath)
 
 
-def test_custom_check_existing_function(custom_check_existing_pipeline):
+def test_custom_check_existing_func(custom_check_existing_pipeline):
     custom_check_existing_pipeline(
         inpaths=IMAGE_URLS,
         path_func=keep_filename_save_png_in_tempdir,
-        n_jobs=6,
+        n_jobs=1,
         skip_existing=True,
     )
-    assert custom_check_existing_pipeline.loc[:, "skipped_existing"].all()
+    assert custom_check_existing_pipeline.run_report_.loc[:, "skipped_existing"].all()

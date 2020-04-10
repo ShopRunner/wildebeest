@@ -31,6 +31,9 @@ class Pipeline:
         every element of `ops` take and return one common data structure
         (e.g. NumPy arrays for image data) so that those elements can
         be recombined easily.
+    check_existing_func
+        Callable that takes an output path and checks whether a file
+        exists at that path.
     write_func
         Callable that takes the output of the last element of `ops` (or
         the output of `load_func` if `ops` is `None` or empty) and a
@@ -42,8 +45,11 @@ class Pipeline:
     def __init__(
         self,
         load_func: Callable[[PathOrStr], Any],
-        ops: Optional[Union[Callable[[Any], Any], Iterable[Callable[[Any], Any]]]],
         write_func: Callable[[Any, PathOrStr], None],
+        ops: Optional[
+            Union[Callable[[Any], Any], Iterable[Callable[[Any], Any]]]
+        ] = None,
+        check_existing_func: Optional[Callable[[Any], bool]] = None,
     ) -> None:
         """
         Compose the provided functions, and store them as attributes.

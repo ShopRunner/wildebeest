@@ -49,19 +49,10 @@ class Pipeline:
         ops: Optional[
             Union[Callable[[Any], Any], Iterable[Callable[[Any], Any]]]
         ] = None,
-        check_existing_func: Optional[Callable[[Any], bool]] = None,
+        check_existing_func: Optional[Callable[[Any], bool]] = (
+            lambda x: Path(x).exists()
+        ),
     ) -> None:
-        """
-        Compose the provided functions, and store them as attributes.
-
-        Store `load_func`, `ops`, and `write_func` as attributes with
-        the corresponding names. Create an additional attribute
-        `pipeline_func` that composes those functions for when `run`
-        is called.
-
-        See the `Pipeline` docstring for information about the form that
-        `load_func`, `ops`, and `write_func` are expected to take.
-        """
         self.load_func = load_func
         if callable(ops):
             self.ops = [ops]
@@ -70,11 +61,10 @@ class Pipeline:
         elif ops is None:
             self.ops = []
         else:
-            raise TypeError(
-                'ops must be callable, an iterable of ' 'callables, or `None`'
-            )
+            raise TypeError('ops must be callable, an iterable of callables, or `None`')
         self._run_report_ = None
         self.write_func = write_func
+        self.check_existing_func = check_existing_func
 
     @property
     def run_report_(self):

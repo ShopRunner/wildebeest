@@ -154,9 +154,10 @@ class Pipeline:
                 for path in tqdm(inpaths)
             )
         except Exception as e:
-            raise CreeveyProcessingError from e
-        finally:
             self._run_report_ = pd.DataFrame.from_dict(log_dict, orient='index')
+            raise CreeveyProcessingError from e
+
+        self._run_report_ = pd.DataFrame.from_dict(log_dict, orient='index')
 
     def run(self, *args, **kwargs):
         """

@@ -1,10 +1,9 @@
 """Pipeline class definitions"""
 from collections import defaultdict
 import concurrent.futures
+from datetime import datetime
 import logging
-from pathlib import Path
-import time
-from typing import Any, Callable, Iterable, Optional, Tuple, Union
+from typing import Any, Callable, Iterable, Optional, Union
 
 from numpy import iterable
 import pandas as pd
@@ -140,9 +139,11 @@ class Pipeline:
         with concurrent.futures.ThreadPoolExecutor(max_workers=n_jobs) as executor:
             futures = [
                 executor.submit(self._pipeline_func, path, path_func, skip_func)
-                for path in tqdm(inpaths)
+                for path in inpaths
             ]
-        for inpath, future in zip(inpaths, concurrent.futures.as_completed(futures)):
+        for inpath, future in zip(
+            tqdm(inpaths), concurrent.futures.as_completed(futures)
+        ):
             try:
                 future.result()
                 self._log_dict[inpath]['error'] = None
@@ -206,13 +207,13 @@ class Pipeline:
                 f'Skipping {inpath} because there is already a file at corresponding '
                 f'output path {self._log_dict[inpath]["outpath"]}'
             )
-            self._log_dict[inpath]['time_finished'] = time.time()
+            self._log_dict[inpath]['time_finished'] = datetime.now()
         else:
             self._log_dict[inpath]['skipped'] = False
             try:
                 self._run_pipeline_func(inpath, self._log_dict[inpath]['outpath'])
             finally:
-                self._log_dict[inpath]['time_finished'] = time.time()
+                self._log_dict[inpath]['time_finished'] = datetime.now()
 
     def _run_pipeline_func(self, inpath, outpath):
         stage = self.load_func(inpath)

@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import pytest
 
-from creevey import CreeveyProcessingError, Pipeline
+from creevey import Pipeline
 from creevey.load_funcs.image import load_image_from_url
 from creevey.ops.image import resize
 from creevey.write_funcs.image import write_image
@@ -44,51 +44,11 @@ def trim_resize_pipeline():
 def test_trim_resize_pipeline(trim_resize_pipeline):
     path_func = keep_filename_save_png_in_tempdir
     inpaths = IMAGE_URLS
-    trim_resize_pipeline(
-        inpaths=inpaths, path_func=path_func, n_jobs=6, skip_existing=False
-    )
+    trim_resize_pipeline(inpaths=inpaths, path_func=path_func, n_jobs=6)
     for path in inpaths:
         outpath = path_func(path)
         image = plt.imread(str(outpath))
         assert image.shape[:2] == IMAGE_RESIZE_SHAPE
-
-
-def test_skip_existing(trim_resize_pipeline, caplog):
-    inpaths = IMAGE_URLS
-
-    trim_resize_pipeline(
-        inpaths=inpaths,
-        path_func=keep_filename_save_png_in_tempdir,
-        n_jobs=6,
-        skip_existing=False,
-    )
-    with caplog.at_level(logging.WARNING):
-        outpaths = [
-            TEMP_DATA_DIR / Path(filename).with_suffix('.png')
-            for filename in IMAGE_FILENAMES
-        ]
-        expected_run_report = pd.DataFrame(
-            {
-                'outpath': outpaths,
-                'skipped': [True] * len(inpaths),
-                'error': [None] * len(inpaths),
-            },
-            index=inpaths,
-        )
-        trim_resize_pipeline(
-            inpaths=IMAGE_URLS,
-            path_func=keep_filename_save_png_in_tempdir,
-            n_jobs=6,
-            skip_existing=True,
-        )
-        pd.testing.assert_frame_equal(
-            trim_resize_pipeline.run_report_.sort_index().drop(
-                'time_finished', axis='columns'
-            ),
-            expected_run_report.sort_index(),
-        )
-        assert len(caplog.records) == 1
-        assert caplog.records[0].levelname == 'WARNING'
 
 
 def test_logging(trim_resize_pipeline):
@@ -106,10 +66,7 @@ def test_logging(trim_resize_pipeline):
         index=inpaths,
     )
     trim_resize_pipeline(
-        inpaths=inpaths,
-        path_func=keep_filename_save_png_in_tempdir,
-        n_jobs=6,
-        skip_existing=False,
+        inpaths=inpaths, path_func=keep_filename_save_png_in_tempdir, n_jobs=6,
     )
     pd.testing.assert_frame_equal(
         trim_resize_pipeline.run_report_.sort_index().drop(
@@ -141,11 +98,7 @@ def test_catches(error_pipeline):
         {'outpath': outpaths, 'skipped': [False] * len(inpaths),}, index=inpaths,
     )
     error_pipeline(
-        inpaths=inpaths,
-        path_func=keep_filename_save_png_in_tempdir,
-        n_jobs=1,
-        skip_existing=False,
-        exceptions_to_catch=(TypeError,),
+        inpaths=inpaths, path_func=keep_filename_save_png_in_tempdir, n_jobs=1,
     )
     pd.testing.assert_frame_equal(
         error_pipeline.run_report_.sort_index().drop(
@@ -160,13 +113,9 @@ def test_catches(error_pipeline):
 
 
 def test_run_report_with_raise(trim_resize_pipeline):
-    try:
-        trim_resize_pipeline(
-            inpaths=IMAGE_URLS[:1] + [None] + IMAGE_URLS[1:],
-            path_func=keep_filename_save_png_in_tempdir,
-            n_jobs=6,
-            skip_existing=False,
-        )
-    except CreeveyProcessingError:
-        pass
+    trim_resize_pipeline(
+        inpaths=IMAGE_URLS[:1] + [None] + IMAGE_URLS[1:],
+        path_func=keep_filename_save_png_in_tempdir,
+        n_jobs=6,
+    )
     assert hasattr(trim_resize_pipeline, 'run_report_')

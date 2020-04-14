@@ -55,10 +55,7 @@ def test_custom_reporting_pipeline(report_mean_brightness_pipeline):
         index=IMAGE_URLS,
     )
     report_mean_brightness_pipeline(
-        inpaths=IMAGE_URLS,
-        path_func=keep_filename_save_png_in_tempdir,
-        n_jobs=6,
-        skip_existing=False,
+        inpaths=IMAGE_URLS, path_func=keep_filename_save_png_in_tempdir, n_jobs=6,
     )
     pd.testing.assert_frame_equal(
         report_mean_brightness_pipeline.run_report_.sort_index(axis='index')
@@ -71,15 +68,6 @@ def test_custom_reporting_pipeline(report_mean_brightness_pipeline):
     )
 
 
-def test_run_method(report_mean_brightness_pipeline):
-    report_mean_brightness_pipeline.run(
-        inpaths=IMAGE_URLS,
-        path_func=keep_filename_save_png_in_tempdir,
-        n_jobs=6,
-        skip_existing=False,
-    )
-
-
 @pytest.fixture(scope='function')
 def custom_check_existing_pipeline():
     for url in IMAGE_URLS:
@@ -87,9 +75,7 @@ def custom_check_existing_pipeline():
         delete_file_if_exists(outpath)
 
     yield Pipeline(
-        load_func=load_image_from_url,
-        write_func=write_image,
-        check_existing_func=lambda url: requests.head(url),
+        load_func=load_image_from_url, write_func=write_image,
     )
     for url in IMAGE_URLS:
         outpath = keep_filename_save_png_in_tempdir(url)
@@ -98,6 +84,9 @@ def custom_check_existing_pipeline():
 
 def test_custom_check_existing_func(custom_check_existing_pipeline):
     custom_check_existing_pipeline(
-        inpaths=IMAGE_URLS, path_func=lambda x: x, n_jobs=6, skip_existing=True,
+        inpaths=IMAGE_URLS,
+        path_func=lambda x: x,
+        n_jobs=6,
+        skip_func=lambda url, outpath: requests.head(outpath).status_code < 400,
     )
     assert custom_check_existing_pipeline.run_report_.loc[:, 'skipped'].all()

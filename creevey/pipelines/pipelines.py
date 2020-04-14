@@ -4,7 +4,7 @@ import concurrent.futures
 import logging
 from pathlib import Path
 import time
-from typing import Any, Callable, DefaultDict, Iterable, Optional, Tuple, Union
+from typing import Any, Callable, Iterable, Optional, Tuple, Union
 
 from numpy import iterable
 import pandas as pd
@@ -52,9 +52,6 @@ class Pipeline:
         ops: Optional[
             Union[Callable[[Any], Any], Iterable[Callable[[Any], Any]]]
         ] = None,
-        check_existing_func: Optional[Callable[[Any], bool]] = (
-            lambda x: Path(x).is_file()
-        ),
     ) -> None:
         self.load_func = load_func
         if callable(ops):
@@ -67,9 +64,8 @@ class Pipeline:
             raise TypeError('ops must be callable, an iterable of callables, or `None`')
         self._run_report_ = None
         self.write_func = write_func
-        self.check_existing_func = check_existing_func
 
-        self.log_dict = defaultdict(dict)
+        self._log_dict = defaultdict(dict)
 
     @property
     def run_report_(self):
@@ -100,8 +96,7 @@ class Pipeline:
         inpaths: Iterable[PathOrStr],
         path_func: Callable[[PathOrStr], PathOrStr],
         n_jobs: int,
-        skip_existing: bool = True,
-        exceptions_to_catch: Optional[Union[Exception, Tuple[Exception]]] = None,
+        skip_func: Optional[Callable[[PathOrStr, Any], bool]] = None,
     ) -> pd.DataFrame:
         """
         Run the pipeline.
@@ -142,42 +137,28 @@ class Pipeline:
 
         Stores a run report in `self.run_report_`
         """
-        if skip_existing:
-            logging.warning(
-                'Skipping files where a file exists at the output '
-                'location. Pass `skip_existing=False` to overwrite '
-                'existing files instead.'
-            )
-
         with concurrent.futures.ThreadPoolExecutor(max_workers=n_jobs) as executor:
             futures = [
-                executor.submit(self._pipeline_func, path, path_func, skip_existing)
+                executor.submit(self._pipeline_func, path, path_func, skip_func)
                 for path in tqdm(inpaths)
             ]
         for inpath, future in zip(inpaths, concurrent.futures.as_completed(futures)):
             try:
                 future.result()
-                self.log_dict[inpath]['error'] = None
+                self._log_dict[inpath]['error'] = None
             except Exception as e:
-                self.log_dict[inpath]['error'] = e
+                self._log_dict[inpath]['error'] = e
 
-        run_report = pd.DataFrame.from_dict(self.log_dict, orient='index')
+        run_report = pd.DataFrame.from_dict(self._log_dict, orient='index')
+        # breakpoint()
         self._run_report_ = run_report.loc[
             :,
             RUN_REPORT_COLS + [col for col in run_report if col not in RUN_REPORT_COLS],
         ]
-
-    def run(self, *args, **kwargs):
-        """
-        Alias for `self.__call__`
-
-        Provided for compatibility with code written before
-        `self.__call__` was added.
-        """
-        return self(*args, **kwargs)
+        self._log_dict = defaultdict(dict)
 
     def _pipeline_func(
-        self, inpath: PathOrStr, outpath_func: PathOrStr, skip_existing: bool,
+        self, inpath: PathOrStr, outpath_func: PathOrStr, skip_func
     ) -> None:
         """
         Process one file
@@ -206,7 +187,7 @@ class Pipeline:
 
         Note
         ----
-        Records results in a dict within `self.log_dict[inpath]` with
+        Records results in a dict within `self._log_dict[inpath]` with
         the following keys
 
         outpath
@@ -216,20 +197,22 @@ class Pipeline:
         time_finished
             Timestamp indicating when processing finished
         """
-        self.log_dict[inpath]['outpath'] = outpath_func(inpath)
-        if skip_existing and self.check_existing_func(self.log_dict[inpath]['outpath']):
-            self.log_dict[inpath]['skipped'] = True
+        self._log_dict[inpath]['outpath'] = outpath_func(inpath)
+        if skip_func is not None and skip_func(
+            inpath, self._log_dict[inpath]['outpath']
+        ):
+            self._log_dict[inpath]['skipped'] = True
             logging.debug(
                 f'Skipping {inpath} because there is already a file at corresponding '
-                f'output path {self.log_dict[inpath]["outpath"]}'
+                f'output path {self._log_dict[inpath]["outpath"]}'
             )
-            self.log_dict[inpath]['time_finished'] = time.time()
+            self._log_dict[inpath]['time_finished'] = time.time()
         else:
-            self.log_dict[inpath]['skipped'] = False
+            self._log_dict[inpath]['skipped'] = False
             try:
-                self._run_pipeline_func(inpath, self.log_dict[inpath]['outpath'])
+                self._run_pipeline_func(inpath, self._log_dict[inpath]['outpath'])
             finally:
-                self.log_dict[inpath]['time_finished'] = time.time()
+                self._log_dict[inpath]['time_finished'] = time.time()
 
     def _run_pipeline_func(self, inpath, outpath):
         stage = self.load_func(inpath)
@@ -259,13 +242,7 @@ class CustomReportingPipeline(Pipeline):
     """
 
     def _run_pipeline_func(self, inpath, outpath):
-        stage = self.load_func(inpath, log_dict=self.log_dict)
+        stage = self.load_func(inpath, log_dict=self._log_dict)
         for op in self.ops:
-            stage = op(stage, inpath=inpath, log_dict=self.log_dict)
-        self.write_func(stage, outpath, inpath=inpath, log_dict=self.log_dict)
-
-
-class CreeveyProcessingError(Exception):
-    """Raised when unhandled exception arises during file processing"""
-
-    pass
+            stage = op(stage, inpath=inpath, log_dict=self._log_dict)
+        self.write_func(stage, outpath, inpath=inpath, log_dict=self._log_dict)

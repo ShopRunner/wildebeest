@@ -141,14 +141,14 @@ class Pipeline:
                 executor.submit(self._pipeline_func, path, path_func, skip_func)
                 for path in inpaths
             ]
-        for inpath, future in zip(
-            tqdm(inpaths), concurrent.futures.as_completed(futures)
-        ):
-            try:
-                future.result()
-                self._log_dict[inpath]['error'] = None
-            except Exception as e:
-                self._log_dict[inpath]['error'] = e
+            for inpath, future in zip(
+                tqdm(inpaths), concurrent.futures.as_completed(futures)
+            ):
+                try:
+                    future.result()
+                    self._log_dict[inpath]['error'] = None
+                except Exception as e:
+                    self._log_dict[inpath]['error'] = e
 
         run_report = pd.DataFrame.from_dict(self._log_dict, orient='index')
         # breakpoint()

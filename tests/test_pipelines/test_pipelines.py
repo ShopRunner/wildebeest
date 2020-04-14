@@ -42,22 +42,20 @@ def report_mean_brightness_pipeline():
 
 
 def test_custom_reporting_pipeline(report_mean_brightness_pipeline):
-    inpaths = IMAGE_URLS
     outpaths = [
         TEMP_DATA_DIR / Path(filename).with_suffix('.png')
         for filename in IMAGE_FILENAMES
     ]
-    exception_handled = skipped_existing = [0] * len(inpaths)
     expected_run_report = pd.DataFrame(
         {
             'outpath': outpaths,
-            'skipped_existing': skipped_existing,
-            'exception_handled': exception_handled,
+            'skipped': [False] * len(IMAGE_URLS),
+            'error': [None] * len(IMAGE_URLS),
         },
-        index=inpaths,
+        index=IMAGE_URLS,
     )
     report_mean_brightness_pipeline(
-        inpaths=inpaths,
+        inpaths=IMAGE_URLS,
         path_func=keep_filename_save_png_in_tempdir,
         n_jobs=6,
         skip_existing=False,
@@ -102,4 +100,4 @@ def test_custom_check_existing_func(custom_check_existing_pipeline):
     custom_check_existing_pipeline(
         inpaths=IMAGE_URLS, path_func=lambda x: x, n_jobs=6, skip_existing=True,
     )
-    assert custom_check_existing_pipeline.run_report_.loc[:, 'skipped_existing'].all()
+    assert custom_check_existing_pipeline.run_report_.loc[:, 'skipped'].all()

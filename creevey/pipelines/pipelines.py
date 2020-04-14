@@ -1,16 +1,19 @@
 """Pipeline class definitions"""
 from collections import defaultdict
+import concurrent.futures
 import logging
 from pathlib import Path
 import time
 from typing import Any, Callable, DefaultDict, Iterable, Optional, Tuple, Union
 
-from joblib import delayed, Parallel
 from numpy import iterable
 import pandas as pd
 from tqdm import tqdm
 
 from creevey.constants import PathOrStr
+
+
+RUN_REPORT_COLS = ['outpath', 'skipped', 'error', 'time_finished']
 
 
 class Pipeline:
@@ -65,6 +68,8 @@ class Pipeline:
         self._run_report_ = None
         self.write_func = write_func
         self.check_existing_func = check_existing_func
+
+        self.log_dict = defaultdict(dict)
 
     @property
     def run_report_(self):
@@ -144,20 +149,23 @@ class Pipeline:
                 'existing files instead.'
             )
 
-        log_dict = defaultdict(dict)
-
-        try:
-            Parallel(n_jobs=n_jobs, prefer='threads')(
-                delayed(self._pipeline_func)(
-                    path, path_func, skip_existing, log_dict, exceptions_to_catch
-                )
+        with concurrent.futures.ThreadPoolExecutor(max_workers=n_jobs) as executor:
+            futures = [
+                executor.submit(self._pipeline_func, path, path_func, skip_existing)
                 for path in tqdm(inpaths)
-            )
-        except Exception as e:
-            self._run_report_ = pd.DataFrame.from_dict(log_dict, orient='index')
-            raise CreeveyProcessingError from e
+            ]
+        for inpath, future in zip(inpaths, concurrent.futures.as_completed(futures)):
+            try:
+                future.result()
+                self.log_dict[inpath]['error'] = None
+            except Exception as e:
+                self.log_dict[inpath]['error'] = e
 
-        self._run_report_ = pd.DataFrame.from_dict(log_dict, orient='index')
+        run_report = pd.DataFrame.from_dict(self.log_dict, orient='index')
+        self._run_report_ = run_report.loc[
+            :,
+            RUN_REPORT_COLS + [col for col in run_report if col not in RUN_REPORT_COLS],
+        ]
 
     def run(self, *args, **kwargs):
         """
@@ -169,12 +177,7 @@ class Pipeline:
         return self(*args, **kwargs)
 
     def _pipeline_func(
-        self,
-        inpath: PathOrStr,
-        outpath_func: PathOrStr,
-        skip_existing: bool,
-        log_dict: DefaultDict[str, dict],
-        exceptions_to_catch: Optional[Union[Tuple, Tuple[Exception]]] = None,
+        self, inpath: PathOrStr, outpath_func: PathOrStr, skip_existing: bool,
     ) -> None:
         """
         Process one file
@@ -198,56 +201,37 @@ class Pipeline:
             Function that takes input path and returns output path
         skip_existing
             Whether or not to skip processing if output path is occupied
-        log_dict
-            Dictionary of logs
         exceptions_to_catch
             Exception types to catch
 
         Note
         ----
-        Records results in a dict within `log_dict[inpath]` with the
-        following attributes
+        Records results in a dict within `self.log_dict[inpath]` with
+        the following keys
 
         outpath
             output path
         skipped_existing
             0/1 indicating whether existing file was skipped
-        exception_handled
-            0/1 indicating whether exception of a type specified in
-            `exceptions_to_catch` was handled during processing
         time_finished
             Timestamp indicating when processing finished
         """
-        outpath = outpath_func(inpath)
-        skipped_existing = False
-        exception_handled = False
-
-        if skip_existing and self.check_existing_func(outpath):
-            skipped_existing = True
+        self.log_dict[inpath]['outpath'] = outpath_func(inpath)
+        if skip_existing and self.check_existing_func(self.log_dict[inpath]['outpath']):
+            self.log_dict[inpath]['skipped'] = True
             logging.debug(
                 f'Skipping {inpath} because there is already a file at corresponding '
-                f'output path {outpath}'
+                f'output path {self.log_dict[inpath]["outpath"]}'
             )
+            self.log_dict[inpath]['time_finished'] = time.time()
         else:
-            if exceptions_to_catch is None:
-                self._run_pipeline_func(inpath, outpath, log_dict=log_dict)
-            else:
-                try:
-                    self._run_pipeline_func(inpath, outpath, log_dict=log_dict)
-                except exceptions_to_catch as e:
-                    exception_handled = True
-                    logging.error(e, inpath)
+            self.log_dict[inpath]['skipped'] = False
+            try:
+                self._run_pipeline_func(inpath, self.log_dict[inpath]['outpath'])
+            finally:
+                self.log_dict[inpath]['time_finished'] = time.time()
 
-        inpath_logs = log_dict[inpath]
-        inpath_logs['outpath'] = outpath
-        inpath_logs['skipped_existing'] = int(skipped_existing)
-        inpath_logs['exception_handled'] = int(exception_handled)
-        inpath_logs['time_finished'] = time.time()
-
-    def _run_pipeline_func(self, inpath, outpath, **kwargs):
-        # `kwargs` included to handle unused `log_dict` so that
-        # `_pipeline_func` does not have to change in
-        # `CustomReportingPipeline`
+    def _run_pipeline_func(self, inpath, outpath):
         stage = self.load_func(inpath)
         for op in self.ops:
             stage = op(stage)
@@ -274,11 +258,11 @@ class CustomReportingPipeline(Pipeline):
     returns. See Creevey's README for further explanation.
     """
 
-    def _run_pipeline_func(self, inpath, outpath, log_dict):
-        stage = self.load_func(inpath, log_dict=log_dict)
+    def _run_pipeline_func(self, inpath, outpath):
+        stage = self.load_func(inpath, log_dict=self.log_dict)
         for op in self.ops:
-            stage = op(stage, inpath=inpath, log_dict=log_dict)
-        self.write_func(stage, outpath, inpath=inpath, log_dict=log_dict)
+            stage = op(stage, inpath=inpath, log_dict=self.log_dict)
+        self.write_func(stage, outpath, inpath=inpath, log_dict=self.log_dict)
 
 
 class CreeveyProcessingError(Exception):

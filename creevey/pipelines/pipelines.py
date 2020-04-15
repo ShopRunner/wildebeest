@@ -1,10 +1,10 @@
 """Pipeline class definitions"""
 from collections import defaultdict
-import concurrent.futures
 from datetime import datetime
 import logging
 from typing import Any, Callable, Iterable, Optional, Union
 
+from joblib import delayed, Parallel
 from numpy import iterable
 import pandas as pd
 from tqdm import tqdm
@@ -136,22 +136,12 @@ class Pipeline:
 
         Stores a run report in `self.run_report_`
         """
-        with concurrent.futures.ThreadPoolExecutor(max_workers=n_jobs) as executor:
-            futures = [
-                executor.submit(self._pipeline_func, path, path_func, skip_func)
-                for path in inpaths
-            ]
-            for inpath, future in zip(
-                tqdm(inpaths), concurrent.futures.as_completed(futures)
-            ):
-                try:
-                    future.result()
-                    self._log_dict[inpath]['error'] = None
-                except Exception as e:
-                    self._log_dict[inpath]['error'] = e
+        Parallel(n_jobs=n_jobs, prefer='threads')(
+            delayed(self._pipeline_func)(path, path_func, skip_func)
+            for path in tqdm(inpaths)
+        )
 
         run_report = pd.DataFrame.from_dict(self._log_dict, orient='index')
-        # breakpoint()
         self._run_report_ = run_report.loc[
             :,
             RUN_REPORT_COLS + [col for col in run_report if col not in RUN_REPORT_COLS],
@@ -207,11 +197,16 @@ class Pipeline:
                 f'Skipping {inpath} because there is already a file at corresponding '
                 f'output path {self._log_dict[inpath]["outpath"]}'
             )
+            self._log_dict[inpath]['error'] = None
             self._log_dict[inpath]['time_finished'] = datetime.now()
         else:
             self._log_dict[inpath]['skipped'] = False
             try:
                 self._run_pipeline_func(inpath, self._log_dict[inpath]['outpath'])
+            except Exception as e:
+                self._log_dict[inpath]['error'] = e
+            else:
+                self._log_dict[inpath]['error'] = None
             finally:
                 self._log_dict[inpath]['time_finished'] = datetime.now()
 

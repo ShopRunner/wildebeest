@@ -112,10 +112,8 @@ def test_catches(error_pipeline):
         assert actual_error.args == expected_error.args
 
 
-def test_run_report_with_raise(trim_resize_pipeline):
-    trim_resize_pipeline(
-        inpaths=IMAGE_URLS[:1] + [None] + IMAGE_URLS[1:],
-        path_func=keep_filename_save_png_in_tempdir,
-        n_jobs=6,
+def test_run_report_with_raise(error_pipeline):
+    error_pipeline(
+        inpaths=IMAGE_URLS, path_func=keep_filename_save_png_in_tempdir, n_jobs=6,
     )
-    assert hasattr(trim_resize_pipeline, 'run_report_')
+    assert hasattr(error_pipeline, 'run_report_')

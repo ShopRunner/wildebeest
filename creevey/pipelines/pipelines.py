@@ -2,7 +2,7 @@
 from collections import defaultdict
 from datetime import datetime
 import logging
-from typing import Any, Callable, Iterable, Optional, Union
+from typing import Any, Callable, Iterable, Optional, Tuple, Union
 
 from joblib import delayed, Parallel
 from numpy import iterable
@@ -149,7 +149,11 @@ class Pipeline:
         self._log_dict = defaultdict(dict)
 
     def _pipeline_func(
-        self, inpath: PathOrStr, outpath_func: PathOrStr, skip_func
+        self,
+        inpath: PathOrStr,
+        outpath_func: PathOrStr,
+        skip_func: Callable,
+        exceptions_to_catch: Optional[Union[Exception, Tuple[Exception]]] = Exception,
     ) -> None:
         """
         Process one file
@@ -203,8 +207,9 @@ class Pipeline:
             self._log_dict[inpath]['skipped'] = False
             try:
                 self._run_pipeline_func(inpath, self._log_dict[inpath]['outpath'])
-            except Exception as e:
+            except exceptions_to_catch as e:
                 self._log_dict[inpath]['error'] = e
+                logging.error(f'{type(e)} exception on {inpath}: {e}')
             else:
                 self._log_dict[inpath]['error'] = None
             finally:

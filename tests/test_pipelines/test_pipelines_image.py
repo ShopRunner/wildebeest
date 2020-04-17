@@ -112,8 +112,12 @@ def test_catches(error_pipeline):
         assert actual_error.args == expected_error.args
 
 
-def test_run_report_with_raise(error_pipeline):
-    error_pipeline(
-        inpaths=IMAGE_URLS, path_func=keep_filename_save_png_in_tempdir, n_jobs=6,
-    )
-    assert hasattr(error_pipeline, 'run_report_')
+def test_raises_with_different_catch(error_pipeline):
+    with pytest.raises(TypeError):
+        error_pipeline(
+            inpaths=IMAGE_URLS,
+            path_func=keep_filename_save_png_in_tempdir,
+            n_jobs=6,
+            skip_existing=False,
+            exceptions_to_catch=(AttributeError,),
+        )

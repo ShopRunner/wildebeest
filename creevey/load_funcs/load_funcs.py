@@ -20,7 +20,7 @@ def _is_connection_error(exception):
     wait_exponential_max=10000,
     stop_max_attempt_number=10,
 )
-def get_response(url: str, timeout: int = 5, **kwargs) -> None:
+def get_response(url: str, timeout: int = 5, **kwargs) -> requests.models.Response:
     """
     Make a GET request to the specified URL and return the response.
 
@@ -48,8 +48,7 @@ def get_response(url: str, timeout: int = 5, **kwargs) -> None:
         URL of file to download
     timeout
         Number of seconds to wait before timing out if server has not
-        issued a response; see
-        https://requests.readthedocs.io/en/master/user/quickstart/#timeouts
+        issued a response.
     """
     session = _get_session()
     response = session.get(url, timeout=timeout)

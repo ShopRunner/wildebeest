@@ -15,7 +15,7 @@ Creevey was developed for deep learning computer vision projects, so in addition
 .. toctree::
    
    quickstart.rst
-   contents.rst
+   api.rst
    limitations.rst
    contrib.rst
 

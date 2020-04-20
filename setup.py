@@ -29,7 +29,6 @@ dev_packages = [
     'pytest',
     'pytest-cov',
     'responses',
-    'sphinx<3',
 ]
 
 

@@ -25,6 +25,11 @@ class Pipeline:
         Callable that takes a string or `Path` object as single
         positional argument, reads from the corresponding location, and
         returns some representation of its contents.
+    write_func
+        Callable that takes the output of the last element of `ops` (or
+        the output of `load_func` if `ops` is `None` or empty) and a
+        string or `Path` object and writes the former to the location
+        specified by the latter.
     ops
         Iterable of callables each of which takes a single positional
         argument. The first element of `ops` must accept the output of
@@ -33,14 +38,6 @@ class Pipeline:
         every element of `ops` take and return one common data structure
         (e.g. NumPy arrays for image data) so that those elements can
         be recombined easily.
-    check_existing_func
-        Callable that takes an output path and checks whether a file
-        exists at that path.
-    write_func
-        Callable that takes the output of the last element of `ops` (or
-        the output of `load_func` if `ops` is `None` or empty) and a
-        string or `Path` object and writes the former to the location
-        specified by the latter.
     run_report_
     """
 
@@ -53,30 +50,34 @@ class Pipeline:
         ] = None,
     ) -> None:
         self.load_func = load_func
-        if callable(ops):
-            self.ops = [ops]
-        elif iterable(ops):
-            self.ops = ops
+        self.write_func = write_func
+        self.ops = self._process_ops(ops)
+        self._run_report_ = None
+        self._log_dict = defaultdict(dict)
+
+    def _process_ops(self, ops):
+        if iterable(ops):
+            return ops
+        elif callable(ops):
+            return [ops]
         elif ops is None:
-            self.ops = []
+            return []
         else:
             raise TypeError('ops must be callable, an iterable of callables, or `None`')
-        self._run_report_ = None
-        self.write_func = write_func
-
-        self._log_dict = defaultdict(dict)
 
     @property
     def run_report_(self):
         """
         Pandas DataFrame of information about the most recent run.
 
-        Stores input path in the index, output path as "outpath", 0/1
-        indicating whether processing was skipped because a file already
-        existed at the output path as "skipped_existing", whether
-        processing failed due to a handled exception as
-        "exception_handled", and a timestamp indicating when processing
-        completed as "time_finished".
+        Stores input path in the index, output path as "outpath",
+        Boolean indicating whether the file was skipped as "skipped",
+        an exception object that was handled during processing if any as
+        "error" (`np.nan` if no exception was handled), a timestamp
+        indicating when processing completed as "time_finished".
+        
+        May include additional custom fields in a
+        `CustomReportingPipeline`.
 
         Raises
         ------
@@ -101,10 +102,10 @@ class Pipeline:
         Run the pipeline.
 
         Across `n_jobs` threads, for each path in `inpaths`, if
-        `skip_existing` and `self.check_existing_func(path_func(path))`
-        are both `True`, do not do anything. Otherwise, use `load_func`
-        to get the resource from that path, pipe its output through
-        `ops`, and write out the result with `write_func`.
+        `skip_func(path, path_func(path))` is `True`, skip that path.
+        Otherwise, use `load_func` to get the resource from that path,
+        pipe its output through `ops`, and write out the result with
+        `write_func`.
 
         Parameters
         ----------
@@ -116,10 +117,12 @@ class Pipeline:
             corresponding output path.
         n_jobs
             Number of threads to use.
-        skip_existing
-            Boolean indicating whether to skip items that would result
-            in overwriting an existing file or to overwrite any such
-            files.
+        skip_func
+            Callable that takes an input path and a prospective output
+            path and returns a Boolean indicating whether or not that
+            file should be skipped; for instance, use
+            `lambda inpath, outpath: Path(outpath).is_file()` to avoid
+            overwriting existing files.
         exceptions_to_catch
             Tuple of exception types to catch. An exception of one of
             these types will be logged with logging level ERROR and the

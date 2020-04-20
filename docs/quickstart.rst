@@ -110,15 +110,6 @@ Here is the resulting run report:
    :alt: 
 
 
-The ``CustomReporting`` Class
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-You define and run a ``CustomReportingPipeline`` object in the same way that you define and run a basic ``Pipeline`` object, except that the elements of ``ops`` and ``write_func`` need to accept the input path as an additional keyword argument "inpath"; and ``write_func``\ , ``ops`` and ``write_func`` need to accept a ``defaultdict(dict)`` object as another keyword argument "log_dict", which stores the run report information for a single file. You can then enrich your run reports in one of these functions by writing e.g. ``log_dict[inpath]['mean_brightness'] = mean_brightness`` inside one of the functions in the pipeline (assuming that you have calculated ``mean_brightness``\ ).
-
-The ``get_report_output_decorator`` function can be used as in the example above to modify a function that takes a single input and returns a single output for use in a ``CustomReportingPipeline``. It wraps the function it decorates to return  that function's input and add its output to ``log_dict[inpath]`` with the specified key. 
-
-Files that would be written to an output location where there is an existing file are skipped entirely when ``skip_existing=True``\ , so custom reports will not be written for those files.
-
 Non-Image Example: Text Scraping
 --------------------------------
 
@@ -162,7 +153,7 @@ Creevey is not limited to images! It applies anywhere you want to process data f
        load_func=read_from_url, ops=[record_title, count_words], write_func=do_nothing,
    )
 
-   pipeline(inpaths=URLS, path_func=do_nothing, n_jobs=4, skip_existing=False)
+   pipeline(inpaths=URLS, path_func=do_nothing, n_jobs=4)
 
 Here is the resulting run report:
 

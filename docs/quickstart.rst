@@ -42,7 +42,9 @@ For instance, the following code takes a list of image URLs and for each one dow
        exceptions_to_catch=AttributeError,
    )
 
-``trim_resize_pipeline(...)`` returns a "run report:" a Pandas DataFrame with each input path as its index and columns indicating the corresponding output path ("outpath"), whether processing was skipped because a file already existed at the output path ("skipped_existing"), whether processing failed due to an exception in ``exceptions_to_catch`` ("exception_handled"), and a timestamp indicating when processing completed ("time_finished"):
+Notice that we call a ``Pipeline`` object directly in order to run it (e.g. ``trim_resize_pipeline(inpaths=image_urls, ...)``), rather than calling a named method.
+
+When a ``Pipeline`` object is called, it returns a "run report:" a Pandas DataFrame with each input path as its index and columns indicating the corresponding output path ("outpath"), whether processing was skipped because a file already existed at the output path ("skipped_existing"), whether processing failed due to an exception in ``exceptions_to_catch`` ("exception_handled"), and a timestamp indicating when processing completed ("time_finished"):
 
 If you pass ``exceptions_to_catch=Exception`` to a pipeline call, Creevey will simply catch all exceptions (aside from things a few like `KeyboardInterrupt` that don't arise from the code).
 

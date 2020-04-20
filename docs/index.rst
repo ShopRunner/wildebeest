@@ -18,6 +18,7 @@ Creevey was developed for deep learning computer vision projects, so in addition
    api.rst
    limitations.rst
    contrib.rst
+   conduct.rst
 
 
 Indices and tables

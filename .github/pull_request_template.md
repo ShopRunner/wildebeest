@@ -6,7 +6,7 @@ Contributors from outside ShopRunner should feel free to submit a PR without hav
  - [ ] Pull request includes a description of the change and the reason behind it.
  - [ ] Pull request [uses keywords](https://help.github.com/en/articles/closing-issues-using-keywords) to close relevant [issues](https://github.com/ShopRunner/creevey/issues).
  - [ ] Pull request includes unit tests for any bug fixes and new functionality.
- - [ ] `README.md` and other docs have been updated as needed.
+ - [ ] Docs have been updated as needed.
  - [ ] `./.ci/test.sh` passes locally.
  
 The maintainer will complete the following steps for external contributions.
@@ -15,3 +15,8 @@ The maintainer will complete the following steps for external contributions.
 
  - [ ] `CHANGELOG.md` has been updated.
  - [ ] `_version.py` has been updated.
+ - [ ] Version number has been updated in `docs/conf.py`.
+
+**For merges from `wip` to `master`**::
+
+ - [ ] Confirm that docs [build](https://readthedocs.org/projects/creevey/builds/) correctly.

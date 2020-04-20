@@ -1,3 +1,4 @@
+"""Pipeline class definitions"""
 from collections import defaultdict
 import logging
 from pathlib import Path
@@ -15,8 +16,6 @@ from creevey.constants import PathOrStr
 class Pipeline:
     """
     Class for defining file processing pipelines.
-
-    See Creevey's README for an example.
 
     Attributes
     ----------
@@ -105,19 +104,20 @@ class Pipeline:
             these types will be logged with logging level ERROR and the
             relevant file will be skipped.
 
-        Side effects
-        ------------
-        Logs a warning when `skip_existing` is `True`.
-
         Returns
         -------
-        Pandas DataFrame "run report" with each input path as its
-        index and columns indicating the corresponding output path (
-        "outpath"), whether processing was skipped because a file
-        already existed at the output path ("skipped_existing"),
-        whether processing failed due to an exception in
-        `exceptions_to_catch` ("exception_handled"), and a timestamp
-        indicating when processing complete ("time_finished").
+        pd.DataFrame
+            Run report with each input path as its index and columns
+            indicating the corresponding output path  ("outpath"),
+            whether processing was skipped because a file already
+            existed at the output path ("skipped_existing"), whether
+            processing failed due to an exception in
+            `exceptions_to_catch` ("exception_handled"), and a timestamp
+            indicating when processing complete ("time_finished").
+
+        Note
+        ----
+        Logs a warning when `skip_existing` is `True`.
         """
         if skip_existing:
             logging.warning(
@@ -129,7 +129,7 @@ class Pipeline:
         log_dict = defaultdict(dict)
 
         Parallel(n_jobs=n_jobs, prefer='threads')(
-            delayed(self.pipeline_func)(
+            delayed(self._pipeline_func)(
                 path, path_func, skip_existing, log_dict, exceptions_to_catch
             )
             for path in tqdm(inpaths)
@@ -148,7 +148,7 @@ class Pipeline:
         """
         return self(*args, **kwargs)
 
-    def pipeline_func(
+    def _pipeline_func(
         self,
         inpath: PathOrStr,
         outpath_func: PathOrStr,
@@ -166,27 +166,36 @@ class Pipeline:
         If `skip_existing` is `True`, check up front whether
         `outpath_func(inpath)` exists. If it does, skip the file.
 
-        Catch `exceptions_to_catch` if they arise during file processing.
+        Catch `exceptions_to_catch` if they arise during file
+        processing.
 
         Parameters
         ----------
         inpath
+            Input path
         outpath_func
+            Function that takes input path and returns output path
         skip_existing
+            Whether or not to skip processing if output path is occupied
         log_dict
+            Dictionary of logs
         exceptions_to_catch
+            Exception types to catch
 
-        Side effects
-        ------------
-        Record results in a dict within `log_dict[inpath]`:
-            - `outpath_func(inpath)` as "outpath"
-            - 0/1 indicating whether existing file was skipped as
-            "skipped_existing"
-            - 0/1 indicating whether exception of a type specified in
-            `exceptions_to_catch` was handled during processing as
-            "exception_handled"
-            - Timestamp indicating when processing finished as
-            "time_finished"
+        Note
+        ----
+        Records results in a dict within `log_dict[inpath]` with the
+        following attributes
+
+        outpath
+            output path
+        skipped_existing
+            0/1 indicating whether existing file was skipped
+        exception_handled
+            0/1 indicating whether exception of a type specified in
+            `exceptions_to_catch` was handled during processing
+        time_finished
+            Timestamp indicating when processing finished
         """
         outpath = outpath_func(inpath)
         skipped_existing = False
@@ -216,7 +225,7 @@ class Pipeline:
 
     def _run_pipeline_func(self, inpath, outpath, **kwargs):
         # `kwargs` included to handle unused `log_dict` so that
-        # `pipeline_func` does not have to change in
+        # `_pipeline_func` does not have to change in
         # `CustomReportingPipeline`
         stage = self.load_func(inpath)
         for op in self.ops:
@@ -231,12 +240,13 @@ class CustomReportingPipeline(Pipeline):
 
     Differences from Pipeline parent class:
 
-    - `load_func`, each element of `ops`, and `write_func` must each
-    accept the string or `Path` object indicating the input item's
-    location as an additional positional argument.
-    - Each element of `ops` and `write_func` must each accept a
-    `defaultdict(dict)` object as an additional positional argument.
-    Functions defined in Creevey call this item `log_dict`.
+        `load_func`, each element of `ops`, and `write_func` must each
+        accept the string or `Path` object indicating the input item's
+        location as an additional positional argument.
+
+        Each element of `ops` and `write_func` must each accept a
+        `defaultdict(dict)` object as an additional positional argument.
+        Functions defined in Creevey call this item `log_dict`.
 
     Inside those functions, adding items to `log_dict[inpath]` causes
     them to be added to the "run record" DataFrame that the pipeline

@@ -1,8 +1,11 @@
+"""Miscellaneous utilities for images"""
 from functools import partial
+import mimetypes
 
 from creevey.util import find_files_with_extensions
 
-IMAGE_EXTENSIONS = ["jpeg", "jpg", "png", "bmp", "gif"]
-
-
-find_image_files = partial(find_files_with_extensions, extensions=IMAGE_EXTENSIONS)
+find_image_files = partial(
+    find_files_with_extensions,
+    extensions=[k for k, v in mimetypes.types_map.items() if v.startswith("image/")],
+)
+"""Find all image files in a directory"""

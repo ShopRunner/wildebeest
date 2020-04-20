@@ -1,3 +1,4 @@
+"""Functions that take a path and return a path"""
 from pathlib import Path
 from typing import Optional
 import uuid

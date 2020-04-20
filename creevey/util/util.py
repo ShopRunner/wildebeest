@@ -1,3 +1,4 @@
+"""Miscellaneous utilities"""
 import os
 from pathlib import Path
 from typing import Iterable, List
@@ -23,8 +24,10 @@ def find_files_with_extensions(
 
     Returns
     -------
-    List of `Path` objects specifying locations of all files recursively
-    within `search_dir` that have one of the extensions in `extensions`.
+    list
+        List of `Path` objects specifying locations of all files
+        recursively within `search_dir` that have one of the extensions
+        in `extensions`.
     """
     extensions = [item if item.startswith('.') else '.' + item for item in extensions]
     file_list = [

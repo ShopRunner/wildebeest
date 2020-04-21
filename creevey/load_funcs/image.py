@@ -17,11 +17,6 @@ def load_image_from_url(inpath: str, **kwargs) -> np.array:
     ----------
     inpath
         Image URL
-
-    Returns
-    -------
-    np.array
-        Image
     """
     response = get_response(inpath)
     image = _load_image_from_response(response)
@@ -51,11 +46,6 @@ def load_image_from_disk(inpath: PathOrStr, **kwargs) -> np.array:
     ----------
     inpath
         Path to local image file
-
-    Returns
-    -------
-    np.array
-        Image
 
     Raises
     ------

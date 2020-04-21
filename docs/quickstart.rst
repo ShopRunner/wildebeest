@@ -40,7 +40,7 @@ The following code takes a list of image URLs and for each one downloads the fil
         n_jobs=10,
     )
 
-After it runs, ``trim_resize_pipeline(...)`` has a Pandas DataFrame containing a record of what happened with each input file stored as an attribute called ``run_report_``:
+Notice that we call a ``Pipeline`` object directly in order to run it (e.g. ``trim_resize_pipeline(inpaths=image_urls, ...)``), rather than calling a named method. After it runs, ``trim_resize_pipeline(...)`` has a Pandas DataFrame containing a record of what happened with each input file stored as an attribute called ``run_report_``:
 
 .. image:: ./images/run_report_image.png
    :target: ./images/run_report_image.png

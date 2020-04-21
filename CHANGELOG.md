@@ -3,19 +3,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
-# [3.0.0] - 2020-4-9
-### Changed
- - Run report is now stored in `<Pipeline object>.run_report_` rather than being returned.
-### Added
- - If an otherwise unhandled exception arises during file processing, it is caught and a `CreeveyProcessingException` is raised instead.
- - Pipelines can now use a custom function to check whether the output file already exists.
-
-# [2.0.0] - 2020-4-3
+# [2.0.0] - 2020-4-21
 ### Changed
  - Renamed `pipelines/core.py` to `pipelines/pipelines.py`
- - Moved most of the README content to readthedocs.
-### Added
- - Docstrings in readthedocs.
+ - Run report is now stored in `<Pipeline object>.run_report_` rather than being returned.
+ - Moved most of the README content and added docstrings to readthedocs.
+ - All exceptions are now handled by default.
+ - Pipelines now take a function to decide whether to skip a file based on its input and output paths, rather than just providing the option to skip files whose outpath points to a local file.
 
 # [1.7.2] - 2020-4-2
 ### Added

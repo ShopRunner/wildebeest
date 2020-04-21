@@ -2,13 +2,10 @@
 Quickstart
 ==========
 
-Basic Pipelines
----------------
+Basic Example: Downloading Images
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Example: Downloading and Processing Images
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-The following code takes a list of image URLs and for each one downloads the file contents, trims off its bottom 100 pixels, resizes it to 224x224, and writes the result to disk, parallelizing across up to ten threads.
+The following code uses a fairly minimal Creevey pipeline to download a list of images to the current working directory as PNGs, parallelizing across up to ten threads.
 
 .. code-block:: python
 
@@ -16,40 +13,79 @@ The following code takes a list of image URLs and for each one downloads the fil
 
     from creevey import Pipeline
     from creevey.load_funcs.image import load_image_from_url
-    from creevey.ops.image import resize
-    from creevey.write_funcs.image import write_image
     from creevey.path_funcs import join_outdir_filename_extension
+    from creevey.write_funcs.image import write_image
 
 
-    trim_bottom_100 = lambda image: image[:-100, :]
-    resize_224 = partial(resize, shape=(224, 224))
-
-    trim_resize_pipeline = Pipeline(
-        load_func=load_image_from_url, ops=[trim_bottom_100, resize_224], write_func=write_image
+    # Create a pipeline object, specifying how to load a file and how to
+    # write out each file
+    image_download_pipeline = Pipeline(
+        load_func=load_image_from_url, write_func=write_image
     )
 
-    image_filenames = ['2RsJ8EQ', '2TqoToT', '2VocS58', '2scKPIp', '2TsO6Pc', '2SCv0q7']
-    image_urls = [f'https://bit.ly/{filename}' for filename in image_filenames]
-
-    keep_filename_png_in_cwd = partial(
-        join_outdir_filename_extension, outdir='.', extension='.png'
-    )
-    trim_resize_pipeline(
-        inpaths=image_urls,
-        path_func=keep_filename_png_in_cwd,
+    # Run the pipeline, specifying input paths, how to derive an output path
+    # from each input path, and how many threads to use
+    image_download_pipeline(
+        inpaths=[
+            f"https://bit.ly/{filename}"
+            for filename in [
+                "2RsJ8EQ",
+                "2TqoToT",
+                "2VocS58",
+                "2scKPIp",
+                "2TsO6Pc",
+                "2SCv0q7",
+            ]
+        ],
+        path_func=partial(join_outdir_filename_extension, outdir=".", extension=".png"),
         n_jobs=10,
     )
 
-Notice that we call a ``Pipeline`` object directly in order to run it (e.g. ``trim_resize_pipeline(inpaths=image_urls, ...)``), rather than calling a named method. After it runs, ``trim_resize_pipeline(...)`` has a Pandas DataFrame containing a record of what happened with each input file stored as an attribute called ``run_report_``:
+Notice that we call a ``Pipeline`` object directly in order to run it (e.g. ``image_download_pipeline(...)``), rather than calling a named method.
 
-.. image:: ./images/run_report_image.png
-   :target: ./images/run_report_image.png
+After it runs, ``image_download_pipeline(...)`` has a Pandas DataFrame containing a record of what happened with each input file stored as an attribute called ``run_report_``:
+
+.. image:: ./images/image_download_pipeline_run_report.png
+   :target: ./images/image_download_pipeline_run_report.png
    :alt:
 
 If ``n_jobs`` is greater than 1, then the order of the input files in the run report typically will not match the order in ``inpaths``\ ; a command like ``run_report.loc[inpaths, :]`` can be used to restore the original order if desired.
 
+The following code adds two additional wrinkles:
+
+TK
+
+.. code-block:: python
+
+    from functools import partial
+
+    from creevey import Pipeline
+    from creevey.load_funcs.image import load_image_from_url
+    from creevey.path_funcs import join_outdir_filename_extension
+    from creevey.write_funcs.image import write_image
+
+
+    image_urls = [
+        f"https://bit.ly/{filename}"
+        for filename in ["2RsJ8EQ", "2TqoToT", "2VocS58", "2scKPIp", "2TsO6Pc", "2SCv0q7",]
+    ]
+
+    # Create a pipeline object, specifying how to load a file and how to
+    # write out each file
+    image_download_pipeline = Pipeline(
+        load_func=load_image_from_url, write_func=write_image
+    )
+
+    # Run the pipeline, specifying input paths, how to derive an output path
+    # from each input path, and how many threads to use
+    image_download_pipeline(
+        inpaths=image_urls,
+        path_func=partial(join_outdir_filename_extension, outdir=".", extension=".png"),
+        n_jobs=10,
+    )
+
 Extending an Existing Pipeline
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 We can simplify our sample code snippet by using an existing pipeline for downloading and writing images and simply adding our ``ops``.
 

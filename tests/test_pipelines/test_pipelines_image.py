@@ -117,5 +117,15 @@ def test_raises_with_different_catch(error_pipeline):
             inpaths=IMAGE_URLS,
             path_func=keep_filename_save_png_in_tempdir,
             n_jobs=6,
-            exceptions_to_catch=(AttributeError,),
+            exceptions_to_catch=AttributeError,
+        )
+
+
+def test_raises_with_different_catch_tuple(error_pipeline):
+    with pytest.raises(ValueError):
+        error_pipeline(
+            inpaths=IMAGE_URLS,
+            path_func=keep_filename_save_png_in_tempdir,
+            n_jobs=6,
+            exceptions_to_catch=(AttributeError, TypeError),
         )

@@ -97,6 +97,7 @@ class Pipeline:
         path_func: Callable[[PathOrStr], PathOrStr],
         n_jobs: int,
         skip_func: Optional[Callable[[PathOrStr, Any], bool]] = None,
+        exceptions_to_catch: Optional[Union[Exception, Tuple[Exception]]] = Exception,
     ) -> pd.DataFrame:
         """
         Run the pipeline.
@@ -140,7 +141,9 @@ class Pipeline:
         Stores a run report in `self.run_report_`
         """
         Parallel(n_jobs=n_jobs, prefer='threads')(
-            delayed(self._pipeline_func)(path, path_func, skip_func)
+            delayed(self._pipeline_func)(
+                path, path_func, skip_func, exceptions_to_catch
+            )
             for path in tqdm(inpaths)
         )
 

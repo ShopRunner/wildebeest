@@ -246,7 +246,7 @@ class CustomReportingPipeline(Pipeline):
 
     Inside those functions, adding items to `log_dict[inpath]` causes
     them to be added to the "run record" DataFrame that the pipeline
-    returns. See Creevey's README for further explanation.
+    returns.
     """
 
     def _run_pipeline_func(self, inpath, outpath):

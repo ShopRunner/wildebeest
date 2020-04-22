@@ -5,11 +5,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 # [2.0.0] - 2020-4-21
 ### Changed
- - Renamed `pipelines/core.py` to `pipelines/pipelines.py`
- - Run report is now stored in `<Pipeline object>.run_report_` rather than being returned.
- - Moved most of the README content and added docstrings to readthedocs.
- - All exceptions are now handled by default.
  - Pipelines now take a function to decide whether to skip a file based on its input and output paths, rather than just providing the option to skip files whose outpath points to a local file.
+ - Run report is now stored in `<Pipeline object>.run_report_` rather than being returned.
+ - All exceptions that inherit from `Exception` that arise during file processing are now handled by default.
+ - Moved most of the README content and added docstrings to readthedocs.
+ - `pipelines/core.py` has been renamed to `pipelines/pipelines.py`
 
 # [1.7.2] - 2020-4-2
 ### Added

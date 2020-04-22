@@ -229,3 +229,4 @@ Here is the resulting run report:
    :target: ./images/text_pipeline_run_report.png
    :alt: 
 
+Notice that in this case we just want the information in the run report and don't want to write out processed versions of the input files, so we pass a dummy function ``do_nothing`` to ``write_func`` and ``path_func``.

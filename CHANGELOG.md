@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
  - Run report is now stored in `<Pipeline object>.run_report_` rather than being returned.
  - All exceptions that inherit from `Exception` that arise during file processing are now handled by default.
  - "time_finished" field in run reports now uses human-readable timestamps.
+ - `Pipeline.ops` is now `None` by default.
  - Moved most of the README content to readthedocs, added docstrings there and improved examples.
  - `log_dict` is now a Pipeline attribute.
  - `pipelines/core.py` has been renamed to `pipelines/pipelines.py`

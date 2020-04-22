@@ -73,7 +73,7 @@ class Pipeline:
         Stores input path in the index, output path as "outpath",
         Boolean indicating whether the file was skipped as "skipped",
         an exception object that was handled during processing if any as
-        "error" (`np.nan` if no exception was handled), a timestamp
+        "error" (`np.nan` if no exception was handled), and a timestamp
         indicating when processing completed as "time_finished".
         
         May include additional custom fields in a
@@ -126,18 +126,12 @@ class Pipeline:
             overwriting existing files.
         exceptions_to_catch
             Tuple of exception types to catch. An exception of one of
-            these types will be logged with logging level ERROR and the
-            relevant file will be skipped.
+            these types will be logged with logging level ERROR and
+            added to the run report, but the pipeline will continue to
+            execute.
 
-        Raises
-        ------
-        CreeveyProcessingError
-            If any unhandled errors arise during file processing
-
-        Notes
-        -----
-        Logs a warning when `skip_existing` is `True`.
-
+        Note
+        ----
         Stores a run report in `self.run_report_`
         """
         Parallel(n_jobs=n_jobs, prefer='threads')(
@@ -198,6 +192,13 @@ class Pipeline:
         time_finished
             Timestamp indicating when processing finished
         """
+
+        class _DummyException(Exception):
+            pass
+
+        if exceptions_to_catch is None:
+            exceptions_to_catch = _DummyException
+
         self._log_dict[inpath]['outpath'] = outpath_func(inpath)
         if skip_func is not None and skip_func(
             inpath, self._log_dict[inpath]['outpath']

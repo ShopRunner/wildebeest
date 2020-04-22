@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
  - All exceptions that inherit from `Exception` that arise during file processing are now handled by default.
  - Rather than noting whether an exception was handled in processing a particular file in an "exception_handled" field, the run report now contains either the exception object itself or `np.nan` in a field called "error."
  - "time_finished" field in run reports now uses human-readable timestamps.
+ - `Pipeline.run()` method has been removed; now pipelines can only be called directly.
  - `Pipeline.ops` is now `None` by default.
  - Moved most of the README content to readthedocs, improved the examples, and added docstrings.
  - `log_dict` is now a Pipeline attribute.

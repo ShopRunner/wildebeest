@@ -94,7 +94,7 @@ def test_catches(error_pipeline):
         for filename in IMAGE_FILENAMES
     ]
     expected_run_report = pd.DataFrame(
-        {'outpath': outpaths, 'skipped': [False] * len(inpaths),}, index=inpaths,
+        {'outpath': outpaths, 'skipped': [False] * len(inpaths)}, index=inpaths,
     )
     error_pipeline(
         inpaths=inpaths, path_func=keep_filename_save_png_in_tempdir, n_jobs=1,

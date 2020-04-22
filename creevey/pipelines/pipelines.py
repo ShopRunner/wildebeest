@@ -75,7 +75,7 @@ class Pipeline:
         an exception object that was handled during processing if any as
         "error" (`np.nan` if no exception was handled), and a timestamp
         indicating when processing completed as "time_finished".
-        
+
         May include additional custom fields in a
         `CustomReportingPipeline`.
 

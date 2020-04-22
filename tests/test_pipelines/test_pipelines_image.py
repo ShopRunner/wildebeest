@@ -1,5 +1,4 @@
 from functools import partial
-import logging
 from pathlib import Path
 
 import matplotlib.pyplot as plt
@@ -85,7 +84,7 @@ def error_pipeline():
 
 
 def _raise_TypeError(*args, **kwargs):
-    raise TypeError('Sample error for testing purposes')
+    raise ValueError('Sample error for testing purposes')
 
 
 def test_catches(error_pipeline):
@@ -106,14 +105,14 @@ def test_catches(error_pipeline):
         ),
         expected_run_report.sort_index(),
     )
-    expected_error = TypeError('Sample error for testing purposes')
+    expected_error = ValueError('Sample error for testing purposes')
     for actual_error in error_pipeline.run_report_.loc[:, 'error']:
         assert type(actual_error) is type(expected_error)
         assert actual_error.args == expected_error.args
 
 
 def test_raises_with_different_catch(error_pipeline):
-    with pytest.raises(TypeError):
+    with pytest.raises(ValueError):
         error_pipeline(
             inpaths=IMAGE_URLS,
             path_func=keep_filename_save_png_in_tempdir,

@@ -78,12 +78,12 @@ def test_logging(trim_resize_pipeline):
 @pytest.fixture
 def error_pipeline():
     error_pipeline = Pipeline(
-        load_func=load_image_from_url, ops=[_raise_TypeError], write_func=write_image
+        load_func=load_image_from_url, ops=[_raise_ValueError], write_func=write_image
     )
     return error_pipeline
 
 
-def _raise_TypeError(*args, **kwargs):
+def _raise_ValueError(*args, **kwargs):
     raise ValueError('Sample error for testing purposes')
 
 

@@ -143,6 +143,11 @@ Another Use for `skip_func`
 
 More generally, (1) `skip_func` is not limited to checking whether the output file already exists locally, and (2) generating a set of paths to skip up front and checking against that set with `skip_func` may be faster than performing some operation on each path on the fly to decide whether to skip it.
 
+Skipping Files Based on Content
+-------------------------------
+
+``skip_func`` is useful for deciding whether to skip a file based on information that you can obtain without opening the files, because it allows you to avoid ever opening the files that you skip. It is not recommended for cases where you need to open the file in order to decide whether to skip it (such as skipping images that are too bright, where that information is not in the image metadata) because you would then be opening the files that you do not skip twice, which will generally slow down processing substantially. I would recommend instead creating a custom exception type (e.g. ``WashedOutImageError``), having the first function in ``ops`` raise that exception when appropriate, and including that exception type in ``exceptions_to_catch`` (which will happen by default as long as your exception inherits from ``Exception``). That way your pipeline will not do any further processing on those files, and it will be easy to see in the run report which files were skipped in this way.
+
 Custom Reporting Example
 ------------------------
 

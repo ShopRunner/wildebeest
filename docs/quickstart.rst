@@ -136,12 +136,12 @@ We could simplify the code above by using the provided ``download_image_pipeline
 
 More generally, you can modify attributes of an existing ``Pipeline`` object.
 
-Another Use for `skip_func`
+Another Use for ``skip_func``
 ---------------------------
 
-`skip_func=lambda inpath, outpath: Path(outpath).is_file()` often makes sense when you are writing files locally and don't want to repeat work. However, suppose you are using Creevey to copy files from one S3 bucket to another. You could write a function to check whether a file exists at the output URL (e.g. `requests.head(outpath).status_code < 400`), but in my testing running that function was slower than copying the file. An alternative approach is to make a set of all of the files in the output bucket before running the pipeline and pass `skip_func` a function that checks whether `outpath` is in that set.
+``skip_func=lambda inpath, outpath: Path(outpath).is_file()`` often makes sense when you are writing files locally and don't want to repeat work. However, suppose you are using Creevey to copy files from one S3 bucket to another. You could write a function to check whether a file exists at the output URL (e.g. ``requests.head(outpath).status_code < 400``), but in my testing running that function was slower than copying the file. An alternative approach is to make a set of all of the files in the output bucket before running the pipeline and pass ``skip_func`` a function that checks whether ``outpath`` is in that set.
 
-More generally, (1) `skip_func` is not limited to checking whether the output file already exists locally, and (2) generating a set of paths to skip up front and checking against that set with `skip_func` may be faster than performing some operation on each path on the fly to decide whether to skip it.
+More generally, (1) ``skip_func`` is not limited to checking whether the output file already exists locally, and (2) generating a set of paths to skip up front and checking against that set with ``skip_func`` may be faster than performing some operation on each path on the fly to decide whether to skip it.
 
 Skipping Files Based on Content
 -------------------------------

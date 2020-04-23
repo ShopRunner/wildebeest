@@ -141,7 +141,13 @@ class Pipeline:
             for path in tqdm(inpaths)
         )
 
+        logging.info('Processing finished. Creating run report.')
         run_report = pd.DataFrame.from_dict(self._log_dict, orient='index')
+        # Default ns precision is overkill for most applications and
+        # gives an error when writing to parquet.
+        run_report.loc[:, "time_finished"] = run_report.loc[:, "time_finished"].astype(
+            "datetime64[ms]"
+        )
         self._run_report_ = run_report.loc[
             :,
             RUN_REPORT_COLS + [col for col in run_report if col not in RUN_REPORT_COLS],

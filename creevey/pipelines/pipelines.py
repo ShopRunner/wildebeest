@@ -145,8 +145,8 @@ class Pipeline:
         run_report = pd.DataFrame.from_dict(self._log_dict, orient='index')
         # Default ns precision is overkill for most applications and
         # gives an error when writing to parquet.
-        run_report.loc[:, "time_finished"] = run_report.loc[:, "time_finished"].astype(
-            "datetime64[ms]"
+        run_report.loc[:, 'time_finished'] = run_report.loc[:, 'time_finished'].astype(
+            'datetime64[ms]'
         )
         self._run_report_ = run_report.loc[
             :,
@@ -212,7 +212,7 @@ class Pipeline:
             self._log_dict[inpath]['skipped'] = True
             logging.debug(
                 f'Skipping {inpath} because there is already a file at corresponding '
-                f'output path {self._log_dict[inpath]["outpath"]}'
+                f'output path {self._log_dict[inpath]['outpath']}'
             )
             self._log_dict[inpath]['error'] = None
             self._log_dict[inpath]['time_finished'] = datetime.now()

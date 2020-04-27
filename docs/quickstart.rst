@@ -132,7 +132,7 @@ We could simplify the code above by using the provided ``download_image_pipeline
    from creevey.pipelines.image import download_image_pipeline
 
    trim_resize_pipeline = download_image_pipeline
-   trim_resize_pipeline.ops = [trim_bottom_100, resize_224]
+   trim_resize_pipeline.ops = [lambda image: image[:-100, :], partial(resize, shape=(224, 224))]
 
 More generally, you can modify attributes of an existing ``Pipeline`` object.
 

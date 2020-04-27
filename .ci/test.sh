@@ -7,3 +7,4 @@ set -e
 pytest
 flake8 creevey tests
 black creevey tests --skip-string-normalization --check
+sphinx-build docs docs/_html

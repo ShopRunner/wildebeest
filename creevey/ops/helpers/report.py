@@ -1,4 +1,4 @@
-"""Code for reporting information calculating during processing"""
+"""Code for reporting information calculating during processing."""
 from functools import partial
 from typing import Any, Callable, DefaultDict, Hashable
 
@@ -23,37 +23,36 @@ def report_output(
 
     Examples
     --------
-    >> from functools import partial
-    >>
-    >> from creevey import CustomReportingPipeline
-    >> from creevey.load_funcs.image import load_image_from_url
-    >> from creevey.ops import report_output
-    >> from creevey.ops.image import calculate_mean_brightness
-    >> from creevey.path_funcs import join_outdir_filename_extension
-    >> from creevey.write_funcs.image import write_image
-    >>
-    >> report_mean_brightness = partial(
-    >>     report_output, func=calculate_mean_brightness, key='mean_brightness'
-    >> )
-    >>
-    >> report_brightness_pipeline = CustomReportingPipeline(
-    >>     load_func=load_image_from_url, ops=[report_mean_brightness], write_func=write_image
-    >> )
-    >>
-    >> image_filenames = ['2RsJ8EQ', '2TqoToT', '2VocS58', '2scKPIp', '2TsO6Pc', '2SCv0q7']
-    >> image_urls = [f'https://bit.ly/{filename}' for filename in image_filenames]
-    >>
-    >> keep_filename_png_in_cwd = partial(
-    >>     join_outdir_filename_extension, outdir='.', extension='.png'
-    >> )
-    >> print(
-    >>     report_brightness_pipeline(
-    >>         inpaths=image_urls,
-    >>         path_func=keep_filename_png_in_cwd,
-    >>         n_jobs=1,
-    >>         skip_existing=False,
-    >>     )
-    >> )
+    >>> from functools import partial
+    >>>
+    >>> from creevey import CustomReportingPipeline
+    >>> from creevey.load_funcs.image import load_image_from_url
+    >>> from creevey.ops import report_output
+    >>> from creevey.ops.image import calculate_mean_brightness
+    >>> from creevey.path_funcs import join_outdir_filename_extension
+    >>> from creevey.write_funcs.image import write_image
+    >>>
+    >>> report_mean_brightness = partial(
+    >>>     report_output, func=calculate_mean_brightness, key='mean_brightness'
+    >>> )
+    >>>
+    >>> report_brightness_pipeline = CustomReportingPipeline(
+    >>>     load_func=load_image_from_url, ops=[report_mean_brightness], write_func=write_image
+    >>> )
+    >>>
+    >>> image_filenames = ['2RsJ8EQ', '2TqoToT', '2VocS58', '2scKPIp', '2TsO6Pc', '2SCv0q7']
+    >>> image_urls = [f'https://bit.ly/{filename}' for filename in image_filenames]
+    >>>
+    >>> keep_filename_png_in_cwd = partial(
+    >>>     join_outdir_filename_extension, outdir='.', extension='.png'
+    >>> )
+    >>> report_brightness_pipeline(
+    >>>     inpaths=image_urls,
+    >>>     path_func=keep_filename_png_in_cwd,
+    >>>     n_jobs=1,
+    >>>     skip_existing=False,
+    >>> )
+    >>> print(report_brightness_pipeline.run_report_)
                                 mean_brightness  ... time_finished
     https://bit.ly/2RsJ8EQ        78.570605  ...  1.571842e+09
     https://bit.ly/2SCv0q7       130.348113  ...  1.571842e+09
@@ -79,10 +78,11 @@ def report_output(
 
     Returns
     -------
-    func_input
+    Any
+        func_input
 
-    Side effect
-    -----------
+    Note
+    ----
     Assigns `func(func_input)` to `log_dict[inpath][key]`
     """
     result = func(func_input)
@@ -100,39 +100,38 @@ def get_report_output_decorator(key: Hashable) -> Callable:
 
     Examples
     --------
-    >> from functools import partial
-    >>
-    >> from creevey import CustomReportingPipeline
-    >> from creevey.load_funcs.image import load_image_from_url
-    >> from creevey.ops import get_report_output_decorator
-    >> from creevey.ops.image import calculate_mean_brightness
-    >> from creevey.path_funcs import join_outdir_filename_extension
-    >> from creevey.write_funcs.image import write_image
-    >>
-    >>
-    >> @get_report_output_decorator(key='mean_brightness')
-    >> def report_mean_brightness(image):
-    >>     return calculate_mean_brightness(image)
-    >>
-    >>
-    >> report_brightness_pipeline = CustomReportingPipeline(
-    >>     load_func=load_image_from_url, ops=[report_mean_brightness], write_func=write_image
-    >> )
-    >>
-    >> image_filenames = ['2RsJ8EQ', '2TqoToT', '2VocS58', '2scKPIp', '2TsO6Pc', '2SCv0q7']
-    >> image_urls = [f'https://bit.ly/{filename}' for filename in image_filenames]
-    >>
-    >> keep_filename_png_in_cwd = partial(
-    >>     join_outdir_filename_extension, outdir='.', extension='.png'
-    >> )
-    >> print(
-    >>     report_brightness_pipeline(
-    >>         inpaths=image_urls,
-    >>         path_func=keep_filename_png_in_cwd,
-    >>         n_jobs=1,
-    >>         skip_existing=False,
-    >>     )
-    >> )
+    >>> from functools import partial
+    >>>
+    >>> from creevey import CustomReportingPipeline
+    >>> from creevey.load_funcs.image import load_image_from_url
+    >>> from creevey.ops import get_report_output_decorator
+    >>> from creevey.ops.image import calculate_mean_brightness
+    >>> from creevey.path_funcs import join_outdir_filename_extension
+    >>> from creevey.write_funcs.image import write_image
+    >>>
+    >>>
+    >>> @get_report_output_decorator(key='mean_brightness')
+    >>> def report_mean_brightness(image):
+    >>>     return calculate_mean_brightness(image)
+    >>>
+    >>>
+    >>> report_brightness_pipeline = CustomReportingPipeline(
+    >>>     load_func=load_image_from_url, ops=[report_mean_brightness], write_func=write_image
+    >>> )
+    >>>
+    >>> image_filenames = ['2RsJ8EQ', '2TqoToT', '2VocS58', '2scKPIp', '2TsO6Pc', '2SCv0q7']
+    >>> image_urls = [f'https://bit.ly/{filename}' for filename in image_filenames]
+    >>>
+    >>> keep_filename_png_in_cwd = partial(
+    >>>     join_outdir_filename_extension, outdir='.', extension='.png'
+    >>> )
+    >>> report_brightness_pipeline(
+    >>>     inpaths=image_urls,
+    >>>     path_func=keep_filename_png_in_cwd,
+    >>>     n_jobs=1,
+    >>>     skip_existing=False,
+    >>> )
+    >>> print(report_brightness_pipeline.run_report_)
                                 mean_brightness  ... time_finished
     https://bit.ly/2RsJ8EQ        78.570605  ...  1.571843e+09
     https://bit.ly/2SCv0q7       130.348113  ...  1.571843e+09

@@ -1,3 +1,4 @@
+"""Functions that take an image and write it out"""
 import os
 from pathlib import Path
 

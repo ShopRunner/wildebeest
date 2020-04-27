@@ -1,5 +1,4 @@
 from functools import partial
-import logging
 from pathlib import Path
 
 import matplotlib.pyplot as plt
@@ -21,7 +20,7 @@ from tests.conftest import (
 IMAGE_RESIZE_SHAPE = (224, 224)
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope='function')
 def trim_resize_pipeline():
     for url in IMAGE_URLS:
         outpath = keep_filename_save_png_in_tempdir(url)
@@ -44,51 +43,11 @@ def trim_resize_pipeline():
 def test_trim_resize_pipeline(trim_resize_pipeline):
     path_func = keep_filename_save_png_in_tempdir
     inpaths = IMAGE_URLS
-    trim_resize_pipeline(
-        inpaths=inpaths, path_func=path_func, n_jobs=6, skip_existing=False
-    )
+    trim_resize_pipeline(inpaths=inpaths, path_func=path_func, n_jobs=6)
     for path in inpaths:
         outpath = path_func(path)
         image = plt.imread(str(outpath))
         assert image.shape[:2] == IMAGE_RESIZE_SHAPE
-
-
-def test_skip_existing(trim_resize_pipeline, caplog):
-    inpaths = IMAGE_URLS
-
-    trim_resize_pipeline(
-        inpaths=inpaths,
-        path_func=keep_filename_save_png_in_tempdir,
-        n_jobs=6,
-        skip_existing=False,
-    )
-    with caplog.at_level(logging.WARNING):
-        outpaths = [
-            TEMP_DATA_DIR / Path(filename).with_suffix('.png')
-            for filename in IMAGE_FILENAMES
-        ]
-        skipped_existing = [1] * len(inpaths)
-        exception_handled = [0] * len(inpaths)
-        expected_run_report = pd.DataFrame(
-            {
-                'outpath': outpaths,
-                'skipped_existing': skipped_existing,
-                'exception_handled': exception_handled,
-            },
-            index=inpaths,
-        )
-        actual_run_report = trim_resize_pipeline(
-            inpaths=IMAGE_URLS,
-            path_func=keep_filename_save_png_in_tempdir,
-            n_jobs=6,
-            skip_existing=True,
-        )
-        pd.testing.assert_frame_equal(
-            actual_run_report.sort_index().drop('time_finished', axis='columns'),
-            expected_run_report.sort_index(),
-        )
-        assert len(caplog.records) == 1
-        assert caplog.records[0].levelname == 'WARNING'
 
 
 def test_logging(trim_resize_pipeline):
@@ -97,23 +56,21 @@ def test_logging(trim_resize_pipeline):
         TEMP_DATA_DIR / Path(filename).with_suffix('.png')
         for filename in IMAGE_FILENAMES
     ]
-    exception_handled = skipped_existing = [0] * len(inpaths)
     expected_run_report = pd.DataFrame(
         {
             'outpath': outpaths,
-            'skipped_existing': skipped_existing,
-            'exception_handled': exception_handled,
+            'skipped': [False] * len(inpaths),
+            'error': [None] * len(inpaths),
         },
         index=inpaths,
     )
-    actual_run_report = trim_resize_pipeline(
-        inpaths=inpaths,
-        path_func=keep_filename_save_png_in_tempdir,
-        n_jobs=6,
-        skip_existing=False,
+    trim_resize_pipeline(
+        inpaths=inpaths, path_func=keep_filename_save_png_in_tempdir, n_jobs=6,
     )
     pd.testing.assert_frame_equal(
-        actual_run_report.sort_index().drop('time_finished', axis='columns'),
+        trim_resize_pipeline.run_report_.sort_index().drop(
+            'time_finished', axis='columns'
+        ),
         expected_run_report.sort_index(),
     )
 
@@ -121,34 +78,13 @@ def test_logging(trim_resize_pipeline):
 @pytest.fixture
 def error_pipeline():
     error_pipeline = Pipeline(
-        load_func=load_image_from_url, ops=[_raise_TypeError], write_func=write_image
+        load_func=load_image_from_url, ops=[_raise_ValueError], write_func=write_image
     )
     return error_pipeline
 
 
-def _raise_TypeError(*args, **kwargs):
-    raise TypeError('Sample error for testing purposes')
-
-
-def test_raises_without_catch(error_pipeline):
-    with pytest.raises(TypeError):
-        error_pipeline(
-            inpaths=IMAGE_URLS,
-            path_func=keep_filename_save_png_in_tempdir,
-            n_jobs=6,
-            skip_existing=False,
-        )
-
-
-def test_raises_with_different_catch(error_pipeline):
-    with pytest.raises(TypeError):
-        error_pipeline(
-            inpaths=IMAGE_URLS,
-            path_func=keep_filename_save_png_in_tempdir,
-            n_jobs=6,
-            skip_existing=False,
-            exceptions_to_catch=(AttributeError,),
-        )
+def _raise_ValueError(*args, **kwargs):
+    raise ValueError('Sample error for testing purposes')
 
 
 def test_catches(error_pipeline):
@@ -157,24 +93,49 @@ def test_catches(error_pipeline):
         TEMP_DATA_DIR / Path(filename).with_suffix('.png')
         for filename in IMAGE_FILENAMES
     ]
-    skipped_existing = [0] * len(inpaths)
-    exception_handled = [1] * len(inpaths)
     expected_run_report = pd.DataFrame(
-        {
-            'outpath': outpaths,
-            'skipped_existing': skipped_existing,
-            'exception_handled': exception_handled,
-        },
-        index=inpaths,
+        {'outpath': outpaths, 'skipped': [False] * len(inpaths)}, index=inpaths,
     )
-    actual_run_report = error_pipeline(
-        inpaths=inpaths,
-        path_func=keep_filename_save_png_in_tempdir,
-        n_jobs=1,
-        skip_existing=False,
-        exceptions_to_catch=(TypeError,),
+    error_pipeline(
+        inpaths=inpaths, path_func=keep_filename_save_png_in_tempdir, n_jobs=1,
     )
     pd.testing.assert_frame_equal(
-        actual_run_report.sort_index().drop('time_finished', axis='columns'),
+        error_pipeline.run_report_.sort_index().drop(
+            ['time_finished', 'error'], axis='columns'
+        ),
         expected_run_report.sort_index(),
     )
+    expected_error = ValueError('Sample error for testing purposes')
+    for actual_error in error_pipeline.run_report_.loc[:, 'error']:
+        assert type(actual_error) is type(expected_error)
+        assert actual_error.args == expected_error.args
+
+
+def test_raises_with_different_catch(error_pipeline):
+    with pytest.raises(ValueError):
+        error_pipeline(
+            inpaths=IMAGE_URLS,
+            path_func=keep_filename_save_png_in_tempdir,
+            n_jobs=6,
+            exceptions_to_catch=AttributeError,
+        )
+
+
+def test_raises_with_different_catch_tuple(error_pipeline):
+    with pytest.raises(ValueError):
+        error_pipeline(
+            inpaths=IMAGE_URLS,
+            path_func=keep_filename_save_png_in_tempdir,
+            n_jobs=6,
+            exceptions_to_catch=(AttributeError, TypeError),
+        )
+
+
+def test_raises_with_no_catch(error_pipeline):
+    with pytest.raises(ValueError):
+        error_pipeline(
+            inpaths=IMAGE_URLS,
+            path_func=keep_filename_save_png_in_tempdir,
+            n_jobs=6,
+            exceptions_to_catch=None,
+        )

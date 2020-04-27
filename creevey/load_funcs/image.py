@@ -1,3 +1,4 @@
+"""Functions for loading images"""
 import cv2 as cv
 import numpy as np
 
@@ -16,10 +17,6 @@ def load_image_from_url(inpath: str, **kwargs) -> np.array:
     ----------
     inpath
         Image URL
-
-    Returns
-    -------
-    Image as NumPy array
     """
     response = get_response(inpath)
     image = _load_image_from_response(response)
@@ -50,13 +47,10 @@ def load_image_from_disk(inpath: PathOrStr, **kwargs) -> np.array:
     inpath
         Path to local image file
 
-    Returns
-    -------
-    Image file contents as a NumPy array
-
     Raises
     ------
-    ValueError if image fails to load
+    ValueError
+        If image fails to load
     """
     # As of mid-2018 OpenCV is faster than Matplotlib or Pillow for IO
     image = cv.imread(str(inpath), cv.IMREAD_UNCHANGED)

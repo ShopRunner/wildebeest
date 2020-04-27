@@ -3,8 +3,9 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import pytest
+import requests
 
-from creevey import CustomReportingPipeline
+from creevey import CustomReportingPipeline, Pipeline
 from creevey.load_funcs.image import load_image_from_url
 from creevey.ops import get_report_output_decorator
 from creevey.ops.image import calculate_mean_brightness
@@ -23,7 +24,7 @@ def report_mean_brightness(image):
     return calculate_mean_brightness(image)
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope='function')
 def report_mean_brightness_pipeline():
     for url in IMAGE_URLS:
         outpath = keep_filename_save_png_in_tempdir(url)
@@ -41,39 +42,51 @@ def report_mean_brightness_pipeline():
 
 
 def test_custom_reporting_pipeline(report_mean_brightness_pipeline):
-    inpaths = IMAGE_URLS
     outpaths = [
         TEMP_DATA_DIR / Path(filename).with_suffix('.png')
         for filename in IMAGE_FILENAMES
     ]
-    exception_handled = skipped_existing = [0] * len(inpaths)
     expected_run_report = pd.DataFrame(
         {
             'outpath': outpaths,
-            'skipped_existing': skipped_existing,
-            'exception_handled': exception_handled,
+            'skipped': [False] * len(IMAGE_URLS),
+            'error': [None] * len(IMAGE_URLS),
         },
-        index=inpaths,
+        index=IMAGE_URLS,
     )
-    actual_run_report = report_mean_brightness_pipeline(
-        inpaths=inpaths,
-        path_func=keep_filename_save_png_in_tempdir,
-        n_jobs=6,
-        skip_existing=False,
+    report_mean_brightness_pipeline(
+        inpaths=IMAGE_URLS, path_func=keep_filename_save_png_in_tempdir, n_jobs=6,
     )
     pd.testing.assert_frame_equal(
-        actual_run_report.sort_index(axis='index')
+        report_mean_brightness_pipeline.run_report_.sort_index(axis='index')
         .sort_index(axis='columns')
         .drop(['time_finished', 'mean_brightness'], axis='columns'),
         expected_run_report.sort_index(axis='index').sort_index(axis='columns'),
     )
-    assert np.issubdtype(actual_run_report.loc[:, 'mean_brightness'], np.number)
-
-
-def test_run_method(report_mean_brightness_pipeline):
-    report_mean_brightness_pipeline.run(
-        inpaths=IMAGE_URLS,
-        path_func=keep_filename_save_png_in_tempdir,
-        n_jobs=6,
-        skip_existing=False,
+    assert np.issubdtype(
+        report_mean_brightness_pipeline.run_report_.loc[:, 'mean_brightness'], np.number
     )
+
+
+@pytest.fixture(scope='function')
+def custom_check_existing_pipeline():
+    for url in IMAGE_URLS:
+        outpath = keep_filename_save_png_in_tempdir(url)
+        delete_file_if_exists(outpath)
+
+    yield Pipeline(
+        load_func=load_image_from_url, write_func=write_image,
+    )
+    for url in IMAGE_URLS:
+        outpath = keep_filename_save_png_in_tempdir(url)
+        delete_file_if_exists(outpath)
+
+
+def test_custom_check_existing_func(custom_check_existing_pipeline):
+    custom_check_existing_pipeline(
+        inpaths=IMAGE_URLS,
+        path_func=lambda x: x,
+        n_jobs=6,
+        skip_func=lambda url, outpath: requests.head(outpath).status_code < 400,
+    )
+    assert custom_check_existing_pipeline.run_report_.loc[:, 'skipped'].all()

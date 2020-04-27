@@ -12,10 +12,10 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-# import os
-# import sys
-# sys.path.insert(0, os.path.abspath('.'))
+import os
+import sys
 
+sys.path.insert(0, os.path.abspath('../creevey'))
 
 # -- Project information -----------------------------------------------------
 
@@ -23,10 +23,8 @@ project = 'creevey'
 copyright = '2019 Shoprunner'
 author = 'gsganden, sugi-chan'
 
-# The short X.Y version
-version = ''
-# The full version, including alpha/beta/rc tags
-release = '0.4.0'
+
+release = version = '2.0.0'
 
 
 # -- General configuration ---------------------------------------------------
@@ -41,6 +39,7 @@ release = '0.4.0'
 extensions = [
     'm2r',
     'sphinx.ext.autodoc',
+    'sphinx.ext.napoleon',
     'sphinx.ext.doctest',
     'sphinx.ext.intersphinx',
     'sphinx.ext.todo',
@@ -49,7 +48,14 @@ extensions = [
     'sphinx.ext.ifconfig',
     'sphinx.ext.viewcode',
     'sphinx.ext.githubpages',
+    'sphinx_autodoc_typehints',
 ]
+
+napoleon_google_docstring = False
+napoleon_numpy_docstring = True
+napoleon_use_param = True
+
+autodoc_member_order = 'bysource'
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']

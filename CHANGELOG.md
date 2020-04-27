@@ -3,9 +3,26 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
-# [1.7.1] - 2020-4-1
+# [2.0.0] - 2020-4-21
+### Changed
+ - Pipelines now take a function to decide whether to skip a file based on its input and output paths, rather than just providing the option to skip files whose outpath points to a local file. "skipped_existing" field of run report has been renamed to "skipped" accordingly.
+ - Run report is now stored in `<Pipeline object>.run_report_` rather than being returned.
+ - All exceptions that inherit from `Exception` that arise during file processing are now handled by default.
+ - Rather than noting whether an exception was handled in processing a particular file in an "exception_handled" field, the run report now contains either the exception object itself or `np.nan` in a field called "error."
+ - "time_finished" field in run reports now uses human-readable timestamps.
+ - `Pipeline.run()` method has been removed; now pipelines can only be called directly.
+ - `Pipeline.ops` is now `None` by default.
+ - Moved most of the README content to readthedocs, improved the examples, and added docstrings.
+ - `log_dict` is now a Pipeline attribute.
+ - `pipelines/core.py` has been renamed to `pipelines/pipelines.py`
+
+# [1.7.2] - 2020-4-2
 ### Added
  - Example text scraping application.
+
+# [1.7.1] - 2020-4-1
+### Changed
+ - Have `flake8` check for docstrings in library functions and classes.
 
 # [1.7.0] - 2020-3-27
 ### Added

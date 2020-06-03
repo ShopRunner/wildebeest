@@ -22,6 +22,16 @@ def report_mean_brightness(image):  # noqa: D103
     return calculate_mean_brightness(image)
 
 
+@get_report_output_decorator(key="is_grayscale")
+def report_is_grayscale(image: np.array) -> bool:
+    """
+    Report whether image is grayscale.
+
+    Add entry to log dict, etc.
+    """
+    return image.ndim == 2
+
+
 def calculate_dhash(image: np.array, sqrt_hash_size: int = 8) -> np.array:
     """
     Calculate difference hash of image.

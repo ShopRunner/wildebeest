@@ -158,3 +158,28 @@ def _find_min_dim_shape(image, min_dim):
         out_height = min_dim
         out_width = round(out_height * aspect_ratio, 1)
     return (int(out_height), int(out_width))
+
+def rotate(image, angle) ->np.array:
+   """
+       Rotate an image
+
+       This function takes an image as numpy array and an angle to rotate,
+       and outputs rotated image.
+
+       Assumes:
+           The image is going to be rotated around center, and size of image
+           will remain unchanged.
+
+       Parameters
+       ----------
+       image
+           Numpy array of an image. Function will handle 2D greyscale
+           images, RGB, and RGBA image arrays
+       angle
+           integer from 0 to 360, the degrees to be rotated for a picture.
+       """
+   (h, w) = image.shape[:2]
+   center = (w // 2, h // 2)
+   M = cv.getRotationMatrix2D(center, angle, 1.0)
+   rotated = cv.warpAffine(image, M, (w, h))
+   return rotated

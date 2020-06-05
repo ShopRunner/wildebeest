@@ -159,16 +159,16 @@ def _find_min_dim_shape(image, min_dim):
         out_width = round(out_height * aspect_ratio, 1)
     return (int(out_height), int(out_width))
 
+
 def flip_horiz(image: np.array) -> np.array:
     """
     Flip an image horizontally
     """
-    im_flipped = cv.flip(image, flipCode=1)
-    return im_flipped
+    return cv.flip(image, flipCode=1)
+
 
 def flip_vert(image: np.array) -> np.array:
     """
     Flip an image vertically
     """
-    im_flipped = cv.flip(image, flipCode=0)
-    return im_flipped
+    return cv.flip(image, flipCode=0)

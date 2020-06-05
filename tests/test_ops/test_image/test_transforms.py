@@ -4,7 +4,7 @@ import cv2 as cv
 import numpy as np
 import pytest
 
-from creevey.ops.image import centercrop, resize, trim_padding
+from creevey.ops.image import centercrop, flip_horiz, flip_vert, resize, trim_padding
 
 
 class TestResize:
@@ -128,3 +128,31 @@ class TestTrimPadding:
         )
         actual = trim_padding(im_padded, thresh=0.05, comparison_op=operator.lt)
         np.testing.assert_almost_equal(actual, sample_image_square_rgb)
+
+
+class TestFlipHoriz:
+    def test_flip_horiz_rgba(self, sample_image_square_rgba, sample_image_square_rgba_flipped_horiz):
+        image = flip_horiz(sample_image_square_rgba)
+        np.testing.assert_almost_equal(image, sample_image_square_rgba_flipped_horiz, decimal=-1)
+
+    def test_flip_horiz_rgb(self, sample_image_square_rgb, sample_image_square_rgb_flipped_horiz):
+        image = flip_horiz(sample_image_square_rgb)
+        np.testing.assert_almost_equal(image, sample_image_square_rgb_flipped_horiz, decimal=-1)
+
+    def test_flip_horiz_grayscale(self, sample_image_tall_grayscale, sample_image_grayscale_flipped_horiz):
+        image = flip_horiz(sample_image_tall_grayscale)
+        np.testing.assert_almost_equal(image, sample_image_grayscale_flipped_horiz, decimal=-1)
+
+
+class TestFlipVert:
+    def test_flip_vert_rgba(self, sample_image_square_rgba, sample_image_square_rgba_flipped_vert):
+        image = flip_vert(sample_image_square_rgba)
+        np.testing.assert_almost_equal(image, sample_image_square_rgba_flipped_vert, decimal=-1)
+
+    def test_flip_vert_rgb(self, sample_image_square_rgb, sample_image_square_rgb_flipped_vert):
+        image = flip_vert(sample_image_square_rgb)
+        np.testing.assert_almost_equal(image, sample_image_square_rgb_flipped_vert, decimal=-1)
+
+    def test_flip_vert_grayscale(self, sample_image_tall_grayscale, sample_image_grayscale_flipped_vert):
+        image = flip_vert(sample_image_tall_grayscale)
+        np.testing.assert_almost_equal(image, sample_image_grayscale_flipped_vert, decimal=-1)

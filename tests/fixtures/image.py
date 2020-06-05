@@ -26,3 +26,51 @@ def sample_image_square_rgba():
     path = SAMPLE_DATA_DIR / filename
     image = load_image_from_disk(path)
     return image
+
+
+@pytest.fixture
+def sample_image_square_rgba_flipped_horiz():
+    filename = 'creevey_rgba_flipped_horiz.png'
+    path = SAMPLE_DATA_DIR / filename
+    image = load_image_from_disk(path)
+    return image
+
+
+@pytest.fixture
+def sample_image_square_rgba_flipped_vert():
+    filename = 'creevey_rgba_flipped_vert.png'
+    path = SAMPLE_DATA_DIR / filename
+    image = load_image_from_disk(path)
+    return image
+
+
+@pytest.fixture
+def sample_image_square_rgb_flipped_horiz():
+    filename = 'creevey_rgb_flipped_horiz.jpg'
+    path = SAMPLE_DATA_DIR / filename
+    image = load_image_from_disk(path)
+    return image
+
+
+@pytest.fixture
+def sample_image_square_rgb_flipped_vert():
+    filename = 'creevey_rgb_flipped_vert.jpg'
+    path = SAMPLE_DATA_DIR / filename
+    image = load_image_from_disk(path)
+    return image
+
+
+@pytest.fixture
+def sample_image_grayscale_flipped_horiz():
+    filename = 'creevey_gray_flipped_horiz.jpg'
+    path = SAMPLE_DATA_DIR / filename
+    image = load_image_from_disk(path)
+    return image
+
+
+@pytest.fixture
+def sample_image_grayscale_flipped_vert():
+    filename = 'creevey_gray_flipped_vert.jpg'
+    path = SAMPLE_DATA_DIR / filename
+    image = load_image_from_disk(path)
+    return image

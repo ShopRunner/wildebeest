@@ -26,3 +26,10 @@ def sample_image_square_rgba():
     path = SAMPLE_DATA_DIR / filename
     image = load_image_from_disk(path)
     return image
+
+@pytest.fixture
+def sample_image_rotate():
+    filename = 'creevey_rotate.jpg'
+    path = SAMPLE_DATA_DIR / filename
+    image = load_image_from_disk(path)
+    return image

@@ -183,3 +183,4 @@ def rotate(image, angle) ->np.array:
    M = cv.getRotationMatrix2D(center, angle, 1.0)
    rotated = cv.warpAffine(image, M, (w, h))
    return rotated
+

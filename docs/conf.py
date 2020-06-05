@@ -24,7 +24,7 @@ copyright = '2019 Shoprunner'
 author = 'gsganden, sugi-chan'
 
 
-release = version = '2.0.0'
+release = version = '2.1ss.0'
 
 
 # -- General configuration ---------------------------------------------------

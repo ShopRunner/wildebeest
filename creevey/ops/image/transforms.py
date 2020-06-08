@@ -160,12 +160,12 @@ def _find_min_dim_shape(image, min_dim):
     return (int(out_height), int(out_width))
 
 
-def rotate(image, angle) -> np.array:
+def rotate_90(image) -> np.array:
     """
-    Rotate an image
+    Rotate an image 90 degrees counterclockwise
 
-    This function takes an image as numpy array and an angle to rotate,
-    and outputs rotated image.
+    This function takes an image as numpy array and
+    and outputs the image rotated 90 degrees counterclockwise.
 
     Assumes:
         The image is going to be rotated around center, and size of image
@@ -176,11 +176,48 @@ def rotate(image, angle) -> np.array:
     image
         Numpy array of an image. Function will handle 2D greyscale
         images, RGB, and RGBA image arrays
-    angle
-        integer from 0 to 360, the degrees to be rotated for a picture.
     """
-    (h, w) = image.shape[:2]
-    center = (w // 2, h // 2)
-    M = cv.getRotationMatrix2D(center, angle, 1.0)
-    rotated = cv.warpAffine(image, M, (w, h))
-    return rotated
+    img = cv.rotate(image, cv.ROTATE_90_COUNTERCLOCKWISE)
+    return img
+
+
+def rotate_180(image) -> np.array:
+    """
+    Rotate an image 180 degrees
+
+    This function takes an image as numpy array and
+    and outputs the image rotated 180 degrees.
+
+    Assumes:
+        The image is going to be rotated around center, and size of image
+        will remain unchanged.
+
+    Parameters
+    ----------
+    image
+        Numpy array of an image. Function will handle 2D greyscale
+        images, RGB, and RGBA image arrays
+    """
+    img = cv.rotate(image, cv.ROTATE_180)
+    return img
+
+
+def rotate_270(image) -> np.array:
+    """
+    Rotate an image 270 degrees counterclockwise
+
+    This function takes an image as numpy array and
+    and outputs the image rotated 270 degrees counterclockwise.
+
+    Assumes:
+        The image is going to be rotated around center, and size of image
+        will remain unchanged.
+
+    Parameters
+    ----------
+    image
+        Numpy array of an image. Function will handle 2D greyscale
+        images, RGB, and RGBA image arrays
+    """
+    img = cv.rotate(image, cv.ROTATE_90_CLOCKWISE)
+    return img

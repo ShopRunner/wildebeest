@@ -4,7 +4,7 @@ import cv2 as cv
 import numpy as np
 import pytest
 
-from creevey.ops.image import centercrop, resize, trim_padding
+from creevey.ops.image import centercrop, resize, rotate_180, rotate_270, rotate_90, trim_padding
 
 
 class TestResize:
@@ -128,3 +128,45 @@ class TestTrimPadding:
         )
         actual = trim_padding(im_padded, thresh=0.05, comparison_op=operator.lt)
         np.testing.assert_almost_equal(actual, sample_image_square_rgb)
+
+
+class TestRotate_90:
+    def test_rotate_rgba_90(self, sample_image_square_rgba, sample_image_square_rgba_rotated_90):
+        image = rotate_90(sample_image_square_rgba)
+        np.testing.assert_almost_equal(image, sample_image_square_rgba_rotated_90, decimal=-1)
+
+    def test_rotate_rgb_90(self, sample_image_square_rgb, sample_image_square_rgb_rotated_90):
+        image = rotate_90(sample_image_square_rgb)
+        np.testing.assert_almost_equal(image, sample_image_square_rgb_rotated_90, decimal=-1)
+
+    def test_rotate_grayscale_90(self, sample_image_tall_grayscale, sample_image_tall_grayscale_rotated_90):
+        image = rotate_90(sample_image_tall_grayscale)
+        np.testing.assert_almost_equal(image, sample_image_tall_grayscale_rotated_90, decimal=-2)
+
+
+class TestRotate_180:
+    def test_rotate_rgba_180(self, sample_image_square_rgba, sample_image_square_rgba_rotated_180):
+        image = rotate_180(sample_image_square_rgba)
+        np.testing.assert_almost_equal(image, sample_image_square_rgba_rotated_180, decimal=-1)
+
+    def test_rotate_rgb_180(self, sample_image_square_rgb, sample_image_square_rgb_rotated_180):
+        image = rotate_180(sample_image_square_rgb)
+        np.testing.assert_almost_equal(image, sample_image_square_rgb_rotated_180, decimal=-1)
+
+    def test_rotate_grayscale_180(self, sample_image_tall_grayscale, sample_image_tall_grayscale_rotated_180):
+        image = rotate_180(sample_image_tall_grayscale)
+        np.testing.assert_almost_equal(image, sample_image_tall_grayscale_rotated_180, decimal=-2)
+
+
+class TestRotate_270:
+    def test_rotate_rgba_270(self, sample_image_square_rgba, sample_image_square_rgba_rotated_270):
+        image = rotate_270(sample_image_square_rgba)
+        np.testing.assert_almost_equal(image, sample_image_square_rgba_rotated_270, decimal=-1)
+
+    def test_rotate_rgb_270(self, sample_image_square_rgb, sample_image_square_rgb_rotated_270):
+        image = rotate_270(sample_image_square_rgb)
+        np.testing.assert_almost_equal(image, sample_image_square_rgb_rotated_270, decimal=-2)
+
+    def test_rotate_grayscale_270(self, sample_image_tall_grayscale, sample_image_tall_grayscale_rotated_270):
+        image = rotate_270(sample_image_tall_grayscale)
+        np.testing.assert_almost_equal(image, sample_image_tall_grayscale_rotated_270, decimal=-2)

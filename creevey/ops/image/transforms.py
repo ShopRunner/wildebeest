@@ -160,6 +160,20 @@ def _find_min_dim_shape(image, min_dim):
     return (int(out_height), int(out_width))
 
 
+def flip_horiz(image: np.array) -> np.array:
+    """
+    Flip an image horizontally
+    """
+    return cv.flip(image, flipCode=1)
+
+
+def flip_vert(image: np.array) -> np.array:
+    """
+    Flip an image vertically
+    """
+    return cv.flip(image, flipCode=0)
+
+
 def rotate_90(image) -> np.array:
     """
     Rotate an image 90 degrees counterclockwise

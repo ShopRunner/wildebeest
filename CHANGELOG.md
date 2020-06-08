@@ -2,10 +2,16 @@
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
-# [2.1.0] - 2020-6-05
+
+# [2.2.0] - 2020-6-07
 ### Added 
  - Function rotate() that takes an image and an angle and ouputs the rotated image.
- 
+
+#[2.1.0] - 2020-6-3
+### Added
+- Function to flip an image horizontally.
+- Function to flip an image vertically.
+
 # [2.0.0] - 2020-4-21
 ### Changed
  - Pipelines now take a function to decide whether to skip a file based on its input and output paths, rather than just providing the option to skip files whose outpath points to a local file. "skipped_existing" field of run report has been renamed to "skipped" accordingly.

@@ -46,6 +46,7 @@ def sample_image_square_rgba_flipped_vert():
 
 @pytest.fixture
 def sample_image_square_rgb_flipped_horiz():
+    filename = 'creevey_rgb_flipped_horiz.jpg'
     path = SAMPLE_DATA_DIR / filename
     image = load_image_from_disk(path)
     return image

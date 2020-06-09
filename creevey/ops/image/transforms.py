@@ -36,14 +36,11 @@ def resize(
     _validate_resize_inputs(shape, min_dim)
     if min_dim is not None:
         shape = _find_min_dim_shape(image, min_dim)
-    resized = cv.resize(image, dsize=shape[::-1])
-    return resized
+    return cv.resize(image, dsize=shape[::-1])
 
 
 def _validate_resize_inputs(shape, min_dim) -> None:
-    if (shape is None) + (min_dim is None) == 1:
-        pass
-    else:
+    if (shape is None) + (min_dim is None) != 1:
         raise ValueError('Exactly one of `shape` and `min_dim` must be None')
 
 
@@ -187,8 +184,7 @@ def rotate_90(image) -> np.array:
         Numpy array of an image. Function will handle 2D greyscale
         images, RGB, and RGBA image arrays
     """
-    img = cv.rotate(image, cv.ROTATE_90_COUNTERCLOCKWISE)
-    return img
+    return cv.rotate(image, cv.ROTATE_90_COUNTERCLOCKWISE)
 
 
 def rotate_180(image) -> np.array:
@@ -208,8 +204,7 @@ def rotate_180(image) -> np.array:
         Numpy array of an image. Function will handle 2D greyscale
         images, RGB, and RGBA image arrays
     """
-    img = cv.rotate(image, cv.ROTATE_180)
-    return img
+    return cv.rotate(image, cv.ROTATE_180)
 
 
 def rotate_270(image) -> np.array:
@@ -229,5 +224,4 @@ def rotate_270(image) -> np.array:
         Numpy array of an image. Function will handle 2D greyscale
         images, RGB, and RGBA image arrays
     """
-    img = cv.rotate(image, cv.ROTATE_90_CLOCKWISE)
-    return img
+    return cv.rotate(image, cv.ROTATE_90_CLOCKWISE)

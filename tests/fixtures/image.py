@@ -67,14 +67,15 @@ def sample_image_grayscale_flipped_horiz():
     image = load_image_from_disk(path)
     return image
 
+
 @pytest.fixture
 def sample_image_grayscale_flipped_vert():
     filename = 'creevey_gray_flipped_vert.jpg'
     path = SAMPLE_DATA_DIR / filename
     image = load_image_from_disk(path)
     return image
-  
-  
+
+
 @pytest.fixture
 def sample_image_tall_grayscale_rotated_90():
     filename = 'creevey_gray_rotated_90.jpg'

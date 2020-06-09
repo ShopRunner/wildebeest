@@ -4,7 +4,9 @@ import cv2 as cv
 import numpy as np
 import pytest
 
-from creevey.ops.image import centercrop, flip_horiz, flip_vert, resize, rotate_180, rotate_270, rotate_90, trim_padding
+from creevey.ops.image import centercrop, flip_horiz, flip_vert, resize, rotate_180,\
+    rotate_270, rotate_90, trim_padding
+
 
 class TestResize:
     def test_resize_validation(self, sample_image_square_rgb):
@@ -155,7 +157,7 @@ class TestFlipVert:
     def test_flip_vert_grayscale(self, sample_image_tall_grayscale, sample_image_grayscale_flipped_vert):
         image = flip_vert(sample_image_tall_grayscale)
         np.testing.assert_almost_equal(image, sample_image_grayscale_flipped_vert, decimal=-1)
-        
+
 
 class TestRotate_90:
     def test_rotate_rgba_90(self, sample_image_square_rgba, sample_image_square_rgba_rotated_90):
@@ -197,4 +199,3 @@ class TestRotate_270:
     def test_rotate_grayscale_270(self, sample_image_tall_grayscale, sample_image_tall_grayscale_rotated_270):
         image = rotate_270(sample_image_tall_grayscale)
         np.testing.assert_almost_equal(image, sample_image_tall_grayscale_rotated_270, decimal=-2)
-

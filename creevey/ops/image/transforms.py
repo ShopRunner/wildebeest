@@ -36,14 +36,11 @@ def resize(
     _validate_resize_inputs(shape, min_dim)
     if min_dim is not None:
         shape = _find_min_dim_shape(image, min_dim)
-    resized = cv.resize(image, dsize=shape[::-1])
-    return resized
+    return cv.resize(image, dsize=shape[::-1])
 
 
 def _validate_resize_inputs(shape, min_dim) -> None:
-    if (shape is None) + (min_dim is None) == 1:
-        pass
-    else:
+    if (shape is None) + (min_dim is None) != 1:
         raise ValueError('Exactly one of `shape` and `min_dim` must be None')
 
 

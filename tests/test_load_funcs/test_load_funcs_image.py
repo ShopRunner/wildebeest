@@ -31,48 +31,42 @@ def test_load_error_406():
 def creevey_gray_local():
     filename = 'creevey_gray.jpg'
     path = SAMPLE_DATA_DIR / filename
-    image = load_image_from_disk(path)
-    return image
+    return load_image_from_disk(path)
 
 
 @pytest.fixture
 def creevey_gray_remote():
     filename = 'creevey_gray.jpg'
     url = f'{SAMPLE_DATA_BASE_URL}/{filename}'
-    image = load_image_from_url(url)
-    return image
+    return load_image_from_url(url)
 
 
 @pytest.fixture
 def creevey_rgb_local():
     filename = 'creevey_rgb.jpg'
     path = SAMPLE_DATA_DIR / filename
-    image = load_image_from_disk(path)
-    return image
+    return load_image_from_disk(path)
 
 
 @pytest.fixture
 def creevey_rgb_remote():
     filename = 'creevey_rgb.jpg'
     url = f'{SAMPLE_DATA_BASE_URL}/{filename}'
-    image = load_image_from_url(url)
-    return image
+    return load_image_from_url(url)
 
 
 @pytest.fixture
 def creevey_rgba_local():
     filename = 'creevey_rgba.png'
     path = SAMPLE_DATA_DIR / filename
-    image = load_image_from_disk(path)
-    return image
+    return load_image_from_disk(path)
 
 
 @pytest.fixture
 def creevey_rgba_remote():
     filename = 'creevey_rgba.png'
     url = f'{SAMPLE_DATA_BASE_URL}/{filename}'
-    image = load_image_from_url(url)
-    return image
+    return load_image_from_url(url)
 
 
 def test_load_image_from_disk_grayscale_shape(creevey_gray_local):

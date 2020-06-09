@@ -19,8 +19,7 @@ def load_image_from_url(inpath: str, **kwargs) -> np.array:
         Image URL
     """
     response = get_response(inpath)
-    image = _load_image_from_response(response)
-    return image
+    return _load_image_from_response(response)
 
 
 def _load_image_from_response(response):

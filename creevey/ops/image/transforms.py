@@ -167,61 +167,49 @@ def flip_vert(image: np.array) -> np.array:
     return cv.flip(image, flipCode=0)
 
 
-def rotate_90(image) -> np.array:
+def rotate_90(image: np.array) -> np.array:
     """
     Rotate an image 90 degrees counterclockwise
 
     This function takes an image as numpy array and
     and outputs the image rotated 90 degrees counterclockwise.
 
-    Assumes:
-        The image is going to be rotated around center, and size of image
-        will remain unchanged.
+    Assumes that the image is going to be rotated around center, and size of image
+    will remain unchanged.
 
-    Parameters
-    ----------
-    image
-        Numpy array of an image. Function will handle 2D greyscale
-        images, RGB, and RGBA image arrays
+    This function takes numpy array of an image. Function will handle 2D greyscale
+    images, RGB, and RGBA image arrays.
     """
     return cv.rotate(image, cv.ROTATE_90_COUNTERCLOCKWISE)
 
 
-def rotate_180(image) -> np.array:
+def rotate_180(image: np.array) -> np.array:
     """
     Rotate an image 180 degrees
 
     This function takes an image as numpy array and
     and outputs the image rotated 180 degrees.
 
-    Assumes:
-        The image is going to be rotated around center, and size of image
-        will remain unchanged.
+    Assumes that the image is going to be rotated around center, and size of image
+    will remain unchanged.
 
-    Parameters
-    ----------
-    image
-        Numpy array of an image. Function will handle 2D greyscale
-        images, RGB, and RGBA image arrays
+    This function takes numpy array of an image. Function will handle 2D greyscale
+    images, RGB, and RGBA image arrays.
     """
     return cv.rotate(image, cv.ROTATE_180)
 
 
-def rotate_270(image) -> np.array:
+def rotate_270(image: np.array) -> np.array:
     """
     Rotate an image 270 degrees counterclockwise
 
     This function takes an image as numpy array and
     and outputs the image rotated 270 degrees counterclockwise.
 
-    Assumes:
-        The image is going to be rotated around center, and size of image
-        will remain unchanged.
+    Assumes that the image is going to be rotated around center, and size of image
+    will remain unchanged.
 
-    Parameters
-    ----------
-    image
-        Numpy array of an image. Function will handle 2D greyscale
-        images, RGB, and RGBA image arrays
+    This function takes numpy array of an image. Function will handle 2D greyscale
+    images, RGB, and RGBA image arrays.
     """
     return cv.rotate(image, cv.ROTATE_90_CLOCKWISE)

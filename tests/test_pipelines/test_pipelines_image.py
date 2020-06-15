@@ -78,9 +78,7 @@ def test_logging(trim_resize_pipeline):
 @pytest.fixture
 def error_pipeline():
     return Pipeline(
-        load_func=load_image_from_url,
-        ops=[_raise_ValueError],
-        write_func=write_image,
+        load_func=load_image_from_url, ops=[_raise_ValueError], write_func=write_image,
     )
 
 

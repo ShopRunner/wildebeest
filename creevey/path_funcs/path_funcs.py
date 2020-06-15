@@ -27,8 +27,7 @@ def join_outdir_filename_extension(
     if extension is not None:
         extension = extension if extension.startswith('.') else '.' + extension
         filename = filename.stem + extension
-    outpath = Path(outdir) / filename
-    return outpath
+    return Path(outdir) / filename
 
 
 def join_outdir_hashed_path_extension(
@@ -51,8 +50,7 @@ def join_outdir_hashed_path_extension(
     filename = filename.replace('-', '')
     if extension is None:
         extension = path.suffix
-    outpath = join_outdir_filename_extension(filename, outdir, extension)
-    return outpath
+    return join_outdir_filename_extension(filename, outdir, extension)
 
 
 def replace_dir(path: PathOrStr, outdir: PathOrStr) -> Path:

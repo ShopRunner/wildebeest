@@ -52,7 +52,7 @@ def calculate_dhash(image: np.array, sqrt_hash_size: int = 8) -> np.array:
     im_mod = convert_to_grayscale(image)
     im_mod = cv.resize(im_mod, (sqrt_hash_size + 1, sqrt_hash_size))
     diff = im_mod[:, 1:] > im_mod[:, :-1]
-    return sum([2 ** i for (i, v) in enumerate(diff.flatten()) if v])
+    return sum(2 ** i for (i, v) in enumerate(diff.flatten()) if v)
 
 
 @get_report_output_decorator(key='dhash')

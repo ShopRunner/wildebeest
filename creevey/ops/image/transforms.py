@@ -36,14 +36,11 @@ def resize(
     _validate_resize_inputs(shape, min_dim)
     if min_dim is not None:
         shape = _find_min_dim_shape(image, min_dim)
-    resized = cv.resize(image, dsize=shape[::-1])
-    return resized
+    return cv.resize(image, dsize=shape[::-1])
 
 
 def _validate_resize_inputs(shape, min_dim) -> None:
-    if (shape is None) + (min_dim is None) == 1:
-        pass
-    else:
+    if (shape is None) + (min_dim is None) != 1:
         raise ValueError('Exactly one of `shape` and `min_dim` must be None')
 
 
@@ -161,14 +158,58 @@ def _find_min_dim_shape(image, min_dim):
 
 
 def flip_horiz(image: np.array) -> np.array:
-    """
-    Flip an image horizontally
-    """
+    """Flip an image horizontally"""
     return cv.flip(image, flipCode=1)
 
 
 def flip_vert(image: np.array) -> np.array:
-    """
-    Flip an image vertically
-    """
+    """Flip an image vertically"""
     return cv.flip(image, flipCode=0)
+
+
+def rotate_90(image: np.array) -> np.array:
+    """
+    Rotate an image 90 degrees counterclockwise
+
+    This function takes an image as numpy array and
+    and outputs the image rotated 90 degrees counterclockwise.
+
+    Assumes that the image is going to be rotated around center, and size of image
+    will remain unchanged.
+
+    This function takes numpy array of an image. Function will handle 2D greyscale
+    images, RGB, and RGBA image arrays.
+    """
+    return cv.rotate(image, cv.ROTATE_90_COUNTERCLOCKWISE)
+
+
+def rotate_180(image: np.array) -> np.array:
+    """
+    Rotate an image 180 degrees
+
+    This function takes an image as numpy array and
+    and outputs the image rotated 180 degrees.
+
+    Assumes that the image is going to be rotated around center, and size of image
+    will remain unchanged.
+
+    This function takes numpy array of an image. Function will handle 2D greyscale
+    images, RGB, and RGBA image arrays.
+    """
+    return cv.rotate(image, cv.ROTATE_180)
+
+
+def rotate_270(image: np.array) -> np.array:
+    """
+    Rotate an image 270 degrees counterclockwise
+
+    This function takes an image as numpy array and
+    and outputs the image rotated 270 degrees counterclockwise.
+
+    Assumes that the image is going to be rotated around center, and size of image
+    will remain unchanged.
+
+    This function takes numpy array of an image. Function will handle 2D greyscale
+    images, RGB, and RGBA image arrays.
+    """
+    return cv.rotate(image, cv.ROTATE_90_CLOCKWISE)

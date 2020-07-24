@@ -1,0 +1,11 @@
+-c requirements.txt
+
+black
+flake8
+flake8-docstrings
+flake8-import-order
+matplotlib
+pre-commit
+pytest
+pytest-cov
+responses

@@ -1,18 +1,24 @@
-# Pull Request Checklist
+# Pull Request Process
 
 Contributors from outside ShopRunner should feel free to submit a PR without having completed all of the items below. See [CONTRIBUTING.md](https://github.com/ShopRunner/creevey/blob/master/CONTRIBUTING.md) for additional information.
 
-## General
+You can run `./.ci/test.sh` locally to check for style issues, failing tests, etc. before submitting changes.
 
-- [ ] Pull request includes a description of the change and the reason behind it.
+## Description
+
+DESCRIBE THE CHANGE AND EXPLAIN THE REASON BEHIND IT
+
+## Checklist
+
+### General
+
 - [ ] Pull request [uses keywords](https://help.github.com/en/articles/closing-issues-using-keywords) to close relevant [issues](https://github.com/ShopRunner/creevey/issues).
 - [ ] Pull request includes unit tests for any bug fixes and new functionality.
-- [ ] `./.ci/test.sh` passes locally.
 - [ ] Docs have been updated as needed. (`./.ci/test.sh` rebuilds the docs. Open `docs/_html/index.html` to check them.)
 
-## ShopRunner Contributors
+### ShopRunner Contributors
 
-The maintainer will complete the following steps for external contributions.
+The maintainer will complete the following steps for contributions from outside ShopRunner.
 
 - [ ] `CHANGELOG.md` has been updated.
 - [ ] `_version.py` has been updated.

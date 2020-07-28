@@ -5,7 +5,7 @@ flake8
 flake8-docstrings
 flake8-import-order
 isort
-m2r
+git+https://github.com/crossnox/m2r@dev#egg=m2r
 matplotlib
 pip-tools
 pre-commit

@@ -9,7 +9,7 @@ from numpy import iterable
 import pandas as pd
 from tqdm import tqdm
 
-from creevey.constants import PathOrStr
+from wildebeest.constants import PathOrStr
 
 
 RUN_REPORT_COLS = ['outpath', 'skipped', 'error', 'time_finished']
@@ -248,7 +248,7 @@ class CustomReportingPipeline(Pipeline):
 
         Each element of `ops` and `write_func` must each accept a
         `defaultdict(dict)` object as an additional positional argument.
-        Functions defined in Creevey call this item `log_dict`.
+        Functions defined in Wildebeest call this item `log_dict`.
 
     Inside those functions, adding items to `log_dict[inpath]` causes
     them to be added to the "run record" DataFrame that the pipeline

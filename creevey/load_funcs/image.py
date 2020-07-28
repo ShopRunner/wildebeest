@@ -2,8 +2,8 @@
 import cv2 as cv
 import numpy as np
 
-from creevey.constants import PathOrStr
-from creevey.load_funcs import get_response
+from wildebeest.constants import PathOrStr
+from wildebeest.load_funcs import get_response
 
 
 def load_image_from_url(inpath: str, **kwargs) -> np.array:

@@ -4,7 +4,7 @@ import cv2 as cv
 import numpy as np
 import pytest
 
-from creevey.ops.image import (
+from wildebeest.ops.image import (
     centercrop,
     flip_horiz,
     flip_vert,

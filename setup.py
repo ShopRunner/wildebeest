@@ -1,7 +1,7 @@
 from pathlib import Path
 from setuptools import find_packages, setup
 
-version_file_path = Path(__file__).parent / 'creevey' / '_version.py'
+version_file_path = Path(__file__).parent / 'wildebeest' / '_version.py'
 
 with open(version_file_path, 'r') as version_file:
     exec(version_file.read())
@@ -33,7 +33,7 @@ dev_packages = [
 
 
 setup(
-    name='creevey',
+    name='wildebeest',
     version=__version__,
     description='Bulk image processing',
     long_description=readme,
@@ -42,7 +42,7 @@ setup(
     extras_require={'dev': regular_packages + dev_packages},
     author='Greg Gandenberger',
     author_email='gsganden@gmail.com',
-    url='https://github.com/ShopRunner/creevey',
-    download_url=f'https://github.com/ShopRunner/creevey/tarball/{__version__}',
+    url='https://github.com/ShopRunner/wildebeest',
+    download_url=f'https://github.com/ShopRunner/wildebeest/tarball/{__version__}',
     long_description_content_type='text/markdown',
 )

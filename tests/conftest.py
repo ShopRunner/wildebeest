@@ -2,7 +2,7 @@ from functools import partial
 import sys
 from pathlib import Path
 
-from creevey.path_funcs import join_outdir_filename_extension
+from wildebeest.path_funcs import join_outdir_filename_extension
 
 TEST_DIR = Path(__file__).parent
 SAMPLE_DATA_DIR = Path(TEST_DIR) / 'sample_data'

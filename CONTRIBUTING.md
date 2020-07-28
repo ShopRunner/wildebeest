@@ -6,7 +6,7 @@ We welcome contributions in the form of issues or pull requests!
 
 We want this to be a place where all are welcome to discuss and contribute, so please note that this project is released with a Contributor Code of Conduct. By participating in this project you agree to abide by its terms. Find the code of conduct in the ``CONDUCT.md`` file on GitHub.
 
-If you have a problem using Creevey or see a possible improvement, open an issue in the GitHub issue tracker. Please be as specific as you can.
+If you have a problem using Wildebeest or see a possible improvement, open an issue in the GitHub issue tracker. Please be as specific as you can.
 
 If you see an open issue you'd like to be fixed, take a stab at it and open a PR!
 
@@ -16,7 +16,7 @@ If you see an open issue you'd like to be fixed, take a stab at it and open a PR
 2. Clone the forked repo to your local disk. 
 
 ```bash
-git clone https://github.com/<your_github_user_name>/creevey.git
+git clone https://github.com/<your_github_user_name>/wildebeest.git
 ```
 
 3. `cd` into the directory.
@@ -33,11 +33,11 @@ pip install -e .
 ```
 
 6. Make your changes.
-7. Complete all items in the [pull request checklist](https://github.com/ShopRunner/creevey/blob/master/.github/pull_request_template.md) that you feel comfortable with. Feel free to submit a PR with some loose ends, particularly if you are not sure about how to complete a checklist item.
+7. Complete all items in the [pull request checklist](https://github.com/ShopRunner/wildebeest/blob/master/.github/pull_request_template.md) that you feel comfortable with. Feel free to submit a PR with some loose ends, particularly if you are not sure about how to complete a checklist item.
 8. Submit your PR against the `wip` branch.
 
 ## Additional Notes
 
 - We prefer single quotes for one-libe strings unless using double quotes allows us to avoid escaping internal single quotes.
 - We use [numpy style](https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_numpy.html) for docstrings.
-- We want Creevey to be compatible with Python 3.6+.
+- We want Wildebeest to be compatible with Python 3.6+.

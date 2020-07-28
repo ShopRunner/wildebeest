@@ -1,7 +1,7 @@
 """Image-processing pipelines"""
-from creevey import Pipeline
-from creevey.load_funcs.image import load_image_from_url
-from creevey.write_funcs.image import write_image
+from wildebeest import Pipeline
+from wildebeest.load_funcs.image import load_image_from_url
+from wildebeest.write_funcs.image import write_image
 
 
 download_image_pipeline = Pipeline(

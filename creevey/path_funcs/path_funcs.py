@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Optional
 import uuid
 
-from creevey.constants import PathOrStr
+from wildebeest.constants import PathOrStr
 
 
 def join_outdir_filename_extension(

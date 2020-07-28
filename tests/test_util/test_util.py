@@ -1,4 +1,4 @@
-from creevey.util import find_files_with_extensions
+from wildebeest.util import find_files_with_extensions
 from tests.conftest import TEMP_DATA_DIR
 
 

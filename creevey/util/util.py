@@ -3,7 +3,7 @@ import os
 from pathlib import Path
 from typing import Iterable, List
 
-from creevey.constants import PathOrStr
+from wildebeest.constants import PathOrStr
 
 
 def find_files_with_extensions(

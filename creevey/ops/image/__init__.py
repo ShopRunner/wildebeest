@@ -1,2 +1,2 @@
-from creevey.ops.image.stats import *
-from creevey.ops.image.transforms import *
+from wildebeest.ops.image.stats import *
+from wildebeest.ops.image.transforms import *

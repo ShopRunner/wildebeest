@@ -2,7 +2,7 @@
 from functools import partial
 from typing import Any, Callable, DefaultDict, Hashable
 
-from creevey.constants import PathOrStr
+from wildebeest.constants import PathOrStr
 
 
 def report_output(
@@ -25,12 +25,12 @@ def report_output(
     --------
     >>> from functools import partial
     >>>
-    >>> from creevey import CustomReportingPipeline
-    >>> from creevey.load_funcs.image import load_image_from_url
-    >>> from creevey.ops import report_output
-    >>> from creevey.ops.image import calculate_mean_brightness
-    >>> from creevey.path_funcs import join_outdir_filename_extension
-    >>> from creevey.write_funcs.image import write_image
+    >>> from wildebeest import CustomReportingPipeline
+    >>> from wildebeest.load_funcs.image import load_image_from_url
+    >>> from wildebeest.ops import report_output
+    >>> from wildebeest.ops.image import calculate_mean_brightness
+    >>> from wildebeest.path_funcs import join_outdir_filename_extension
+    >>> from wildebeest.write_funcs.image import write_image
     >>>
     >>> report_mean_brightness = partial(
     >>>     report_output, func=calculate_mean_brightness, key='mean_brightness'
@@ -102,12 +102,12 @@ def get_report_output_decorator(key: Hashable) -> Callable:
     --------
     >>> from functools import partial
     >>>
-    >>> from creevey import CustomReportingPipeline
-    >>> from creevey.load_funcs.image import load_image_from_url
-    >>> from creevey.ops import get_report_output_decorator
-    >>> from creevey.ops.image import calculate_mean_brightness
-    >>> from creevey.path_funcs import join_outdir_filename_extension
-    >>> from creevey.write_funcs.image import write_image
+    >>> from wildebeest import CustomReportingPipeline
+    >>> from wildebeest.load_funcs.image import load_image_from_url
+    >>> from wildebeest.ops import get_report_output_decorator
+    >>> from wildebeest.ops.image import calculate_mean_brightness
+    >>> from wildebeest.path_funcs import join_outdir_filename_extension
+    >>> from wildebeest.write_funcs.image import write_image
     >>>
     >>>
     >>> @get_report_output_decorator(key='mean_brightness')

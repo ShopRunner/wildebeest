@@ -5,10 +5,10 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import pytest
 
-from creevey import Pipeline
-from creevey.load_funcs.image import load_image_from_url
-from creevey.ops.image import resize
-from creevey.write_funcs.image import write_image
+from wildebeest import Pipeline
+from wildebeest.load_funcs.image import load_image_from_url
+from wildebeest.ops.image import resize
+from wildebeest.write_funcs.image import write_image
 from tests.conftest import (
     delete_file_if_exists,
     IMAGE_FILENAMES,

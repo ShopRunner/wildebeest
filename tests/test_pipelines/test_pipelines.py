@@ -5,11 +5,11 @@ import pandas as pd
 import pytest
 import requests
 
-from creevey import CustomReportingPipeline, Pipeline
-from creevey.load_funcs.image import load_image_from_url
-from creevey.ops import get_report_output_decorator
-from creevey.ops.image import calculate_mean_brightness
-from creevey.write_funcs.image import write_image
+from wildebeest import CustomReportingPipeline, Pipeline
+from wildebeest.load_funcs.image import load_image_from_url
+from wildebeest.ops import get_report_output_decorator
+from wildebeest.ops.image import calculate_mean_brightness
+from wildebeest.write_funcs.image import write_image
 from tests.conftest import (
     delete_file_if_exists,
     IMAGE_FILENAMES,

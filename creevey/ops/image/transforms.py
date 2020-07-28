@@ -15,7 +15,7 @@ def resize(
     Resize input image
 
     `shape` or `min_dim` needs to be specified with `partial` before
-    this function can be used in a Creevey pipeline.
+    this function can be used in a Wildebeest pipeline.
 
     `kwargs` is included only for compatibility with the
     `CustomReportingPipeline` class.

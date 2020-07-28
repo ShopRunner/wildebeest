@@ -4,26 +4,26 @@
 #
 #    pip-compile
 #
-boto3==1.14.27            # via creevey (setup.py)
+boto3==1.14.27            # via wildebeest (setup.py)
 botocore==1.17.27         # via boto3, s3transfer
 certifi==2020.6.20        # via requests
 chardet==3.0.4            # via requests
 docutils==0.15.2          # via botocore
 idna==2.10                # via requests
 jmespath==0.10.0          # via boto3, botocore
-joblib==0.16.0            # via creevey (setup.py), scikit-learn
+joblib==0.16.0            # via wildebeest (setup.py), scikit-learn
 numpy==1.19.1             # via opencv-contrib-python, pandas, scikit-learn, scipy
-opencv-contrib-python==4.3.0.36  # via creevey (setup.py)
-pandas==1.0.5             # via creevey (setup.py)
-pillow==7.2.0             # via creevey (setup.py)
+opencv-contrib-python==4.3.0.36  # via wildebeest (setup.py)
+pandas==1.0.5             # via wildebeest (setup.py)
+pillow==7.2.0             # via wildebeest (setup.py)
 python-dateutil==2.8.1    # via botocore, pandas
 pytz==2020.1              # via pandas
-requests==2.24.0          # via creevey (setup.py)
-retrying==1.3.3           # via creevey (setup.py)
+requests==2.24.0          # via wildebeest (setup.py)
+retrying==1.3.3           # via wildebeest (setup.py)
 s3transfer==0.3.3         # via boto3
-scikit-learn==0.23.1      # via creevey (setup.py)
+scikit-learn==0.23.1      # via wildebeest (setup.py)
 scipy==1.5.2              # via scikit-learn
 six==1.15.0               # via python-dateutil, retrying
 threadpoolctl==2.1.0      # via scikit-learn
-tqdm==4.48.0              # via creevey (setup.py)
+tqdm==4.48.0              # via wildebeest (setup.py)
 urllib3==1.25.10          # via botocore, requests

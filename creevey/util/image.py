@@ -2,7 +2,7 @@
 from functools import partial
 import mimetypes
 
-from creevey.util import find_files_with_extensions
+from wildebeest.util import find_files_with_extensions
 
 find_image_files = partial(
     find_files_with_extensions,

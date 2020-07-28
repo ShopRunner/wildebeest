@@ -5,7 +5,7 @@ from pathlib import Path
 import cv2 as cv
 import numpy as np
 
-from creevey.constants import PathOrStr
+from wildebeest.constants import PathOrStr
 
 
 def write_image(image: np.array, path: PathOrStr, **kwargs) -> None:

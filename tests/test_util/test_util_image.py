@@ -1,4 +1,4 @@
-from creevey.util.image import find_image_files
+from wildebeest.util.image import find_image_files
 from tests.conftest import TEMP_DATA_DIR
 
 

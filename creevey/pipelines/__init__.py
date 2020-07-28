@@ -1,1 +1,1 @@
-from creevey.pipelines.pipelines import *
+from wildebeest.pipelines.pipelines import *

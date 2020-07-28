@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from creevey.path_funcs import (
+from wildebeest.path_funcs import (
     join_outdir_filename_extension,
     join_outdir_hashed_path_extension,
     replace_dir,

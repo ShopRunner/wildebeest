@@ -15,11 +15,11 @@
 import os
 import sys
 
-sys.path.insert(0, os.path.abspath('../creevey'))
+sys.path.insert(0, os.path.abspath('../wildebeest'))
 
 # -- Project information -----------------------------------------------------
 
-project = 'creevey'
+project = 'wildebeest'
 copyright = '2019 Shoprunner'
 author = 'gsganden, sugi-chan'
 
@@ -115,7 +115,7 @@ html_static_path = ['_static']
 # -- Options for HTMLHelp output ---------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'creeveydoc'
+htmlhelp_basename = 'wildebeestdoc'
 
 
 # -- Options for LaTeX output ------------------------------------------------
@@ -141,8 +141,8 @@ latex_elements = {
 latex_documents = [
     (
         master_doc,
-        'creevey.tex',
-        'creevey Documentation',
+        'wildebeest.tex',
+        'wildebeest Documentation',
         'gsganden, sugi-chan',
         'manual',
     )
@@ -153,7 +153,7 @@ latex_documents = [
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [(master_doc, 'creevey', 'creevey Documentation', [author], 1)]
+man_pages = [(master_doc, 'wildebeest', 'wildebeest Documentation', [author], 1)]
 
 
 # -- Options for Texinfo output ----------------------------------------------
@@ -164,10 +164,10 @@ man_pages = [(master_doc, 'creevey', 'creevey Documentation', [author], 1)]
 texinfo_documents = [
     (
         master_doc,
-        'creevey',
-        'creevey Documentation',
+        'wildebeest',
+        'wildebeest Documentation',
         author,
-        'creevey',
+        'wildebeest',
         'One line description of project.',
         'Miscellaneous',
     )

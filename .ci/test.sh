@@ -5,6 +5,6 @@
 set -e
 
 pytest
-flake8 creevey tests
-black creevey tests --skip-string-normalization --check
+flake8 wildebeest tests
+black wildebeest tests --skip-string-normalization --check
 sphinx-build docs docs/_html

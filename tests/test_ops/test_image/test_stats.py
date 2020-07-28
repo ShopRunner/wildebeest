@@ -2,6 +2,7 @@ from collections import defaultdict
 
 import numpy as np
 
+from tests.conftest import SAMPLE_DATA_DIR
 from wildebeest.ops.image.stats import (
     calculate_dhash,
     calculate_mean_brightness,
@@ -9,7 +10,6 @@ from wildebeest.ops.image.stats import (
     report_mean_brightness,
 )
 from wildebeest.ops.image.transforms import resize
-from tests.conftest import SAMPLE_DATA_DIR
 
 
 class TestCalculateMeanBrightness:

@@ -1,5 +1,5 @@
-from functools import partial
 import sys
+from functools import partial
 from pathlib import Path
 
 from wildebeest.path_funcs import join_outdir_filename_extension
@@ -11,7 +11,6 @@ IMAGE_FILENAMES = ['2RsJ8EQ', '2TqoToT', '2VocS58', '2scKPIp', '2TsO6Pc', '2SCv0
 IMAGE_URLS = [f'https://bit.ly/{filename}' for filename in IMAGE_FILENAMES]
 
 from tests.fixtures import *
-
 
 sys.path.append(TEST_DIR / 'fixtures')
 

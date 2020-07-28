@@ -5,11 +5,6 @@ import pandas as pd
 import pytest
 import requests
 
-from wildebeest import CustomReportingPipeline, Pipeline
-from wildebeest.load_funcs.image import load_image_from_url
-from wildebeest.ops import get_report_output_decorator
-from wildebeest.ops.image import calculate_mean_brightness
-from wildebeest.write_funcs.image import write_image
 from tests.conftest import (
     delete_file_if_exists,
     IMAGE_FILENAMES,
@@ -17,6 +12,11 @@ from tests.conftest import (
     keep_filename_save_png_in_tempdir,
     TEMP_DATA_DIR,
 )
+from wildebeest import CustomReportingPipeline, Pipeline
+from wildebeest.load_funcs.image import load_image_from_url
+from wildebeest.ops import get_report_output_decorator
+from wildebeest.ops.image import calculate_mean_brightness
+from wildebeest.write_funcs.image import write_image
 
 
 @get_report_output_decorator(key='mean_brightness')

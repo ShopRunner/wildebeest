@@ -1,7 +1,7 @@
 import pytest
 
-from wildebeest.load_funcs.image import load_image_from_disk
 from tests.conftest import SAMPLE_DATA_DIR
+from wildebeest.load_funcs.image import load_image_from_disk
 
 
 @pytest.fixture

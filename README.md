@@ -7,3 +7,5 @@ Wildebeest is a file processing framework. It is designed for IO-bound workflows
 Wildebeest was developed for deep learning computer vision projects, so in addition to the general framework it also provides predefined components for image processing. However, it can be used for any project that involves processing data from many sources.
 
 See [the docs](https://wildebeest.readthedocs.io/) for more details.
+
+Wildebeest was known as Creevey until version 3.0.0.

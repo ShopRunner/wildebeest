@@ -8,6 +8,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
  - Rename library "wildebeest"
  - Use GitHub Actions for CI/CD.
 
+==== Below is Creevey development ====
+
+#[3.0.0] - 2020-7-28
+### Added
+ - Warning about upcoming name change
+
 #[2.3.0] - 2020-7-24
 ### Added 
  - Use `pip-tools`.

@@ -6,6 +6,7 @@ import pandas as pd
 import pytest
 
 from tests.conftest import (
+    SAMPLE_DATA_DIR,
     delete_file_if_exists,
     IMAGE_FILENAMES,
     IMAGE_URLS,
@@ -138,3 +139,25 @@ def test_raises_with_no_catch(error_pipeline):
             n_jobs=6,
             exceptions_to_catch=None,
         )
+
+
+@pytest.fixture(scope='function')
+def duplicate_outpath_pipeline():
+    inpaths = [SAMPLE_DATA_DIR / 'blue.png'] * 100
+
+    for url in inpaths:
+        outpath = keep_filename_save_png_in_tempdir(url)
+        delete_file_if_exists(outpath)
+
+    yield Pipeline(
+        load_func=load_image_from_url, write_func=write_image,
+    )
+    for url in inpaths:
+        outpath = keep_filename_save_png_in_tempdir(url)
+        delete_file_if_exists(outpath)
+
+
+def test_duplicate_outpath_pipeline(duplicate_outpath_pipeline):
+    path_func = keep_filename_save_png_in_tempdir
+    inpaths = [SAMPLE_DATA_DIR / 'blue.png'] * 100
+    duplicate_outpath_pipeline(inpaths=inpaths, path_func=path_func, n_jobs=20)

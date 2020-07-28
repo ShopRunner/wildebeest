@@ -2,7 +2,7 @@
 
 Contributors from outside ShopRunner should feel free to submit a PR without having completed all of the items below. See [CONTRIBUTING.md](https://github.com/ShopRunner/wildebeest/blob/master/CONTRIBUTING.md) for additional information.
 
-You can run `./.ci/test.sh` locally to check for style issues, failing tests, etc. before submitting changes.
+You can run `./.ci/test.sh` locally to check for style issues, run tests, rebuild docs, etc. before submitting changes.
 
 ## Description
 
@@ -14,7 +14,7 @@ DESCRIBE THE CHANGE AND EXPLAIN THE REASON BEHIND IT
 
 - [ ] Pull request [uses keywords](https://help.github.com/en/articles/closing-issues-using-keywords) to close relevant [issues](https://github.com/ShopRunner/wildebeest/issues).
 - [ ] Pull request includes unit tests for any bug fixes and new functionality.
-- [ ] Docs have been updated as needed. (`./.ci/test.sh` rebuilds the docs. Open `docs/_html/index.html` to check them.)
+- [ ] Docs have been updated as needed. (`sphinx-build docs docs/_html` rebuilds the docs. Open `docs/_html/index.html` to check them.)
 
 ### ShopRunner Contributors
 

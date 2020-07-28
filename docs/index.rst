@@ -4,7 +4,7 @@
    contain the root `toctree` directive.
 
 Wildebeest
-=======
+==========
 
 .. image:: images/wildebeest_stampede.jpg
 

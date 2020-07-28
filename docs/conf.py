@@ -23,7 +23,7 @@ project = 'creevey'
 copyright = '2019 Shoprunner'
 author = 'gsganden, sugi-chan'
 
-release = version = '2.2.0'
+release = version = '3.0.0'
 
 # -- General configuration ---------------------------------------------------
 

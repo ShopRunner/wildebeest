@@ -28,7 +28,7 @@ importlib-metadata==1.7.0  # via flake8, pluggy, pre-commit, pytest, virtualenv
 isort==5.2.0              # via -r requirements-dev.in
 jinja2==2.11.2            # via sphinx
 kiwisolver==1.2.0         # via matplotlib
-git+https://github.com/crossnox/m2r@dev#egg=m2r  # via -r requirements-dev.in
+m2r==0.2.1                # via -r requirements-dev.in
 markupsafe==1.1.1         # via jinja2
 matplotlib==3.3.0         # via -r requirements-dev.in
 mccabe==0.6.1             # via flake8

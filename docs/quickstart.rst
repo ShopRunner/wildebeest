@@ -5,16 +5,16 @@ Quickstart
 Basic Image Download Example
 ----------------------------
 
-The following code uses a fairly minimal Creevey pipeline to download a list of images to the current working directory as PNGs, parallelizing across up to ten threads.
+The following code uses a fairly minimal Wildebeest pipeline to download a list of images to the current working directory as PNGs, parallelizing across up to ten threads.
 
 .. code-block:: python
 
     from functools import partial
 
-    from creevey import Pipeline
-    from creevey.load_funcs.image import load_image_from_url
-    from creevey.path_funcs import join_outdir_filename_extension
-    from creevey.write_funcs.image import write_image
+    from wildebeest import Pipeline
+    from wildebeest.load_funcs.image import load_image_from_url
+    from wildebeest.path_funcs import join_outdir_filename_extension
+    from wildebeest.write_funcs.image import write_image
 
 
     image_urls = [
@@ -47,14 +47,14 @@ The trailing underscore in ``run_report_`` indicates that the attribute exists o
 
 If ``n_jobs`` is greater than 1, then the order of the input files in the run report typically will not match the order in ``inpaths``\ ; a command like ``run_report.loc[inpaths, :]`` can be used to restore the original order if desired.
 
-Because downloading images is a common use case for Creevey, we have provided a ``download_image_pipeline`` pipeline that you can simply import, resulting in the following simplified version of the code above:
+Because downloading images is a common use case for Wildebeest, we have provided a ``download_image_pipeline`` pipeline that you can simply import, resulting in the following simplified version of the code above:
 
 .. code-block:: python
 
     from functools import partial
 
-    from creevey.path_funcs import join_outdir_filename_extension
-    from creevey.pipelines.image import download_image_pipeline
+    from wildebeest.path_funcs import join_outdir_filename_extension
+    from wildebeest.pipelines.image import download_image_pipeline
 
 
     image_urls = [
@@ -81,11 +81,11 @@ The following example processes a few more files with three additional wrinkles:
     from pathlib import Path
     from functools import partial
 
-    from creevey import Pipeline
-    from creevey.load_funcs.image import load_image_from_url
-    from creevey.ops.image import resize
-    from creevey.write_funcs.image import write_image
-    from creevey.path_funcs import join_outdir_filename_extension
+    from wildebeest import Pipeline
+    from wildebeest.load_funcs.image import load_image_from_url
+    from wildebeest.ops.image import resize
+    from wildebeest.write_funcs.image import write_image
+    from wildebeest.path_funcs import join_outdir_filename_extension
 
 
     image_urls += [
@@ -129,7 +129,7 @@ We could simplify the code above by using the provided ``download_image_pipeline
 
 .. code-block:: python
 
-   from creevey.pipelines.image import download_image_pipeline
+   from wildebeest.pipelines.image import download_image_pipeline
 
    trim_resize_pipeline = download_image_pipeline
    trim_resize_pipeline.ops = [
@@ -143,7 +143,7 @@ More generally, you can modify attributes of an existing ``Pipeline`` object.
 Another Use for ``skip_func``
 -----------------------------
 
-``skip_func=lambda inpath, outpath: Path(outpath).is_file()`` often makes sense when you are writing files locally and don't want to repeat work. However, suppose you are using Creevey to copy files from one S3 bucket to another. You could write a function to check whether a file exists at the output URL (e.g. ``requests.head(outpath).status_code < 400``), but in my testing running that function was slower than copying the file. An alternative approach is to make a set of all of the files in the output bucket before running the pipeline and pass ``skip_func`` a function that checks whether ``outpath`` is in that set.
+``skip_func=lambda inpath, outpath: Path(outpath).is_file()`` often makes sense when you are writing files locally and don't want to repeat work. However, suppose you are using Wildebeest to copy files from one S3 bucket to another. You could write a function to check whether a file exists at the output URL (e.g. ``requests.head(outpath).status_code < 400``), but in my testing running that function was slower than copying the file. An alternative approach is to make a set of all of the files in the output bucket before running the pipeline and pass ``skip_func`` a function that checks whether ``outpath`` is in that set.
 
 More generally, (1) ``skip_func`` is not limited to checking whether the output file already exists locally, and (2) generating a set of paths to skip up front and checking against that set with ``skip_func`` may be faster than performing some operation on each path on the fly to decide whether to skip it.
 
@@ -161,12 +161,12 @@ The ``CustomReportingPipeline`` class allows you to add additional information t
 
     from functools import partial
 
-    from creevey import CustomReportingPipeline
-    from creevey.load_funcs.image import load_image_from_url
-    from creevey.ops import get_report_output_decorator
-    from creevey.ops.image import report_mean_brightness
-    from creevey.path_funcs import join_outdir_filename_extension
-    from creevey.write_funcs.image import write_image
+    from wildebeest import CustomReportingPipeline
+    from wildebeest.load_funcs.image import load_image_from_url
+    from wildebeest.ops import get_report_output_decorator
+    from wildebeest.ops.image import report_mean_brightness
+    from wildebeest.path_funcs import join_outdir_filename_extension
+    from wildebeest.write_funcs.image import write_image
 
 
     @get_report_output_decorator(key="is_grayscale")
@@ -197,15 +197,15 @@ Note that if we use ``skip_func`` to skip files in a ``CustomReportingPipeline``
 Text Scraping Example
 ---------------------
 
-Creevey is not limited to images! It applies anywhere you want to process data from many sources. For instance, we can use it to scrape online text. The example below uses it to get titles and crude word counts for four blog posts.
+Wildebeest is not limited to images! It applies anywhere you want to process data from many sources. For instance, we can use it to scrape online text. The example below uses it to get titles and crude word counts for four blog posts.
 
 .. code-block:: python
 
     import re
     import urllib.request
 
-    from creevey import CustomReportingPipeline
-    from creevey.ops import get_report_output_decorator
+    from wildebeest import CustomReportingPipeline
+    from wildebeest.ops import get_report_output_decorator
 
     URLS = [
         "http://gandenberger.org/2019/10/29/evaluating-classification-models-part-1-weighing-false-positives-against-false-negatives/",

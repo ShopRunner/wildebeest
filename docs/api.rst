@@ -1,7 +1,7 @@
 API
 ===
 
-Generally, each module has a submodule which shares its name that defines generic components and an ``image`` submodule that defines components for working with images. Items in the former are imported into the module namespace, so that you can write e.g. from ``creevey.path_funcs import combine_outdir_dirname_extension`` rather than ``from creevey.path_funcs.path_funcs import combine_outdir_dirname_extension``.
+Generally, each module has a submodule which shares its name that defines generic components and an ``image`` submodule that defines components for working with images. Items in the former are imported into the module namespace, so that you can write e.g. from ``wildebeest.path_funcs import combine_outdir_dirname_extension`` rather than ``from wildebeest.path_funcs.path_funcs import combine_outdir_dirname_extension``.
 
 pipelines
 ---------
@@ -9,14 +9,14 @@ pipelines
 pipelines
 ^^^^^^^^^
 
-.. automodule:: creevey.pipelines.pipelines
+.. automodule:: wildebeest.pipelines.pipelines
    :special-members: __call__
    :members:
 
 image
 ^^^^^
 
-.. automodule:: creevey.pipelines.image
+.. automodule:: wildebeest.pipelines.image
    :members:
 
 load_funcs
@@ -25,13 +25,13 @@ load_funcs
 load_funcs
 ^^^^^^^^^^
 
-.. automodule:: creevey.load_funcs.load_funcs
+.. automodule:: wildebeest.load_funcs.load_funcs
    :members:
 
 image
 ^^^^^
 
-.. automodule:: creevey.load_funcs.image
+.. automodule:: wildebeest.load_funcs.image
    :members:
 
 ops
@@ -43,7 +43,7 @@ helpers
 report
 """"""
 
-.. automodule:: creevey.ops.helpers.report
+.. automodule:: wildebeest.ops.helpers.report
    :members:
 
 image
@@ -52,13 +52,13 @@ image
 stats
 """""
 
-.. automodule:: creevey.ops.image.stats
+.. automodule:: wildebeest.ops.image.stats
    :members:
 
 transforms
 """"""""""
 
-.. automodule:: creevey.ops.image.transforms
+.. automodule:: wildebeest.ops.image.transforms
    :members:
 
 path_funcs
@@ -67,7 +67,7 @@ path_funcs
 path_funcs
 ^^^^^^^^^^
 
-.. automodule:: creevey.path_funcs.path_funcs
+.. automodule:: wildebeest.path_funcs.path_funcs
    :members:
 
 write_funcs
@@ -76,7 +76,7 @@ write_funcs
 image
 ^^^^^
 
-.. automodule:: creevey.write_funcs.image
+.. automodule:: wildebeest.write_funcs.image
    :members:
 
 util
@@ -85,17 +85,17 @@ util
 util
 ^^^^
 
-.. automodule:: creevey.util.util
+.. automodule:: wildebeest.util.util
    :members:
 
 image
 ^^^^^
 
-.. automodule:: creevey.util.image
+.. automodule:: wildebeest.util.image
    :members:
 
 constants
 ---------
 
-.. automodule:: creevey.constants
+.. automodule:: wildebeest.constants
    :members:

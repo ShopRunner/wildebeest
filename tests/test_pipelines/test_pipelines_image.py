@@ -5,10 +5,6 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import pytest
 
-from creevey import Pipeline
-from creevey.load_funcs.image import load_image_from_url
-from creevey.ops.image import resize
-from creevey.write_funcs.image import write_image
 from tests.conftest import (
     delete_file_if_exists,
     IMAGE_FILENAMES,
@@ -16,6 +12,10 @@ from tests.conftest import (
     keep_filename_save_png_in_tempdir,
     TEMP_DATA_DIR,
 )
+from wildebeest import Pipeline
+from wildebeest.load_funcs.image import load_image_from_url
+from wildebeest.ops.image import resize
+from wildebeest.write_funcs.image import write_image
 
 IMAGE_RESIZE_SHAPE = (224, 224)
 

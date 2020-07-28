@@ -2,14 +2,14 @@ from collections import defaultdict
 
 import numpy as np
 
-from creevey.ops.image.stats import (
+from tests.conftest import SAMPLE_DATA_DIR
+from wildebeest.ops.image.stats import (
     calculate_dhash,
     calculate_mean_brightness,
     report_dhash,
     report_mean_brightness,
 )
-from creevey.ops.image.transforms import resize
-from tests.conftest import SAMPLE_DATA_DIR
+from wildebeest.ops.image.transforms import resize
 
 
 class TestCalculateMeanBrightness:
@@ -29,7 +29,7 @@ class TestCalculateMeanBrightness:
 class TestReportMeanBrightness:
     def test_report_mean_brightness(self, sample_image_square_rgb):
         log_dict = defaultdict(dict)
-        image_path = SAMPLE_DATA_DIR / 'creevey_rgb.jpg'
+        image_path = SAMPLE_DATA_DIR / 'wildebeest_rgb.jpg'
         result = report_mean_brightness(
             sample_image_square_rgb, log_dict=log_dict, inpath=image_path
         )
@@ -92,7 +92,7 @@ def _hashlen(hash):
 class TestReportDHash:
     def test_report_dhash(self, sample_image_square_rgb):
         log_dict = defaultdict(dict)
-        image_path = SAMPLE_DATA_DIR / 'creevey_rgb.jpg'
+        image_path = SAMPLE_DATA_DIR / 'wildebeest_rgb.jpg'
         result = report_dhash(
             sample_image_square_rgb, inpath=image_path, log_dict=log_dict
         )

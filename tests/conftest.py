@@ -1,8 +1,8 @@
 from functools import partial
-import sys
 from pathlib import Path
+import sys
 
-from creevey.path_funcs import join_outdir_filename_extension
+from wildebeest.path_funcs import join_outdir_filename_extension
 
 TEST_DIR = Path(__file__).parent
 SAMPLE_DATA_DIR = Path(TEST_DIR) / 'sample_data'
@@ -11,7 +11,6 @@ IMAGE_FILENAMES = ['2RsJ8EQ', '2TqoToT', '2VocS58', '2scKPIp', '2TsO6Pc', '2SCv0
 IMAGE_URLS = [f'https://bit.ly/{filename}' for filename in IMAGE_FILENAMES]
 
 from tests.fixtures import *
-
 
 sys.path.append(TEST_DIR / 'fixtures')
 

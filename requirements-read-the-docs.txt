@@ -1,3 +1,0 @@
-git+https://github.com/crossnox/m2r@dev#egg=m2r
-sphinx_autodoc_typehints
-.

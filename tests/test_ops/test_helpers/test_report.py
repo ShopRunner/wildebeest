@@ -1,6 +1,6 @@
 from collections import defaultdict
 
-from creevey.ops import get_report_output_decorator, report_output
+from wildebeest.ops import get_report_output_decorator, report_output
 
 
 def test_report_output():

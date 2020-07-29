@@ -5,12 +5,13 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import pytest
 
+
 from tests.conftest import (
-    SAMPLE_DATA_DIR,
     delete_file_if_exists,
     IMAGE_FILENAMES,
     IMAGE_URLS,
     keep_filename_save_png_in_tempdir,
+    SAMPLE_DATA_DIR,
     TEMP_DATA_DIR,
 )
 from wildebeest import Pipeline

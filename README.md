@@ -1,6 +1,6 @@
 # Wildebeest
 
-![wildebeest stampede](docs/images/wildebeest_stampede.jpg)
+![wildebeest stampede](https://github.com/ShopRunner/wildebeest/raw/master/docs/images/wildebeest_stampede.jpg)
 
 Wildebeest is a file processing framework. It is designed for IO-bound workflows that involve reading files into memory, processing their contents, and writing out the results. It makes running those workflows faster and more reliable by parallelizing across files, handling errors, making it easy to skip files that have already been processed, and keeping organized records of what was done.
 

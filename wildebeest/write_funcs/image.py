@@ -42,7 +42,7 @@ def write_image(image: np.array, path: PathOrStr, **kwargs) -> None:
 
     tmp_dir = outdir / '.tmp'
     tmp_dir.mkdir(parents=True, exist_ok=True)
-    tmp_path = tmp_dir / (str(uuid.uuid5(uuid.NAMESPACE_DNS, str(path))) + path.suffix)
+    tmp_path = tmp_dir / (str(uuid.uuid4()) + path.suffix)
     try:
         cv.imwrite(str(tmp_path), image)
         assert (

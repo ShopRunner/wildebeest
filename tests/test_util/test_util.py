@@ -14,3 +14,11 @@ def test_find_files_with_extensions_with_dot(generate_file_tree):  # noqa: F811
     )
     assert all(path.exists() for path in pdf_paths)
     assert len(pdf_paths) == 1
+
+
+def test_find_files_with_extensions_str(generate_file_tree):  # noqa: F811
+    pdf_paths = find_files_with_extensions(
+        search_dir=str(TEMP_DATA_DIR), extensions=['.pdf']
+    )
+    assert all(path.exists() for path in pdf_paths)
+    assert len(pdf_paths) == 1

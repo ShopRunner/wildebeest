@@ -142,7 +142,7 @@ def test_raises_with_no_catch(error_pipeline):
 
 
 def test_duplicate_outpath_pipeline():
-    inpaths = [SAMPLE_DATA_DIR / 'blue.png'] * 10_000
+    inpaths = [SAMPLE_DATA_DIR / 'blue.png'] * 1_000
     outpath = keep_filename_save_png_in_tempdir(inpaths[0])
 
     delete_file_if_exists(outpath)

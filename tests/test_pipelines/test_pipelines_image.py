@@ -40,21 +40,23 @@ def trim_resize_pipeline():
 
 
 def test_trim_resize_pipeline(trim_resize_pipeline):
-    path_func = keep_filename_save_png_in_tempdir
     inpaths = IMAGE_URLS
-    trim_resize_pipeline(inpaths=inpaths, path_func=path_func, n_jobs=6)
+    trim_resize_pipeline(
+        inpaths=inpaths, path_func=keep_filename_save_png_in_tempdir, n_jobs=6
+    )
     for path in inpaths:
-        outpath = path_func(path)
+        outpath = keep_filename_save_png_in_tempdir(path)
         image = plt.imread(str(outpath))
         assert image.shape[:2] == IMAGE_RESIZE_SHAPE
 
 
 def test_trim_resize_pipeline_str_paths(trim_resize_pipeline):
-    path_func = keep_filename_save_png_in_tempdir
     inpaths = [str(path) for path in IMAGE_URLS]
-    trim_resize_pipeline(inpaths=inpaths, path_func=path_func, n_jobs=6)
+    trim_resize_pipeline(
+        inpaths=inpaths, path_func=keep_filename_save_png_in_tempdir, n_jobs=6
+    )
     for path in inpaths:
-        outpath = path_func(path)
+        outpath = keep_filename_save_png_in_tempdir(path)
         image = plt.imread(str(outpath))
         assert image.shape[:2] == IMAGE_RESIZE_SHAPE
 

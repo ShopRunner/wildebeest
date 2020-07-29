@@ -29,7 +29,7 @@ git checkout -b my_awesome_new_feature
 5. Install the library. (We recommend using a virtual environment.)
     
 ```bash
-pip install -e . 
+pip install -e .
 ```
 
 6. Install the dev and readthedocs requirements.

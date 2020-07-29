@@ -16,7 +16,7 @@ from tests.conftest import (
     TEMP_DATA_DIR,
 )
 from wildebeest import Pipeline
-from wildebeest.load_funcs.image import load_image_from_disk, load_image_from_url
+from wildebeest.load_funcs.image import load_image_from_url
 from wildebeest.ops.image import resize
 from wildebeest.write_funcs.image import write_image
 
@@ -43,6 +43,16 @@ def trim_resize_pipeline():
 def test_trim_resize_pipeline(trim_resize_pipeline):
     path_func = keep_filename_save_png_in_tempdir
     inpaths = IMAGE_URLS
+    trim_resize_pipeline(inpaths=inpaths, path_func=path_func, n_jobs=6)
+    for path in inpaths:
+        outpath = path_func(path)
+        image = plt.imread(str(outpath))
+        assert image.shape[:2] == IMAGE_RESIZE_SHAPE
+
+
+def test_trim_resize_pipeline_str_paths(trim_resize_pipeline):
+    path_func = keep_filename_save_png_in_tempdir
+    inpaths = [str(path) for path in IMAGE_URLS]
     trim_resize_pipeline(inpaths=inpaths, path_func=path_func, n_jobs=6)
     for path in inpaths:
         outpath = path_func(path)
@@ -138,4 +148,3 @@ def test_raises_with_no_catch(error_pipeline):
             n_jobs=6,
             exceptions_to_catch=None,
         )
-

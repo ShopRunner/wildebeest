@@ -139,16 +139,3 @@ def test_raises_with_no_catch(error_pipeline):
             exceptions_to_catch=None,
         )
 
-
-def test_duplicate_outpath_pipeline():
-    inpaths = [SAMPLE_DATA_DIR / 'blue.png'] * 1_000
-    outpath = keep_filename_save_png_in_tempdir(inpaths[0])
-
-    delete_file_if_exists(outpath)
-
-    pipeline = Pipeline(load_func=load_image_from_disk, write_func=write_image)
-    pipeline(inpaths=inpaths, path_func=keep_filename_save_png_in_tempdir, n_jobs=100)
-
-    delete_file_if_exists(outpath)
-
-    assert pipeline.run_report_.loc[:, "error"].isna().all()

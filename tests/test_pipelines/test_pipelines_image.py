@@ -1,23 +1,22 @@
 from functools import partial
 from pathlib import Path
-from wildebeest.pipelines.image import download_image_pipeline
+
 
 import matplotlib.pyplot as plt
 import pandas as pd
 import pytest
-
 
 from tests.conftest import (
     delete_file_if_exists,
     IMAGE_FILENAMES,
     IMAGE_URLS,
     keep_filename_save_png_in_tempdir,
-    SAMPLE_DATA_DIR,
     TEMP_DATA_DIR,
 )
 from wildebeest import Pipeline
 from wildebeest.load_funcs.image import load_image_from_url
 from wildebeest.ops.image import resize
+from wildebeest.pipelines.image import download_image_pipeline
 from wildebeest.write_funcs.image import write_image
 
 IMAGE_RESIZE_SHAPE = (224, 224)

@@ -1,6 +1,6 @@
-import sys
 from functools import partial
 from pathlib import Path
+import sys
 
 from wildebeest.path_funcs import join_outdir_filename_extension
 

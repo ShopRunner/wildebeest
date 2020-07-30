@@ -29,15 +29,21 @@ git checkout -b my_awesome_new_feature
 5. Install the library. (We recommend using a virtual environment.)
     
 ```bash
-pip install -e . 
+pip install -e .
 ```
 
-6. Make your changes.
-7. Complete all items in the [pull request checklist](https://github.com/ShopRunner/wildebeest/blob/master/.github/pull_request_template.md) that you feel comfortable with. Feel free to submit a PR with some loose ends, particularly if you are not sure about how to complete a checklist item.
-8. Submit your PR against the `wip` branch.
+6. Install the dev and readthedocs requirements.
+
+```bash
+pip install -r requirements-dev.txt -r requirements-read-the-docs.txt
+```
+
+7. Make your changes.
+8. Open a pull request against our `master` branch. We encourage you to do this step early on, before your changes are completed, so that we know you are working on the issue and can provide input early on.
+9. Complete all items in the pull request checklist that you feel comfortable with. Feel free to submit a PR with some loose ends, particularly if you are not sure about how to complete a checklist item.
 
 ## Additional Notes
 
-- We prefer single quotes for one-libe strings unless using double quotes allows us to avoid escaping internal single quotes.
+- We prefer single quotes for one-line strings unless using double quotes allows us to avoid escaping internal single quotes.
 - We use [numpy style](https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_numpy.html) for docstrings.
 - We want Wildebeest to be compatible with Python 3.6+.

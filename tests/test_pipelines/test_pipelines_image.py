@@ -1,6 +1,7 @@
 from functools import partial
 from pathlib import Path
 
+
 import matplotlib.pyplot as plt
 import pandas as pd
 import pytest
@@ -17,6 +18,7 @@ from tests.conftest import (
 from wildebeest import Pipeline
 from wildebeest.load_funcs.image import load_image_from_disk, load_image_from_url
 from wildebeest.ops.image import resize
+from wildebeest.pipelines.image import download_image_pipeline
 from wildebeest.write_funcs.image import write_image
 
 IMAGE_RESIZE_SHAPE = (224, 224)
@@ -31,11 +33,8 @@ def trim_resize_pipeline():
     trim_bottom_100 = lambda image: image[:-100, :]  # noqa: 29
     resize_224 = partial(resize, shape=IMAGE_RESIZE_SHAPE)
 
-    trim_resize_pipeline = Pipeline(
-        load_func=load_image_from_url,
-        ops=[trim_bottom_100, resize_224],
-        write_func=write_image,
-    )
+    trim_resize_pipeline = download_image_pipeline
+    trim_resize_pipeline.ops = [trim_bottom_100, resize_224]
     yield trim_resize_pipeline
     for url in IMAGE_URLS:
         outpath = keep_filename_save_png_in_tempdir(url)
@@ -43,11 +42,23 @@ def trim_resize_pipeline():
 
 
 def test_trim_resize_pipeline(trim_resize_pipeline):
-    path_func = keep_filename_save_png_in_tempdir
     inpaths = IMAGE_URLS
-    trim_resize_pipeline(inpaths=inpaths, path_func=path_func, n_jobs=6)
+    trim_resize_pipeline(
+        inpaths=inpaths, path_func=keep_filename_save_png_in_tempdir, n_jobs=6
+    )
     for path in inpaths:
-        outpath = path_func(path)
+        outpath = keep_filename_save_png_in_tempdir(path)
+        image = plt.imread(str(outpath))
+        assert image.shape[:2] == IMAGE_RESIZE_SHAPE
+
+
+def test_trim_resize_pipeline_str_paths(trim_resize_pipeline):
+    inpaths = [str(path) for path in IMAGE_URLS]
+    trim_resize_pipeline(
+        inpaths=inpaths, path_func=keep_filename_save_png_in_tempdir, n_jobs=6
+    )
+    for path in inpaths:
+        outpath = keep_filename_save_png_in_tempdir(path)
         image = plt.imread(str(outpath))
         assert image.shape[:2] == IMAGE_RESIZE_SHAPE
 

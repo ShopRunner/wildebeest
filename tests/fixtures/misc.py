@@ -5,8 +5,8 @@ import pytest
 from tests.conftest import TEMP_DATA_DIR
 
 
-@pytest.fixture
-def generate_file_tree(scope='session'):
+@pytest.fixture(scope='session')
+def generate_file_tree():
     if TEMP_DATA_DIR.exists():
         rmtree(str(TEMP_DATA_DIR))
     level0_dirs = ['tmp00', 'tmp01']

@@ -50,6 +50,18 @@ def test_join_outdir_hashed_path_extension():
     assert actual_outpath2 == actual_outpath
 
 
+def test_join_outdir_hashed_str_input():
+    inpath = './foo.png'
+    actual_outpath = join_outdir_hashed_path_extension(
+        inpath, outdir='bar', extension='jpg'
+    )
+    expected_pardir = Path('bar')
+    expected_extension = '.jpg'
+    assert actual_outpath.parent == expected_pardir
+    assert actual_outpath.suffix == expected_extension
+    assert actual_outpath.stem != 'foo'
+
+
 def test_join_outdir_hashed_path_no_extension():
     inpath = Path('./foo.png')
     actual_outpath = join_outdir_hashed_path_extension(inpath, outdir='bar')

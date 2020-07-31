@@ -151,8 +151,10 @@ class Pipeline:
             :, 'time_finished'
         ].astype('datetime64[ms]')
         self._run_report_ = self._run_report_.reindex(
-            columns=RUN_REPORT_COLS
-            + [col for col in self._run_report_ if col not in RUN_REPORT_COLS]
+            columns=(
+                RUN_REPORT_COLS
+                + [col for col in self._run_report_ if col not in RUN_REPORT_COLS]
+            )
         )
 
     def _pipeline_func(

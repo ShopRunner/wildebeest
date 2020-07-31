@@ -72,9 +72,10 @@ class Pipeline:
 
         Stores input path in the index, output path as "outpath",
         Boolean indicating whether the file was skipped as "skipped",
-        an exception object that was handled during processing if any as
-        "error" (`None` if no exception was handled), and a timestamp
-        indicating when processing completed as "time_finished".
+        the repr of an exception object that was handled during
+        processing if any as "error" (`np.nan` if no exception was
+        handled), and a timestamp indicating when processing completed
+        as "time_finished".
 
         May include additional custom fields in a
         `CustomReportingPipeline`.

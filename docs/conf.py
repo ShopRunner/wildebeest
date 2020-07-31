@@ -23,7 +23,7 @@ project = 'wildebeest'
 copyright = '2019 Shoprunner'
 author = 'gsganden, sugi-chan'
 
-release = version = '3.0.3'
+release = version = '4.0.0'
 
 # -- General configuration ---------------------------------------------------
 

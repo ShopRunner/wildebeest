@@ -156,6 +156,9 @@ class Pipeline:
                 + [col for col in self._run_report_ if col not in RUN_REPORT_COLS]
             )
         )
+        self._run_report_.loc[:, "skipped"] = self._run_report_.loc[
+            :, "skipped"
+        ].fillna(False)
 
     def _pipeline_func(
         self,
@@ -219,7 +222,6 @@ class Pipeline:
             )
             self._log_dict[inpath]['time_finished'] = datetime.now()
         else:
-            self._log_dict[inpath]['skipped'] = False
             try:
                 self._run_pipeline_func(inpath, self._log_dict[inpath]['outpath'])
             except exceptions_to_catch as e:

@@ -1,6 +1,6 @@
 from collections import defaultdict
 
-import numpy as np
+# import numpy as np
 
 from tests.conftest import SAMPLE_DATA_DIR
 from wildebeest.ops.image.stats import (

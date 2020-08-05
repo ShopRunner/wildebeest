@@ -4,7 +4,7 @@
 # the first time any of these commands fail
 set -e
 
-pytest
+pytest --cov=./ --cov-report=xml
 flake8 wildebeest tests
 black wildebeest tests --skip-string-normalization --check
 sphinx-build docs docs/_html

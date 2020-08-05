@@ -29,7 +29,12 @@ jobs:
     - name: Run checks and build docs
       run: |
         .ci/test.sh
-  
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v1
+      with:
+        file: ./coverage.xml
+        fail_ci_if_error: true
+
   publish:
 
     runs-on: ubuntu-latest

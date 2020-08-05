@@ -28,6 +28,11 @@ jobs:
         python -m pip install -r requirements-read-the-docs.txt
     - name: Run checks and build docs
       run: .ci/test.sh
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v1
+      with:
+        file: ./coverage.xml
+        fail_ci_if_error: true
     - name: Verify build
       run: |
         pip install --upgrade pip wheel twine

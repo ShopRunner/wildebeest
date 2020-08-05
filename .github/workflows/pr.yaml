@@ -33,12 +33,7 @@ jobs:
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         file: ./coverage.xml
-        directory: ./coverage/reports/
-        flags: unittests
-        env_vars: OS, PYTHON
-        name: codecov-umbrella
         fail_ci_if_error: true
-        path_to_write_report: ./coverage/codecov_report.gz
     - name: Verify build
       run: |
         pip install --upgrade pip wheel twine

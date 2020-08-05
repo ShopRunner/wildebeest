@@ -50,7 +50,7 @@ def test_custom_reporting_pipeline(report_mean_brightness_pipeline):
         {
             'outpath': outpaths,
             'skipped': [False] * len(IMAGE_URLS),
-            'error': [None] * len(IMAGE_URLS),
+            'error': [np.nan] * len(IMAGE_URLS),
         },
         index=IMAGE_URLS,
     )

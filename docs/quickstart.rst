@@ -155,7 +155,7 @@ Skipping Files Based on Content
 Custom Reporting Example
 ------------------------
 
-The ``CustomReportingPipeline`` class allows you to add additional information to your run reports reports by adding to them within your ``load_func``, ``ops``, and ``write_func``. For instance, when processing a set of image files you might wish to record each image's mean brightness while you already have it open so that you can later experiment with removing washed-out images from your dataset. Here is an example of a ``CustomReportingPipeline`` that uses a built-in ``report_mean_brightness`` function to record the brightness of each image and a custom ``report_is_grayscale`` function to record whether or not it is grayscale. The pipeline runs those functions on each image during the download process and returns their outputs in the final run report. 
+The ``CustomReportingPipeline`` class allows you to add additional information to your run reports by adding to them within your ``load_func``, ``ops``, and ``write_func``. For instance, when processing a set of image files you might wish to record each image's mean brightness while you already have it open so that you can later experiment with removing washed-out images from your dataset. Here is an example of a ``CustomReportingPipeline`` that uses a built-in ``report_mean_brightness`` function to record the brightness of each image and a custom ``report_is_grayscale`` function to record whether or not it is grayscale. The pipeline runs those functions on each image during the download process and returns their outputs in the final run report. 
 
 .. code-block:: python
 

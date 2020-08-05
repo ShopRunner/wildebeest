@@ -3,6 +3,7 @@ from pathlib import Path
 
 
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 import pytest
 
@@ -73,7 +74,7 @@ def test_logging(trim_resize_pipeline):
         {
             'outpath': outpaths,
             'skipped': [False] * len(inpaths),
-            'error': [None] * len(inpaths),
+            'error': [np.nan] * len(inpaths),
         },
         index=inpaths,
     )
@@ -117,10 +118,8 @@ def test_catches(error_pipeline):
         ),
         expected_run_report.sort_index(),
     )
-    expected_error = ValueError('Sample error for testing purposes')
     for actual_error in error_pipeline.run_report_.loc[:, 'error']:
-        assert type(actual_error) is type(expected_error)
-        assert actual_error.args == expected_error.args
+        actual_error == repr(ValueError('Sample error for testing purposes'))
 
 
 def test_raises_with_different_catch(error_pipeline):

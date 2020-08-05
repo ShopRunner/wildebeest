@@ -72,9 +72,10 @@ class Pipeline:
 
         Stores input path in the index, output path as "outpath",
         Boolean indicating whether the file was skipped as "skipped",
-        an exception object that was handled during processing if any as
-        "error" (`None` if no exception was handled), and a timestamp
-        indicating when processing completed as "time_finished".
+        the repr of an exception object that was handled during
+        processing if any as "error" (`np.nan` if no exception was
+        handled), and a timestamp indicating when processing completed
+        as "time_finished".
 
         May include additional custom fields in a
         `CustomReportingPipeline`.
@@ -142,17 +143,22 @@ class Pipeline:
         )
 
         logging.info('Processing finished. Creating run report.')
-        run_report = pd.DataFrame.from_dict(self._log_dict, orient='index')
+        self._run_report_ = pd.DataFrame.from_dict(self._log_dict, orient='index')
+        self._log_dict = defaultdict(dict)
         # Default ns precision is overkill for most applications and
         # gives an error when writing to parquet.
-        run_report.loc[:, 'time_finished'] = run_report.loc[:, 'time_finished'].astype(
-            'datetime64[ms]'
+        self._run_report_.loc[:, 'time_finished'] = self._run_report_.loc[
+            :, 'time_finished'
+        ].astype('datetime64[ms]')
+        self._run_report_ = self._run_report_.reindex(
+            columns=(
+                RUN_REPORT_COLS
+                + [col for col in self._run_report_ if col not in RUN_REPORT_COLS]
+            )
         )
-        self._run_report_ = run_report.loc[
-            :,
-            RUN_REPORT_COLS + [col for col in run_report if col not in RUN_REPORT_COLS],
-        ]
-        self._log_dict = defaultdict(dict)
+        self._run_report_.loc[:, "skipped"] = self._run_report_.loc[
+            :, "skipped"
+        ].fillna(False)
 
     def _pipeline_func(
         self,
@@ -214,17 +220,13 @@ class Pipeline:
                 f'Skipping {inpath} because there is already a file at corresponding '
                 f'output path {self._log_dict[inpath]["outpath"]}'
             )
-            self._log_dict[inpath]['error'] = None
             self._log_dict[inpath]['time_finished'] = datetime.now()
         else:
-            self._log_dict[inpath]['skipped'] = False
             try:
                 self._run_pipeline_func(inpath, self._log_dict[inpath]['outpath'])
             except exceptions_to_catch as e:
-                self._log_dict[inpath]['error'] = e
+                self._log_dict[inpath]['error'] = repr(e)
                 logging.error(f'{type(e)} exception on {inpath}: {e}')
-            else:
-                self._log_dict[inpath]['error'] = None
             finally:
                 self._log_dict[inpath]['time_finished'] = datetime.now()
 

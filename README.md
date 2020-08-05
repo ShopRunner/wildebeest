@@ -1,9 +1,8 @@
 # Wildebeest
 
+[![cicd](https://github.com/ShopRunner/wildebeest/workflows/Python%20package/badge.svg
+)](https://github.com/ShopRunner/wildebeest/actions?query=workflow%3A%22Python+package%22+branch%3Amaster)
 [![codecov](https://codecov.io/gh/ShopRunner/wildebeest/branch/master/graph/badge.svg)](https://codecov.io/gh/ShopRunner/wildebeest)
-
-https://github.com/shoprunner/wildebeest/workflows/prod/badge.svg
-
 
 ![wildebeest stampede](https://github.com/ShopRunner/wildebeest/raw/master/docs/images/wildebeest_stampede.jpg)
 

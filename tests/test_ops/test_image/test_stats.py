@@ -1,6 +1,6 @@
 from collections import defaultdict
 
-# import numpy as np
+import numpy as np
 
 from tests.conftest import SAMPLE_DATA_DIR
 from wildebeest.ops.image.stats import (
@@ -12,18 +12,18 @@ from wildebeest.ops.image.stats import (
 from wildebeest.ops.image.transforms import resize
 
 
-# class TestCalculateMeanBrightness:
-#     def test_calculate_mean_brightness_known_val(self):
-#         assert calculate_mean_brightness(np.array([[0, 0, 0], [1, 1, 1]])) == 0.5
+class TestCalculateMeanBrightness:
+    def test_calculate_mean_brightness_known_val(self):
+        assert calculate_mean_brightness(np.array([[0, 0, 0], [1, 1, 1]])) == 0.5
 
-#     def test_calculate_mean_brightness_gray(self, sample_image_tall_grayscale):
-#         assert isinstance(calculate_mean_brightness(sample_image_tall_grayscale), float)
+    def test_calculate_mean_brightness_gray(self, sample_image_tall_grayscale):
+        assert isinstance(calculate_mean_brightness(sample_image_tall_grayscale), float)
 
-#     def test_calculate_mean_brightness_rgb(self, sample_image_square_rgb):
-#         assert isinstance(calculate_mean_brightness(sample_image_square_rgb), float)
+    def test_calculate_mean_brightness_rgb(self, sample_image_square_rgb):
+        assert isinstance(calculate_mean_brightness(sample_image_square_rgb), float)
 
-#     def test_calculate_mean_brightness_rgba(self, sample_image_square_rgba):
-#         assert isinstance(calculate_mean_brightness(sample_image_square_rgba), float)
+    def test_calculate_mean_brightness_rgba(self, sample_image_square_rgba):
+        assert isinstance(calculate_mean_brightness(sample_image_square_rgba), float)
 
 
 class TestReportMeanBrightness:

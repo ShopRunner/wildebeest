@@ -227,7 +227,7 @@ class Pipeline:
             except exceptions_to_catch as e:
                 self._log_dict[inpath]['error'] = repr(e)
                 logging.error(f'Exception on {inpath}: {repr(e)}')
-            except:  # noqa: E722
+            except Exception as e:
                 logging.error(f'Exception on {inpath}: {repr(e)}')
                 raise
             finally:

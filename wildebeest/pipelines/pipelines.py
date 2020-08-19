@@ -127,9 +127,9 @@ class Pipeline:
             overwriting existing files.
         exceptions_to_catch
             Tuple of exception types to catch. An exception of one of
-            these types will be logged with logging level ERROR and
-            added to the run report, but the pipeline will continue to
-            execute.
+            these types will be added to the run report, but the
+            pipeline will continue to execute. All exceptions will be
+            logged whether they are caught or not.
 
         Note
         ----

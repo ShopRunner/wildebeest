@@ -47,21 +47,21 @@ The trailing underscore in ``run_report_`` indicates that the attribute exists o
 
 If ``n_jobs`` is greater than 1, then the order of the input files in the run report typically will not match the order in ``inpaths``\ ; a command like ``run_report.loc[inpaths, :]`` can be used to restore the original order if desired.
 
-Because downloading images is a common use case for Wildebeest, we have provided a ``download_image_pipeline`` pipeline that you can simply import, resulting in the following simplified version of the code above:
+Because downloading images is a common use case for Wildebeest, we have provided a ``DownloadImagePipeline`` subclass that allows you to write the following simplified version of the code above:
 
 .. code-block:: python
 
     from functools import partial
 
     from wildebeest.path_funcs import join_outdir_filename_extension
-    from wildebeest.pipelines.image import download_image_pipeline
+    from wildebeest.pipelines.image import DownloadImagePipeline
 
 
     image_urls = [
         f"https://bit.ly/{filename}" for filename in ["2RsJ8EQ", "2TqoToT", "2VocS58"]
     ]
 
-    download_image_pipeline(
+    DownloadImagePipeline()(
         inpaths=image_urls,
         path_func=partial(join_outdir_filename_extension, outdir=".", extension=".png"),
         n_jobs=10,
@@ -125,13 +125,13 @@ In addition, the last file had a bad URL, resulting in a ``ValueError``. The val
    :target: ./images/trim_resize_error.png
    :alt:
 
-We could simplify the code above by using the provided ``download_image_pipeline`` and simply adding our ``ops``.
+We could simplify the code above by using the provided ``DownloadImagePipeline`` and simply adding our ``ops``.
 
 .. code-block:: python
 
-   from wildebeest.pipelines.image import download_image_pipeline
+   from wildebeest.pipelines.image import DownloadImagePipeline
 
-   trim_resize_pipeline = download_image_pipeline
+   trim_resize_pipeline = DownloadImagePipeline()
    trim_resize_pipeline.ops = [
        lambda image: image[:-100, :],
        partial(resize, shape=(224, 224)),

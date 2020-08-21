@@ -75,7 +75,7 @@ The following example processes a few more files with three additional wrinkles:
 
 - It checks whether a file already exists at the prospective output location and skips the corresponding input file if it does, through the ``skip_func`` pipeline run parameter.
 - For each file that it doesn't skip, it trims off the bottom 100 pixels of each and resizes the result to 224x224, through the ``ops`` ``Pipeline`` parameter.
-- It handles ``ValueError`` exceptions that arise during file processing by logging them and recording them in the run report but not halting execution for them, while allowing other exceptions to be raised, through the ``exceptions_to_catch`` pipeline run parameter. You can also pass ``None`` or a tuple of exception types to ``exceptions_to_catch`` (e.g. ``(ValueError, AttributeError)``). The default value for ``exceptions_to_catch`` is ``Exception``, so that ALL exceptions that arise during file processing are caught and recorded without halting execution, aside from a few exceptions such as ``KeyboardInterrupt`` that do not arise from the code.
+- It handles ``ValueError`` exceptions that arise during file processing by recording them in the run report but not halting execution for them, while allowing other exceptions to be raised, through the ``exceptions_to_catch`` pipeline run parameter. You can also pass ``None`` or a tuple of exception types to ``exceptions_to_catch`` (e.g. ``(ValueError, AttributeError)``). The default value for ``exceptions_to_catch`` is ``Exception``, so that ALL exceptions that arise during file processing are caught and recorded without halting execution, aside from a few exceptions such as ``KeyboardInterrupt`` that do not arise from the code.
 
 .. code-block:: python
 
@@ -107,7 +107,7 @@ The following example processes a few more files with three additional wrinkles:
         n_jobs=10,
         # skip files that have already been downloaded
         skip_func=lambda inpath, outpath: Path(outpath).is_file(),
-        # log and record ``ValueError``s but do not halt execution for them.
+        # record ``ValueError``s but do not halt execution for them.
         # Default behavior is to catch all errors that inherit from ``Exception``!
         exceptions_to_catch=ValueError,
     )

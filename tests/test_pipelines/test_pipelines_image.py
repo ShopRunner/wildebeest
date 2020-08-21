@@ -122,7 +122,7 @@ def test_catches(error_pipeline):
         actual_error == repr(ValueError('Sample error for testing purposes'))
 
 
-def test_raises_with_different_catch(error_pipeline):
+def test_raises_with_different_catch(error_pipeline, caplog):
     with pytest.raises(ValueError):
         error_pipeline(
             inpaths=IMAGE_URLS,
@@ -130,9 +130,10 @@ def test_raises_with_different_catch(error_pipeline):
             n_jobs=6,
             exceptions_to_catch=AttributeError,
         )
+    assert "ValueError" in str(caplog.records[-1])  # ensures exception is logged
 
 
-def test_raises_with_different_catch_tuple(error_pipeline):
+def test_raises_with_different_catch_tuple(error_pipeline, caplog):
     with pytest.raises(ValueError):
         error_pipeline(
             inpaths=IMAGE_URLS,
@@ -140,9 +141,10 @@ def test_raises_with_different_catch_tuple(error_pipeline):
             n_jobs=6,
             exceptions_to_catch=(AttributeError, TypeError),
         )
+    assert "ValueError" in str(caplog.records[-1])  # ensures exception is logged
 
 
-def test_raises_with_no_catch(error_pipeline):
+def test_raises_with_no_catch(error_pipeline, caplog):
     with pytest.raises(ValueError):
         error_pipeline(
             inpaths=IMAGE_URLS,
@@ -150,6 +152,7 @@ def test_raises_with_no_catch(error_pipeline):
             n_jobs=6,
             exceptions_to_catch=None,
         )
+    assert "ValueError" in str(caplog.records[-1])  # ensures exception is logged
 
 
 def test_duplicate_outpath_pipeline():

@@ -7,6 +7,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ### Changed
  - Provide `DownloadImagePipeline` class in place of `download_image_pipeline` object.
 
+# [4.1.0] - 2020-8-19
+### Added
+ - Log uncaught exceptions
+
 # [4.0.0] - 2020-7-31
 ### Changed
  - Store `repr(e)` rather than `e` itself in the run report, where `e` is an exception.

@@ -19,7 +19,7 @@ from tests.conftest import (
 from wildebeest import Pipeline
 from wildebeest.load_funcs.image import load_image_from_disk, load_image_from_url
 from wildebeest.ops.image import resize
-from wildebeest.pipelines.image import download_image_pipeline
+from wildebeest.pipelines.image import DownloadImagePipeline
 from wildebeest.write_funcs.image import write_image
 
 IMAGE_RESIZE_SHAPE = (224, 224)
@@ -34,7 +34,7 @@ def trim_resize_pipeline():
     trim_bottom_100 = lambda image: image[:-100, :]  # noqa: 29
     resize_224 = partial(resize, shape=IMAGE_RESIZE_SHAPE)
 
-    trim_resize_pipeline = download_image_pipeline
+    trim_resize_pipeline = DownloadImagePipeline()
     trim_resize_pipeline.ops = [trim_bottom_100, resize_224]
     yield trim_resize_pipeline
     for url in IMAGE_URLS:

@@ -3,42 +3,46 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
-#[4.1.0] - 2020-8-19
+# [5.0.0] - 2020-8-19
+### Changed
+ - Provide `DownloadImagePipeline` class in place of `download_image_pipeline` object.
+
+# [4.1.0] - 2020-8-19
 ### Added
  - Log uncaught exceptions
 
-#[4.0.0] - 2020-7-31
+# [4.0.0] - 2020-7-31
 ### Changed
  - Store `repr(e)` rather than `e` itself in the run report, where `e` is an exception.
 
-#[3.0.3] - 2020-7-30
+# [3.0.3] - 2020-7-30
 ### Added
  - Increased test coverage
 
-#[3.0.2] - 2020-7-29
+# [3.0.2] - 2020-7-29
 ### Fixed
  - Errors from trying to write to the same outpath in multiple threads
 
-#[3.0.1] - 2020-7-28
+# [3.0.1] - 2020-7-28
 ### Fixed
  - Use image URL in README that is accessible on PyPI.
 
-#[3.0.0] - 2020-7-28
+# [3.0.0] - 2020-7-28
 ### Changed
  - Rename library "wildebeest"
  - Use GitHub Actions for CI/CD.
 
 ==== Below is Creevey development ====
 
-#[3.0.0] - 2020-7-28
+# [3.0.0] - 2020-7-28
 ### Added
  - Warning about upcoming name change
 
-#[2.3.0] - 2020-7-24
+# [2.3.0] - 2020-7-24
 ### Added 
  - Use `pip-tools`.
 
-#[2.2.0] - 2020-6-15
+# [2.2.0] - 2020-6-15
 ### Added 
  - Function rotate() that takes an image and an angle and ouputs the rotated image.
  - warning about upcoming rename of library

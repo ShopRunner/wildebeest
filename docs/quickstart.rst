@@ -16,9 +16,9 @@ The following code uses a fairly minimal Wildebeest pipeline to download a list 
     from wildebeest.path_funcs import join_outdir_filename_extension
     from wildebeest.write_funcs.image import write_image
 
-
     image_urls = [
-        f"https://bit.ly/{filename}" for filename in ["2RsJ8EQ", "2TqoToT", "2VocS58"]
+        f'https://raw.githubusercontent.com/ShopRunner/wildebeest/master/tests/sample_data/wildebeest_big{num}.jpg'
+        for num in range(1, 7)
     ]
 
     # Create a pipeline object, specifying how to load a file and how to
@@ -31,7 +31,7 @@ The following code uses a fairly minimal Wildebeest pipeline to download a list 
     # from each input path, and how many threads to use
     image_download_pipeline(
         inpaths=image_urls,
-        path_func=partial(join_outdir_filename_extension, outdir=".", extension=".png"),
+        path_func=partial(join_outdir_filename_extension, outdir='.', extension='.png'),
         n_jobs=10,
     )
 
@@ -47,23 +47,24 @@ The trailing underscore in ``run_report_`` indicates that the attribute exists o
 
 If ``n_jobs`` is greater than 1, then the order of the input files in the run report typically will not match the order in ``inpaths``\ ; a command like ``run_report.loc[inpaths, :]`` can be used to restore the original order if desired.
 
-Because downloading images is a common use case for Wildebeest, we have provided a ``download_image_pipeline`` pipeline that you can simply import, resulting in the following simplified version of the code above:
+Because downloading images is a common use case for Wildebeest, we have provided a ``DownloadImagePipeline`` subclass that allows you to write the following simplified version of the code above:
 
 .. code-block:: python
 
     from functools import partial
 
     from wildebeest.path_funcs import join_outdir_filename_extension
-    from wildebeest.pipelines.image import download_image_pipeline
+    from wildebeest.pipelines.image import DownloadImagePipeline
 
 
     image_urls = [
-        f"https://bit.ly/{filename}" for filename in ["2RsJ8EQ", "2TqoToT", "2VocS58"]
+        f'https://raw.githubusercontent.com/ShopRunner/wildebeest/master/tests/sample_data/wildebeest_big{num}.jpg'
+        for num in range(1, 7)
     ]
 
-    download_image_pipeline(
+    DownloadImagePipeline()(
         inpaths=image_urls,
-        path_func=partial(join_outdir_filename_extension, outdir=".", extension=".png"),
+        path_func=partial(join_outdir_filename_extension, outdir='.', extension='.png'),
         n_jobs=10,
     )
 
@@ -88,10 +89,10 @@ The following example processes a few more files with three additional wrinkles:
     from wildebeest.path_funcs import join_outdir_filename_extension
 
 
-    image_urls += [
-        f"https://bit.ly/{filename}"
-        for filename in ["2scKPIp", "2TsO6Pc", "2SCv0q7", "xyz"]
-    ]
+    image_urls = [
+        f'https://raw.githubusercontent.com/ShopRunner/wildebeest/master/tests/sample_data/wildebeest_big{num}.jpg'
+        for num in range(1, 7)
+    ] + ['https://raw.githubusercontent.com/ShopRunner/wildebeest/master/tests/sample_data/fake.jpg']
 
     trim_resize_pipeline = Pipeline(
         load_func=load_image_from_url,
@@ -102,7 +103,7 @@ The following example processes a few more files with three additional wrinkles:
 
     trim_resize_pipeline(
         inpaths=image_urls,
-        path_func=partial(join_outdir_filename_extension, outdir=".", extension=".png"),
+        path_func=partial(join_outdir_filename_extension, outdir='.', extension='.png'),
         n_jobs=10,
         # skip files that have already been downloaded
         skip_func=lambda inpath, outpath: Path(outpath).is_file(),
@@ -119,24 +120,22 @@ Here is the resulting run report:
 
 We can see that the first three files were skipped because they had already been downloaded; note that as a result, they have NOT been trimmed and resized. If we had not provided a ``skip_func``, then the existing local copies would have been overwritten with trimmed and resized versions.
 
-In addition, the last file had a bad URL, resulting in a ``ValueError``. The value in the table for the "error" column in that row is the resulting ``ValueError`` exception itself:
+In addition, the last file had a bad URL, resulting in a ``ValueError``.
 
-.. image:: ./images/trim_resize_error.png
-   :target: ./images/trim_resize_error.png
-   :alt:
-
-We could simplify the code above by using the provided ``download_image_pipeline`` and simply adding our ``ops``.
+We could simplify the code above by using the provided ``DownloadImagePipeline`` and simply adding our ``ops``.
 
 .. code-block:: python
 
-   from wildebeest.pipelines.image import download_image_pipeline
+    from functools import partial
 
-   trim_resize_pipeline = download_image_pipeline
-   trim_resize_pipeline.ops = [
-       lambda image: image[:-100, :],
-       partial(resize, shape=(224, 224)),
-   ]
+    from wildebeest.ops.image import resize
+    from wildebeest.pipelines.image import DownloadImagePipeline
 
+    trim_resize_pipeline = DownloadImagePipeline()
+    trim_resize_pipeline.ops = [
+        lambda image: image[:-100, :],
+        partial(resize, shape=(224, 224)),
+    ]
 
 More generally, you can modify attributes of an existing ``Pipeline`` object.
 
@@ -169,7 +168,13 @@ The ``CustomReportingPipeline`` class allows you to add additional information t
     from wildebeest.write_funcs.image import write_image
 
 
-    @get_report_output_decorator(key="is_grayscale")
+    image_urls = [
+        f'https://raw.githubusercontent.com/ShopRunner/wildebeest/master/tests/sample_data/wildebeest_big{num}.jpg'
+        for num in range(1, 7)
+    ]
+
+
+    @get_report_output_decorator(key='is_grayscale')
     def report_is_grayscale(image):
         return image.ndim == 2
 
@@ -182,7 +187,7 @@ The ``CustomReportingPipeline`` class allows you to add additional information t
 
     custom_reporting_pipeline(
         inpaths=image_urls,
-        path_func=partial(join_outdir_filename_extension, outdir=".", extension=".png"),
+        path_func=partial(join_outdir_filename_extension, outdir='.', extension='.png'),
         n_jobs=1,
     )
 
@@ -208,10 +213,10 @@ Wildebeest is not limited to images! It applies anywhere you want to process dat
     from wildebeest.ops import get_report_output_decorator
 
     URLS = [
-        "http://gandenberger.org/2019/10/29/evaluating-classification-models-part-1-weighing-false-positives-against-false-negatives/",
-        "http://gandenberger.org/2019/11/20/evaluating-classification-models-part-2-the-sufficiency-of-precision-and-recall/",
-        "http://gandenberger.org/2019/11/22/evaluating-classification-models-part-3-f_beta-and-other-weighted-pythagorean-means-of-precision-and-recall/",
-        "http://gandenberger.org/2019/12/03/evaluating-classification-models-part-4/",
+        'http://gandenberger.org/2019/10/29/evaluating-classification-models-part-1-weighing-false-positives-against-false-negatives/',
+        'http://gandenberger.org/2019/11/20/evaluating-classification-models-part-2-the-sufficiency-of-precision-and-recall/',
+        'http://gandenberger.org/2019/11/22/evaluating-classification-models-part-3-f_beta-and-other-weighted-pythagorean-means-of-precision-and-recall/',
+        'http://gandenberger.org/2019/12/03/evaluating-classification-models-part-4/',
     ]
 
 
@@ -219,12 +224,12 @@ Wildebeest is not limited to images! It applies anywhere you want to process dat
         return str(urllib.request.urlopen(url).read())
 
 
-    @get_report_output_decorator(key="title")
+    @get_report_output_decorator(key='title')
     def record_title(html):
         return re.search(r'<meta property="og:title" content="(.*?)" />', html).group(1)
 
 
-    @get_report_output_decorator(key="word_count")
+    @get_report_output_decorator(key='word_count')
     def count_words(html):
         return len(html.split())
 

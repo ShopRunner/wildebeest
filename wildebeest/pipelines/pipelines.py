@@ -226,9 +226,9 @@ class Pipeline:
                 self._run_pipeline_func(inpath, self._log_dict[inpath]['outpath'])
             except exceptions_to_catch as e:
                 self._log_dict[inpath]['error'] = repr(e)
-                logging.error(f'Exception on {inpath}: {repr(e)}')
+                logging.error(f'Exception caught on {inpath}: {repr(e)}')
             except Exception as e:
-                logging.error(f'Exception on {inpath}: {repr(e)}')
+                logging.error(f'Exception not caught on {inpath}: {repr(e)}')
                 raise
             finally:
                 self._log_dict[inpath]['time_finished'] = datetime.now()

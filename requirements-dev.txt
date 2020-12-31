@@ -20,12 +20,11 @@ flake8-import-order==0.18.1  # via -r requirements-dev.in
 flake8==3.8.3             # via -r requirements-dev.in, flake8-docstrings
 identify==1.4.25          # via pre-commit
 idna==2.10                # via -c requirements.txt, requests
-importlib-metadata==1.7.0  # via flake8, pluggy, pre-commit, pytest, virtualenv
+iniconfig==1.1.1          # via pytest
 isort==5.2.0              # via -r requirements-dev.in
 kiwisolver==1.2.0         # via matplotlib
 matplotlib==3.3.0         # via -r requirements-dev.in
 mccabe==0.6.1             # via flake8
-more-itertools==8.4.0     # via pytest
 nodeenv==1.4.0            # via pre-commit
 numpy==1.19.1             # via -c requirements.txt, matplotlib
 packaging==20.4           # via pytest
@@ -40,7 +39,7 @@ pydocstyle==5.0.2         # via flake8-docstrings
 pyflakes==2.2.0           # via flake8
 pyparsing==2.4.7          # via matplotlib, packaging
 pytest-cov==2.10.0        # via -r requirements-dev.in
-pytest==5.4.3             # via -r requirements-dev.in, pytest-cov
+pytest==6.2.1             # via -r requirements-dev.in, pytest-cov
 python-dateutil==2.8.1    # via -c requirements.txt, matplotlib
 pyyaml==5.3.1             # via pre-commit
 regex==2020.7.14          # via black
@@ -48,12 +47,10 @@ requests==2.24.0          # via -c requirements.txt, responses
 responses==0.10.15        # via -r requirements-dev.in
 six==1.15.0               # via -c requirements.txt, cycler, packaging, pip-tools, python-dateutil, responses, virtualenv
 snowballstemmer==2.0.0    # via pydocstyle
-toml==0.10.1              # via black, pre-commit
+toml==0.10.1              # via black, pre-commit, pytest
 typed-ast==1.4.1          # via black
 urllib3==1.25.10          # via -c requirements.txt, requests
 virtualenv==20.0.28       # via pre-commit
-wcwidth==0.2.5            # via pytest
-zipp==3.1.0               # via importlib-metadata
 
 # The following packages are considered to be unsafe in a requirements file:
 # pip

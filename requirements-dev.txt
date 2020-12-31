@@ -20,7 +20,6 @@ flake8-import-order==0.18.1  # via -r requirements-dev.in
 flake8==3.8.3             # via -r requirements-dev.in, flake8-docstrings
 identify==1.4.25          # via pre-commit
 idna==2.10                # via -c requirements.txt, requests
-importlib-metadata==1.7.0  # via flake8, pluggy, pre-commit, pytest, virtualenv
 isort==5.2.0              # via -r requirements-dev.in
 kiwisolver==1.2.0         # via matplotlib
 matplotlib==3.3.0         # via -r requirements-dev.in
@@ -39,7 +38,7 @@ pycodestyle==2.6.0        # via flake8, flake8-import-order
 pydocstyle==5.0.2         # via flake8-docstrings
 pyflakes==2.2.0           # via flake8
 pyparsing==2.4.7          # via matplotlib, packaging
-pytest-cov==2.10.0        # via -r requirements-dev.in
+pytest-cov==2.10.1        # via -r requirements-dev.in
 pytest==5.4.3             # via -r requirements-dev.in, pytest-cov
 python-dateutil==2.8.1    # via -c requirements.txt, matplotlib
 pyyaml==5.3.1             # via pre-commit
@@ -53,7 +52,6 @@ typed-ast==1.4.1          # via black
 urllib3==1.25.10          # via -c requirements.txt, requests
 virtualenv==20.0.28       # via pre-commit
 wcwidth==0.2.5            # via pytest
-zipp==3.1.0               # via importlib-metadata
 
 # The following packages are considered to be unsafe in a requirements file:
 # pip

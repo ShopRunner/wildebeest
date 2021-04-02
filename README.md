@@ -1,6 +1,9 @@
 # Wildebeest
 
+[![PyPI version](https://badge.fury.io/py/wildebeest.svg)](https://badge.fury.io/py/wildebeest)
 [![codecov](https://codecov.io/gh/ShopRunner/wildebeest/branch/master/graph/badge.svg)](https://codecov.io/gh/ShopRunner/wildebeest)
+[![Workflows Passing](https://github.com/ShopRunner/wildebeest/workflows/Python%20package/badge.svg)](https://github.com/ShopRunner/wildebeest/actions/workflows/prod.yaml)
+[![Documentation Status](https://readthedocs.org/projects/wildebeest-library/badge/?version=latest)](https://wildebeest-library.readthedocs.io/en/latest/?badge=latest)
 
 ![wildebeest stampede](https://github.com/ShopRunner/wildebeest/raw/master/docs/images/wildebeest_stampede.jpg)
 

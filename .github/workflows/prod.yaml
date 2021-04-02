@@ -51,12 +51,14 @@ jobs:
         pip install setuptools wheel twine
     - name: Get changed files
       id: changed-files
-      uses: tj-actions/changed-files@v2.1
+      uses: jitterbit/get-changed-files@v1
+      with:
+        format: space-delimited
     - name: Build and publish
       env:
         TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
         TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
-      if: contains(steps.changed-files.outputs.modified_files, '_version.py')
+      if: contains(steps.changed-files.outputs.modified, '_version.py')
       run: |
         python setup.py sdist bdist_wheel
         twine upload dist/*

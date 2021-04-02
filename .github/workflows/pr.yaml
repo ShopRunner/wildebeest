@@ -26,11 +26,7 @@ jobs:
         python -m pip install .
         python -m pip install -r requirements-dev.txt
         python -m pip install -r requirements-read-the-docs.txt
-    - name: Get changed files
-      id: changed-files
-      uses: tj-actions/changed-files@v2.1
     - name: Run checks and build docs
-      if: contains(steps.changed-files.outputs.modified_files, '_version.py')
       run: .ci/test.sh
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v1

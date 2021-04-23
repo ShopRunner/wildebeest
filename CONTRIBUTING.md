@@ -39,7 +39,7 @@ pip install -r requirements-dev.txt -r requirements-read-the-docs.txt
 ```
 
 7. Make your changes.
-8. Open a pull request against our `master` branch. We encourage you to do this step early on, before your changes are completed, so that we know you are working on the issue and can provide input early on.
+8. Open a pull request against our `main` branch. We encourage you to do this step early on, before your changes are completed, so that we know you are working on the issue and can provide input early on.
 9. Complete all items in the pull request checklist that you feel comfortable with. Feel free to submit a PR with some loose ends, particularly if you are not sure about how to complete a checklist item.
 
 ## Additional Notes

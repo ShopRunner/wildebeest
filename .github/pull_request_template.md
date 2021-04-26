@@ -1,6 +1,6 @@
 # Pull Request Process
 
-Contributors from outside ShopRunner should feel free to submit a PR without having completed all of the items below. See [CONTRIBUTING.md](https://github.com/ShopRunner/wildebeest/blob/master/CONTRIBUTING.md) for additional information.
+Contributors from outside ShopRunner should feel free to submit a PR without having completed all of the items below. See [CONTRIBUTING.md](https://github.com/ShopRunner/wildebeest/blob/main/CONTRIBUTING.md) for additional information.
 
 You can run `./.ci/test.sh` locally to check for style issues, run tests, rebuild docs, etc. before submitting changes.
 

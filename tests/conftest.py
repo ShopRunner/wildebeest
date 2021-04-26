@@ -9,7 +9,7 @@ SAMPLE_DATA_DIR = Path(TEST_DIR) / 'sample_data'
 TEMP_DATA_DIR = SAMPLE_DATA_DIR / 'tmp'
 IMAGE_FILENAMES = [f'wildebeest_big{num}.jpg' for num in range(1, 7)]
 IMAGE_URLS = [
-    f'https://raw.githubusercontent.com/ShopRunner/wildebeest/master/tests/sample_data/{filename}'
+    f'https://raw.githubusercontent.com/ShopRunner/wildebeest/main/tests/sample_data/{filename}'
     for filename in IMAGE_FILENAMES
 ]
 

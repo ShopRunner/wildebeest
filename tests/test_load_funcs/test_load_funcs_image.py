@@ -9,7 +9,7 @@ from tests.conftest import SAMPLE_DATA_DIR
 from wildebeest.load_funcs.image import load_image_from_disk, load_image_from_url
 
 SAMPLE_DATA_BASE_URL = (
-    'https://github.com/ShopRunner/wildebeest/raw/master/tests/sample_data'
+    'https://github.com/ShopRunner/wildebeest/raw/main/tests/sample_data'
 )
 
 

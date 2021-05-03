@@ -1,3 +1,3 @@
 .. _conduct:
 
-.. mdinclude:: ../CONDUCT.md
+.. mdinclude:: ../CODE-OF-CONDUCT.md
